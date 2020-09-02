@@ -18,8 +18,11 @@ jobs:
       with:
         dotnet-version: 3.1.301
     - name: Install dependencies
-      run: dotnet restore "../../src/CoatHanger.sln"
+      run: dotnet restore 
+      working-directory: ./src
     - name: Build
-      run: dotnet build "../../src/CoatHanger.sln" --configuration Release --no-restore
+      run: dotnet build --configuration Release --no-restore
+      working-directory: ./src
     - name: Test
-      run: dotnet test "../../src/CoatHanger.sln" --no-restore --verbosity normal
+      run: dotnet test --no-restore --verbosity normal
+      working-directory: ./src
