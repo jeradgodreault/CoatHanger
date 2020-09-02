@@ -11,7 +11,7 @@ using System.Diagnostics;
 
 namespace CoatHanger.Testing.Web.UnitTest
 {
-    [TestClass]
+    [TestClass]    
     public class FormcastServiceTest
     {
         private TestContext testContextInstance;
@@ -85,7 +85,6 @@ namespace CoatHanger.Testing.Web.UnitTest
 
 
         [TestCase(title: "When the temperature is less than 25 degree celcius")]
-
         public void WhenTemperatureLessThanTwentyFive_ExpectMild()
         {
             // arrange

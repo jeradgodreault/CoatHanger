@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,23 +7,17 @@ namespace CoatHanger.Core
 {
     public class TestSuiteAttribute : Attribute
     {
-        public string Title { get; private set; }
-        public string Identifier { get; private set; }
-        public string ParentSuiteIdentifier { get; private set; }
-
-        public TestSuiteAttribute(string title)
+        public TestSuiteAttribute(Type suiteType)
         {
-            Title = title;
-        }
+            if (suiteType is ISuite)
+            {
+                var instance = (ISuite)Activator.CreateInstance(suiteType);
 
-        public TestSuiteAttribute(string title, string identifier) : this(title)
-        {
-            Identifier = identifier;
-        }
-
-        public TestSuiteAttribute(string title, string identifier, string parentSuiteIdentifer) : this(title, identifier)
-        {
-            ParentSuiteIdentifier = parentSuiteIdentifer;
+            } else
+            {
+                throw new ArgumentException($"The type {suiteType.FullName} is an invalid parameter for {nameof(TestSuiteAttribute)}. " +
+                    $"It must implement the {nameof(ISuite)} interface.");
+            }
         }
     }
 }
