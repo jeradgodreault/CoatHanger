@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -15,8 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CoatHanger.Core\CoatHanger.Core.csproj" />
-    <ProjectReference Include="..\..\CoatHanger.Testing.Web\CoatHanger.Testing.Web.csproj" />
+    <ProjectReference Include="..\..\src\CoatHanger.Core\CoatHanger.Core.csproj" />
+    <ProjectReference Include="..\CoatHanger.Testing.Web\CoatHanger.Testing.Web.csproj" />
   </ItemGroup>
+
 
 </Project>

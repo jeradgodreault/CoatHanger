@@ -11,9 +11,7 @@ using System.Diagnostics;
 
 namespace CoatHanger.Testing.Web.UnitTest
 {
-    [TestClass]
-    [TestSuite(title: "Temperature Summary Calculation", identifier: "TS.01.04", parentSuiteIdentifer: "TS.01")]
-    [TestDesigner(userName: "godreaj")]
+    [TestClass]   
     public class FormcastServiceTest
     {
         private TestContext testContextInstance;
