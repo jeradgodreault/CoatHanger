@@ -1,0 +1,39 @@
+﻿@model IEnumerable<CoatHanger.Testing.Web.Services.WeatherForcast.WeatherForcastListItemViewModel>
+
+@{
+    ViewData["Title"] = "Weather Forcast";
+}
+
+<h1>Weather Forcast</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TemperatureC)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Summary)
+            </th>            
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TemperatureC)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Summary)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
