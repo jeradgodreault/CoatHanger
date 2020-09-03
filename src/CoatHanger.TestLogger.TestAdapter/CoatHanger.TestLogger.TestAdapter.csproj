@@ -1,0 +1,34 @@
+﻿<!--
+This csproj file is only used for local debugging.  
+Depending on what version of vstest or dotnet CLI, it's expected a nuget package for these loggers 
+installed in visual studio. The work-around is to have a .dll assembly that matches ".TestAdapter". 
+
+https://github.com/Microsoft/vstest-docs/blob/master/docs/report.md#create-a-test-logger
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<SourceRoot Condition="$(SourceRoot) == ''">..\..\</SourceRoot>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>netstandard1.5</TargetFramework>
+		<AssemblyName>CoatHanger.TestLogger.TestAdapter</AssemblyName>
+		<Version>$(PackageVersion)</Version>
+		<IsPackable>false</IsPackable>
+
+		<!-- Disable stylecop since the files are already checked in TestLogger project -->
+		<StylecopEnabled>false</StylecopEnabled>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="..\CoatHanger.TestLogger\CoatHangerLogger.cs">
+			<Link>CoatHangerLogger.cs</Link>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.0.0" />
+		<PackageReference Include="System.ValueTuple" Version="4.3.0" />
+	</ItemGroup>
+</Project>

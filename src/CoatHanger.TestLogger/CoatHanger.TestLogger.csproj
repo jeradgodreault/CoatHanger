@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<SourceRoot Condition="$(SourceRoot) == ''">..\..\</SourceRoot>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>netstandard1.5</TargetFramework>
+		<AssemblyName>CoatHanger.TestLogger</AssemblyName>
+		<Version>$(PackageVersion)</Version>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Configuration">
+		<RootNamespace>CoatHanger.TestLogger</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.0.0" />
+		<PackageReference Include="System.ValueTuple" Version="4.3.0" />
+	</ItemGroup>
+
+</Project>

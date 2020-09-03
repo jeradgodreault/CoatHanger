@@ -12,6 +12,7 @@ using System.Diagnostics;
 namespace CoatHanger.Testing.Web.UnitTest
 {
     [TestClass]    
+    [TestSuite(suiteClass: typeof(WeatherForcastSuite))]
     public class FormcastServiceTest
     {
         private TestContext testContextInstance;
@@ -27,6 +28,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         }
 
         [TestCase(title: "When the temperature is less than zero degree celcius")]
+        [Owner("Billy")]
         public void WhenTemperatureIsLessThanZero_ExpectFreezing()
         {
             // arrange
@@ -154,5 +156,15 @@ namespace CoatHanger.Testing.Web.UnitTest
             // assert
             Assert.AreEqual("Scorching", result);
         }
+
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+
+            Console.WriteLine(TestContext.TestName);
+        }
+
+
     }
 }

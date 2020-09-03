@@ -15,6 +15,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoatHanger.Testing.Web.Unit
 		{0B795793-AD8C-4842-BBA5-18BBBEE57D34} = {0B795793-AD8C-4842-BBA5-18BBBEE57D34}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoatHanger.TestRunner", "CoatHanger.TestRunner\CoatHanger.TestRunner.csproj", "{43C41AAA-2147-47A6-B406-9676281BF309}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoatHanger.TestAdapter", "CoatHanger.TestAdapter\CoatHanger.TestAdapter.csproj", "{842AD969-73B4-48AA-9C9D-9A9DC14AE6D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoatHanger.TestLogger", "CoatHanger.TestLogger\CoatHanger.TestLogger.csproj", "{FBBC424A-F0F4-4654-8403-1205E18974AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestLogger", "TestLogger", "{194A87C1-F62C-4CF6-9C19-63858D8E134B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoatHanger.TestLogger.TestAdapter", "CoatHanger.TestLogger.TestAdapter\CoatHanger.TestLogger.TestAdapter.csproj", "{A8EB1596-C293-43BA-B44C-BDEF033D125E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +43,22 @@ Global
 		{07DD10F5-DB8F-4B12-8CED-64899D4CAD61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07DD10F5-DB8F-4B12-8CED-64899D4CAD61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07DD10F5-DB8F-4B12-8CED-64899D4CAD61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43C41AAA-2147-47A6-B406-9676281BF309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43C41AAA-2147-47A6-B406-9676281BF309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43C41AAA-2147-47A6-B406-9676281BF309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43C41AAA-2147-47A6-B406-9676281BF309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{842AD969-73B4-48AA-9C9D-9A9DC14AE6D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{842AD969-73B4-48AA-9C9D-9A9DC14AE6D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{842AD969-73B4-48AA-9C9D-9A9DC14AE6D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{842AD969-73B4-48AA-9C9D-9A9DC14AE6D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBBC424A-F0F4-4654-8403-1205E18974AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBBC424A-F0F4-4654-8403-1205E18974AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBBC424A-F0F4-4654-8403-1205E18974AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBBC424A-F0F4-4654-8403-1205E18974AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8EB1596-C293-43BA-B44C-BDEF033D125E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8EB1596-C293-43BA-B44C-BDEF033D125E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8EB1596-C293-43BA-B44C-BDEF033D125E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8EB1596-C293-43BA-B44C-BDEF033D125E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -40,6 +66,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0B795793-AD8C-4842-BBA5-18BBBEE57D34} = {048E8AF9-80C2-4363-936D-5B0F77402898}
 		{07DD10F5-DB8F-4B12-8CED-64899D4CAD61} = {048E8AF9-80C2-4363-936D-5B0F77402898}
+		{FBBC424A-F0F4-4654-8403-1205E18974AD} = {194A87C1-F62C-4CF6-9C19-63858D8E134B}
+		{A8EB1596-C293-43BA-B44C-BDEF033D125E} = {194A87C1-F62C-4CF6-9C19-63858D8E134B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F1AF5D92-0941-4B15-84E6-24671CD02103}
