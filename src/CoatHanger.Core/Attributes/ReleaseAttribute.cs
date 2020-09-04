@@ -1,30 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
-namespace CoatHanger.Core.Attributes
+namespace CoatHanger
 {
 
 
     [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class ReleaseAttribute : Attribute
     {
-        public string CurrentReleasedVersion { get; private set; }
         public string CreatedReleasedVersion { get; private set; }
+        public List<string> ModifiedReleases { get; set; } = new List<string>();
+        public string LastestVersion => ModifiedReleases.Last();
 
         /// <summary>
         /// Release attributes are used to help generate release documents. 
         /// </summary>
-        /// <param name="currentReleaseVersion">The current upcoming release version this test case will included.</param>
-        /// <param name="modifiedReleaseVersion">The original/created release version this test case was first used.</param>
-        public ReleaseAttribute(string currentReleaseVersion, string createdReleaseVersion)
+        /// <param name="createdReleased">The current upcoming release version this test case will included.</param>
+        public ReleaseAttribute(string createdReleased)
         {
             // null guards.
-            if (currentReleaseVersion == null || currentReleaseVersion == "") throw new ArgumentNullException($"The {nameof(currentReleaseVersion)} variable cannot be null for the {nameof(ReleaseAttribute)}");
-            if (currentReleaseVersion == null || currentReleaseVersion == "") throw new ArgumentNullException($"The {nameof(createdReleaseVersion)} variablecannot be null for the {nameof(ReleaseAttribute)}");
+            if (createdReleased == null || createdReleased == "") throw new ArgumentNullException($"The {nameof(createdReleased)} variable cannot be null for the {nameof(ReleaseAttribute)}");
 
-            CurrentReleasedVersion = currentReleaseVersion;
-            CreatedReleasedVersion = createdReleaseVersion;
+            CreatedReleasedVersion = createdReleased;
+            ModifiedReleases.Add(createdReleased); // if modified not provided, assume it only version.
+        }
+
+        /// <summary>
+        /// Release attributes are used to help generate release documents. 
+        /// </summary>
+        /// <param name="createdReleased">The current upcoming release version this test case will included.</param>
+        /// <param name="modifiedReleaseVersion">The release versions this test case was modified significantly.</param>
+        public ReleaseAttribute(string createdReleased, params string[] modifiedReleaseVersion)
+        {
+            // null guards.
+            if (createdReleased == null || createdReleased == "") throw new ArgumentNullException($"The {nameof(createdReleased)} variable cannot be null for the {nameof(ReleaseAttribute)}");
+            if (modifiedReleaseVersion == null || modifiedReleaseVersion.Length == 0) throw new ArgumentNullException($"The {nameof(modifiedReleaseVersion)} variable cannot be null or emtpy for the {nameof(ReleaseAttribute)}");
+            
+            CreatedReleasedVersion = createdReleased;
+            ModifiedReleases.AddRange(modifiedReleaseVersion);
         }
 
 
@@ -34,17 +48,18 @@ namespace CoatHanger.Core.Attributes
         /// Release attributes are used to help generate release documents. 
         /// </summary>
         /// <param name="currentReleaseVersion">The current upcoming release version this test case will included.</param>
-        /// <param name="modifiedReleaseVersion">The original/created release version this test case was first used.</param>
-        public ReleaseAttribute(int createdReleaseVersion, int modifiedReleaseVersion) : this(createdReleaseVersion.ToString(), modifiedReleaseVersion.ToString())
+        /// <param name="modifiedReleaseVersion">The release versions this test case was modified significantly.</param>
+        public ReleaseAttribute(int createdReleaseVersion, params int[] modifiedReleaseVersion) 
         {
-            // empty
+            CreatedReleasedVersion = createdReleaseVersion.ToString();
+            ModifiedReleases = modifiedReleaseVersion.Select(value => value.ToString()).ToList();
         }
 
         #endregion
 
     }
 
-    [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
+    [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class RegressionTestingAttribute : Attribute
     {
         public string ReleasedVersion { get; private set; }

@@ -1,7 +1,4 @@
 ﻿using CoatHanger.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CoatHanger.Testing.Web.UnitTest
 {

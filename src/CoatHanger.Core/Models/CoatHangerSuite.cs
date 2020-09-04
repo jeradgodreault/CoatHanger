@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace CoatHanger.Core.Models
 {
@@ -14,28 +12,30 @@ namespace CoatHanger.Core.Models
 
     public class CoatHangerTestCase
     {
-        public string Identifier { get; set; }
-        public string Title { get; set; }
+        public string TestCaseID { get; set; }
+        public string TestCaseDescription { get; set; }
         public string CreatedReleaseVersion { get; set; }
         public string ModifiedReleaseVersion { get; set; }
         public List<string> WorkItems { get; set; }
-        public Author Author { get;set; }
+        public Author Author { get; set; }
         public List<CoatHangerTestStep> TestSteps { get; set; }
-        
 
+        public CoatHangerExecution TestExecution { get; set; }
+
+        public bool IsAutomated { get; set; } = true;
     }
 
     public class CoatHangerExecution
     {
         public Author ExecutedBy { get; set; }
         public string ExecuteStartDate { get; set; }
-        public string ExecuteEndDate { get; set; }        
+        public string ExecuteEndDate { get; set; }
         public bool Outcome { get; set; }
     }
 
     public class CoatHangerTestStep
     {
-        public int StepNumber { get; set; }
+        public int TestStepNumber { get; set; }
         public string Action { get; set; }
         public CoatHangerExpectedResult ExpectedOutcome { get; set; }
     }
@@ -43,7 +43,12 @@ namespace CoatHanger.Core.Models
     public class CoatHangerExpectedResult
     {
         public int StepNumber { get; set; }
-        public string Title { get; set; }
+        public string ExpectedResultDescription { get; set; }
     }
+
+
+    // mustache variables 
+
+
 }
 

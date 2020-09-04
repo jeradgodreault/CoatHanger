@@ -1,10 +1,7 @@
-﻿using CoatHanger.Core;
-using CoatHanger.Testing.Web.UnitTest;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace CoatHanger.TestRunner
 {
@@ -21,20 +18,20 @@ namespace CoatHanger.TestRunner
                 //Console.WriteLine(test.FullName);
 
 
-               
+
 
 
 
                 var testCases = test
                     .GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(t=> t.IsDefined(typeof(TestCaseAttribute)))
+                    .Where(t => t.IsDefined(typeof(TestCaseAttribute)))
                     ;
 
                 var testSuiteAttribute = (TestSuiteAttribute)Attribute.GetCustomAttribute(test, typeof(TestSuiteAttribute));
 
                 //var results = GetInheritedClasses(testSuiteAttribute.SuiteType);
 
-                    
+
 
 
 
@@ -59,14 +56,14 @@ namespace CoatHanger.TestRunner
         private static List<Type> FindTests(params Assembly[] assemblies)
         {
             var tests = assemblies
-                .SelectMany(a=> a.ExportedTypes)                
+                .SelectMany(a => a.ExportedTypes)
                 .Where(t => t.IsDefined(typeof(TestSuiteAttribute)))
                 .ToList();
 
             return tests;
         }
 
-        
+
 
         private static List<Type> GetInheritedClasses(Type MyType)
         {
@@ -79,7 +76,7 @@ namespace CoatHanger.TestRunner
 
             if (results.Count != 0)
             {
-                foreach(var type in results)
+                foreach (var type in results)
                 {
                     finalResult.AddRange(GetInheritedClasses(type));
                 }
@@ -88,7 +85,7 @@ namespace CoatHanger.TestRunner
             {
                 finalResult.AddRange(results);
             }
-            
+
 
             return finalResult;
         }

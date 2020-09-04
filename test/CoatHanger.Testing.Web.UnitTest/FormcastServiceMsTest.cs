@@ -1,19 +1,13 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CoatHanger.Core;
-using CoatHanger.Core.Enums;
 using CoatHanger.Testing.Web.Services.WeatherForcast;
-using CoatHanger.Core.Attributes;
-using System.Collections.Generic;
-using System;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Diagnostics;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CoatHanger.Testing.Web.UnitTest
 {
-    [TestClass]    
-    [TestSuite(suiteClass: typeof(WeatherForcastSuite))]
-    public class FormcastServiceTest
+    /// <summary>
+    /// Purpose of this test is to show everything using the MS Testing framework. 
+    /// </summary>
+    [TestClass]
+    public class FormcastServiceMsTest
     {
         private TestContext testContextInstance;
 
@@ -27,8 +21,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             set { testContextInstance = value; }
         }
 
-        [TestCase(testCaseTitle: "When the temperature is less than zero degree celcius")]
-        [Owner("Billy")]
+        [TestMethod("When the temperature is less than zero degree celcius")]
         public void WhenTemperatureIsLessThanZero_ExpectFreezing()
         {
             // arrange
@@ -42,7 +35,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Freezing", output);
         }
 
-        [TestCase(testCaseTitle: "When the temperature is exactly zero degree celcius")]
+        [TestMethod("When the temperature is exactly zero degree celcius")]
         public void WhenTemperatureIsZero_ExpectFreezing()
         {
             // arrange
@@ -56,7 +49,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Freezing", result);
         }
 
-        [TestCase(testCaseTitle: "When the temperature is between 1 and 20 degree celcius")]
+        [TestMethod("When the temperature is between 1 and 20 degree celcius")]
         public void WhenTemperatureBetweenOneAndLessThanTwenty_ExpectCool()
         {
             // arrange
@@ -70,7 +63,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Cool", result);
         }
 
-        [TestCase(testCaseTitle: "When the temperature is exactly 20 degree celcius")]
+        [TestMethod("When the temperature is exactly 20 degree celcius")]
 
         public void WhenTemperatureExactlyTwenty_ExpectMild()
         {
@@ -86,7 +79,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         }
 
 
-        [TestCase(testCaseTitle: "When the temperature is less than 25 degree celcius")]
+        [TestMethod("When the temperature is less than 25 degree celcius")]
         public void WhenTemperatureLessThanTwentyFive_ExpectMild()
         {
             // arrange
@@ -101,7 +94,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         }
 
 
-        [TestCase(testCaseTitle: "When the temperature is exactly 25 degree celcius")]
+        [TestMethod("When the temperature is exactly 25 degree celcius")]
         public void WhenTemperatureExactlyThanTwentyFive_ExpectMild()
         {
             // arrange
@@ -115,7 +108,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Hot", result);
         }
 
-        [TestCase(testCaseTitle: "When the temperature is between 25 and 29 degree celcius")]
+        [TestMethod("When the temperature is between 25 and 29 degree celcius")]
         public void WhenTemperatureBetweenTwentyFiveAndLessThanThirty_ExpectHot()
         {
             // arrange
@@ -129,7 +122,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Hot", result);
         }
 
-        [TestCase(testCaseTitle: "When the temperature is exactly 30 degree celcius")]
+        [TestMethod("When the temperature is exactly 30 degree celcius")]
         public void WhenTemperatureExactlyThirty_ExpectScorching()
         {
             // arrange
@@ -143,7 +136,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Scorching", result);
         }
 
-        [TestCase(testCaseTitle: "When the temperature is greater than 30 degree celcius")]
+        [TestMethod("When the temperature is greater than 30 degree celcius")]
         public void WhenTemperatureGreaterThanThirty_ExpectScorching()
         {
             // arrange
@@ -156,15 +149,5 @@ namespace CoatHanger.Testing.Web.UnitTest
             // assert
             Assert.AreEqual("Scorching", result);
         }
-
-
-        [TestCleanup]
-        public void TestCleanup()
-        {
-
-            Console.WriteLine(TestContext.TestName);
-        }
-
-
     }
 }

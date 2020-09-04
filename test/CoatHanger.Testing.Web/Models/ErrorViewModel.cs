@@ -1,5 +1,3 @@
-using System;
-
 namespace CoatHanger.Testing.Web.Models
 {
     public class ErrorViewModel

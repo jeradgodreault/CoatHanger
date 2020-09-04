@@ -1,13 +1,7 @@
 ﻿using CoatHanger.Testing.Web.Services.WeatherForcast;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace CoatHanger.Testing.Web.Controllers
 {
@@ -37,16 +31,16 @@ namespace CoatHanger.Testing.Web.Controllers
         }
 
         public class WeatherForecastDomainModel
-        {            
-            public DateTime Date { get; set; }            
+        {
+            public DateTime Date { get; set; }
             public int TemperatureC { get; set; }
         }
 
 
 
 
- 
 
-      
+
+
     }
 }

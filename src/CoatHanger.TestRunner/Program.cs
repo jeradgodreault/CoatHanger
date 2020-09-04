@@ -1,8 +1,4 @@
-﻿using CoatHanger.Core;
-using CoatHanger.Testing.Web.UnitTest;
-using System;
-using System.Linq;
-using System.Reflection;
+﻿using CoatHanger.Testing.Web.UnitTest;
 
 namespace CoatHanger.TestRunner
 {
@@ -10,7 +6,7 @@ namespace CoatHanger.TestRunner
     {
         static void Main(string[] args)
         {
-            TestRunner.ExecuteTests(typeof(FormcastServiceTest));
+            TestRunner.ExecuteTests(typeof(FormcastServiceMsTest));
         }
     }
 }

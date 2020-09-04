@@ -1,18 +1,15 @@
-﻿using CoatHanger.Core.Enums;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace CoatHanger.Core
+namespace CoatHanger
 {
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class TestCaseAttribute : TestMethodAttribute
     {
         public string Identifier { get; set; }
-        
-        public TestCaseAttribute(string testCaseTitle) : base(testCaseTitle) 
+
+        public TestCaseAttribute(string description) : base(description)
         {
             // Using TestMethodAttribute so that the VS test explorer shows the friendlier names. 
         }
@@ -24,7 +21,7 @@ namespace CoatHanger.Core
 
         public override Microsoft.VisualStudio.TestTools.UnitTesting.TestResult[] Execute(ITestMethod testMethod)
         {
-            return base.Execute(testMethod);            
+            return base.Execute(testMethod);
         }
     }
 }

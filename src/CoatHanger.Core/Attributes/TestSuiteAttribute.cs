@@ -1,9 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
-namespace CoatHanger.Core
+namespace CoatHanger
 {
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = false)]
     public class TestSuiteAttribute : Attribute

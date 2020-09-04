@@ -1,5 +1,4 @@
-﻿using CoatHanger.Core;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Newtonsoft.Json;
@@ -162,7 +161,7 @@ namespace CoatHanger.TestLogger
                     {
                         Identifier = instance.Identifier,
                         Title = instance.DisplayName,
-                        Status = e.Result.Outcome.ToString()                        
+                        Status = e.Result.Outcome.ToString()
                     });
                 }
             }

@@ -1,13 +1,10 @@
-﻿using CoatHanger.Core.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
-namespace CoatHanger.Core.Attributes
+namespace CoatHanger
 {
     public class TestDesignerAttribute : Attribute
     {
-        public string UserName { get; private set; }        
+        public string UserName { get; private set; }
 
         public TestDesignerAttribute(string userName)
         {
