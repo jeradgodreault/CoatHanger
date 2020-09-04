@@ -1,10 +1,13 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+﻿using CoatHanger.Core;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
+using System.Reflection;
 
 namespace CoatHanger.TestLogger
 {
@@ -21,6 +24,7 @@ namespace CoatHanger.TestLogger
         private string environmentOpt;
         private string xunitVersionOpt;
         private string outputFilePath;
+        public CoatHangerTestSuite testSuite = new CoatHangerTestSuite();
 
         /// <summary>
         /// Initializes the Test Logger.
@@ -29,6 +33,8 @@ namespace CoatHanger.TestLogger
         /// <param name="testRunDirectory">Test Run Directory</param>
         public void Initialize(TestLoggerEvents events, string testResultsDirPath)
         {
+            Console.WriteLine("TestLoggerEvents events, string testResultsDirPath");
+
             if (events == null)
             {
                 throw new ArgumentNullException(nameof(events));
@@ -45,6 +51,8 @@ namespace CoatHanger.TestLogger
 
         public void Initialize(TestLoggerEvents events, Dictionary<string, string> parameters)
         {
+            Console.WriteLine("Initialize TestLoggerEvents events, Dictionary<string, string> parameters");
+
             if (events == null)
             {
                 throw new ArgumentNullException(nameof(events));
@@ -87,7 +95,7 @@ namespace CoatHanger.TestLogger
         /// </summary>
         private void TestMessageHandler(object sender, TestRunMessageEventArgs e)
         {
-            Console.WriteLine("JERAD IS HERE");
+            Console.WriteLine("TestMessageHandler");
             switch (e.Level)
             {
                 case TestMessageLevel.Informational:
@@ -112,25 +120,76 @@ namespace CoatHanger.TestLogger
         /// </summary>
         private void TestResultHandler(object sender, TestResultEventArgs e)
         {
-            Console.WriteLine("JERAD IS HERE");
-            string name = !string.IsNullOrEmpty(e.Result.DisplayName) ? e.Result.DisplayName : e.Result.TestCase.FullyQualifiedName;
+            Console.WriteLine("TestResultHandler");
 
-            if (e.Result.Outcome == TestOutcome.Skipped)
+            //string path = @"C:\temp\output.txt";
+            //using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan))
+            //using (var streamWriter = new StreamWriter(stream, System.Text.Encoding.UTF8, 1024, false))
+            //{
+            //    streamWriter.WriteLine(JsonConvert.SerializeObject(e));
+            //}
+
+            // TODO figure out a way that isn't too much 
+            var assemblies = new List<Assembly>
             {
-                Console.WriteLine(name + " Skipped");
-            }
-            else if (e.Result.Outcome == TestOutcome.Failed)
+                System.Reflection.Assembly.LoadFrom(e.Result.TestCase.Source)
+            };
+
+            var testSuites = assemblies
+                .SelectMany(a => a.ExportedTypes)
+                .Where(t => t.IsDefined(typeof(TestSuiteAttribute)))
+                .ToList();
+
+
+            foreach (var testSuiteResult in testSuites)
             {
-                Console.WriteLine(name + " Failed");
-                if (!String.IsNullOrEmpty(e.Result.ErrorStackTrace))
+
+
+
+                testSuite.DisplayName = testSuite.DisplayName;
+                testSuite.Identifier = testSuite.Identifier;
+
+                var testCases = testSuiteResult
+                    .GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(t => t.IsDefined(typeof(TestCaseAttribute)))
+                    ;
+
+                foreach (var testCase in testCases)
                 {
-                    Console.WriteLine(e.Result.ErrorStackTrace);
+                    var instance = (TestCaseAttribute)Attribute.GetCustomAttribute(testCase, typeof(TestCaseAttribute));
+
+                    testSuite.TestCases.Add(new CoatHangerTestCaseResult()
+                    {
+                        Identifier = instance.Identifier,
+                        Title = instance.DisplayName,
+                        Status = e.Result.Outcome.ToString()                        
+                    });
                 }
             }
-            else if (e.Result.Outcome == TestOutcome.Passed)
-            {
-                Console.WriteLine(name + " Passed");
-            }
+
+
+
+
+
+
+            //string name = !string.IsNullOrEmpty(e.Result.TestCase.DisplayName) ? e.Result.TestCase.DisplayName : e.Result.TestCase.FullyQualifiedName;
+
+            //if (e.Result.Outcome == TestOutcome.Skipped)
+            //{
+            //    Console.WriteLine(name + " Skipped");
+            //}
+            //else if (e.Result.Outcome == TestOutcome.Failed)
+            //{
+            //    Console.WriteLine(name + " Failed");
+            //    if (!String.IsNullOrEmpty(e.Result.ErrorStackTrace))
+            //    {
+            //        Console.WriteLine(e.Result.ErrorStackTrace);
+            //    }
+            //}
+            //else if (e.Result.Outcome == TestOutcome.Passed)
+            //{
+            //    Console.WriteLine(name + " Passed");
+            //}
         }
 
         /// <summary>
@@ -138,11 +197,49 @@ namespace CoatHanger.TestLogger
         /// </summary>
         private void TestRunCompleteHandler(object sender, TestRunCompleteEventArgs e)
         {
-            Console.WriteLine("JERAD IS HERE");
+
+            string path = @"C:\temp\output.txt";
+            using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan))
+            using (var streamWriter = new StreamWriter(stream, System.Text.Encoding.UTF8, 1024, false))
+            {
+                streamWriter.WriteLine(JsonConvert.SerializeObject(testSuite));
+            }
+
+
+
+
+            // Completely BORING.
+
+            //string path = @"C:\temp\output.txt";
+            //using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.SequentialScan))
+            //using (var streamWriter = new StreamWriter(stream, System.Text.Encoding.UTF8, 1024, false))
+            //{
+            //    streamWriter.WriteLine(JsonConvert.SerializeObject(e));
+            //}
+
+
+            Console.WriteLine("TestRunCompleteHandler");
             Console.WriteLine("Total Executed: {0}", e.TestRunStatistics.ExecutedTests);
             Console.WriteLine("Total Passed: {0}", e.TestRunStatistics[TestOutcome.Passed]);
             Console.WriteLine("Total Failed: {0}", e.TestRunStatistics[TestOutcome.Failed]);
             Console.WriteLine("Total Skipped: {0}", e.TestRunStatistics[TestOutcome.Skipped]);
         }
     }
+
+    public class CoatHangerTestSuite
+    {
+        public string Identifier { get; set; }
+        public string DisplayName { get; set; }
+        public List<CoatHangerTestSuite> TestSuites { get; set; } = new List<CoatHangerTestSuite>();
+        public List<CoatHangerTestCaseResult> TestCases { get; set; } = new List<CoatHangerTestCaseResult>();
+    }
+
+    public class CoatHangerTestCaseResult
+    {
+        public string Identifier { get; set; }
+        public string Title { get; set; }
+        public List<string> References { get; set; }
+        public string Status { get; set; }
+    }
+
 }

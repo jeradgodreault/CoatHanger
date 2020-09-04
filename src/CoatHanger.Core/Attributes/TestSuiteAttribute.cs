@@ -8,8 +8,12 @@ namespace CoatHanger.Core
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = false)]
     public class TestSuiteAttribute : Attribute
     {
+        public Type SuiteType { get; set; }
+
         public TestSuiteAttribute(Type suiteClass)
         {
+            SuiteType = suiteClass;
+
             //if (suiteType is ISuite)
             //{
             //    var instance = (ISuite)Activator.CreateInstance(suiteType);

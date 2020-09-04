@@ -27,7 +27,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             set { testContextInstance = value; }
         }
 
-        [TestCase(title: "When the temperature is less than zero degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is less than zero degree celcius")]
         [Owner("Billy")]
         public void WhenTemperatureIsLessThanZero_ExpectFreezing()
         {
@@ -42,7 +42,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Freezing", output);
         }
 
-        [TestCase(title: "When the temperature is exactly zero degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is exactly zero degree celcius")]
         public void WhenTemperatureIsZero_ExpectFreezing()
         {
             // arrange
@@ -56,7 +56,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Freezing", result);
         }
 
-        [TestCase(title: "When the temperature is between 1 and 20 degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is between 1 and 20 degree celcius")]
         public void WhenTemperatureBetweenOneAndLessThanTwenty_ExpectCool()
         {
             // arrange
@@ -70,7 +70,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Cool", result);
         }
 
-        [TestCase(title: "When the temperature is exactly 20 degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is exactly 20 degree celcius")]
 
         public void WhenTemperatureExactlyTwenty_ExpectMild()
         {
@@ -86,7 +86,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         }
 
 
-        [TestCase(title: "When the temperature is less than 25 degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is less than 25 degree celcius")]
         public void WhenTemperatureLessThanTwentyFive_ExpectMild()
         {
             // arrange
@@ -101,7 +101,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         }
 
 
-        [TestCase(title: "When the temperature is exactly 25 degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is exactly 25 degree celcius")]
         public void WhenTemperatureExactlyThanTwentyFive_ExpectMild()
         {
             // arrange
@@ -115,7 +115,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Hot", result);
         }
 
-        [TestCase(title: "When the temperature is between 25 and 29 degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is between 25 and 29 degree celcius")]
         public void WhenTemperatureBetweenTwentyFiveAndLessThanThirty_ExpectHot()
         {
             // arrange
@@ -129,7 +129,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Hot", result);
         }
 
-        [TestCase(title: "When the temperature is exactly 30 degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is exactly 30 degree celcius")]
         public void WhenTemperatureExactlyThirty_ExpectScorching()
         {
             // arrange
@@ -143,7 +143,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Assert.AreEqual("Scorching", result);
         }
 
-        [TestCase(title: "When the temperature is greater than 30 degree celcius")]
+        [TestCase(testCaseTitle: "When the temperature is greater than 30 degree celcius")]
         public void WhenTemperatureGreaterThanThirty_ExpectScorching()
         {
             // arrange

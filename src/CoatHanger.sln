@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestLogger", "TestLogger", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoatHanger.TestLogger.TestAdapter", "CoatHanger.TestLogger.TestAdapter\CoatHanger.TestLogger.TestAdapter.csproj", "{A8EB1596-C293-43BA-B44C-BDEF033D125E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoatHanger.Core.Testing.UnitTest", "..\test\CoatHanger.Core.Testing.UnitTest\CoatHanger.Core.Testing.UnitTest.csproj", "{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{A8EB1596-C293-43BA-B44C-BDEF033D125E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8EB1596-C293-43BA-B44C-BDEF033D125E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8EB1596-C293-43BA-B44C-BDEF033D125E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{07DD10F5-DB8F-4B12-8CED-64899D4CAD61} = {048E8AF9-80C2-4363-936D-5B0F77402898}
 		{FBBC424A-F0F4-4654-8403-1205E18974AD} = {194A87C1-F62C-4CF6-9C19-63858D8E134B}
 		{A8EB1596-C293-43BA-B44C-BDEF033D125E} = {194A87C1-F62C-4CF6-9C19-63858D8E134B}
+		{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E} = {048E8AF9-80C2-4363-936D-5B0F77402898}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F1AF5D92-0941-4B15-84E6-24671CD02103}

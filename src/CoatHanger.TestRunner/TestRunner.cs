@@ -18,22 +18,41 @@ namespace CoatHanger.TestRunner
 
             foreach (var test in tests)
             {
-                Console.WriteLine(test.FullName);
+                //Console.WriteLine(test.FullName);
+
+
+               
+
+
+
                 var testCases = test
                     .GetMethods(BindingFlags.Instance | BindingFlags.Public)
                     .Where(t=> t.IsDefined(typeof(TestCaseAttribute)))
                     ;
 
-                foreach(var testCase in testCases)
-                {
-                    var instance = (TestCaseAttribute)Attribute.GetCustomAttribute(testCase, typeof(TestCaseAttribute));
+                var testSuiteAttribute = (TestSuiteAttribute)Attribute.GetCustomAttribute(test, typeof(TestSuiteAttribute));
+
+                //var results = GetInheritedClasses(testSuiteAttribute.SuiteType);
+
+                    
 
 
-           
+
+                //foreach (var t in results)
+                //{
+                //    Console.WriteLine(t.FullName);
+                //}
 
 
-                    Console.WriteLine(instance.DisplayName);
-                }
+                //foreach (var testCase in testCases)
+                //{
+                //    var testCaseAttribute = (TestCaseAttribute)Attribute.GetCustomAttribute(testCase, typeof(TestCaseAttribute));
+
+
+
+
+
+                //}
             }
         }
 
@@ -45,6 +64,33 @@ namespace CoatHanger.TestRunner
                 .ToList();
 
             return tests;
+        }
+
+        
+
+        private static List<Type> GetInheritedClasses(Type MyType)
+        {
+            var finalResult = new List<Type>();
+            //if you want the abstract classes drop the !TheType.IsAbstract but it is probably to instance so its a good idea to keep it.
+            var results = Assembly.GetAssembly(MyType)
+                .GetTypes()
+                .Where(TheType => TheType.IsClass && !TheType.IsAbstract && TheType.IsSubclassOf(MyType))
+                .ToList();
+
+            if (results.Count != 0)
+            {
+                foreach(var type in results)
+                {
+                    finalResult.AddRange(GetInheritedClasses(type));
+                }
+            }
+            else
+            {
+                finalResult.AddRange(results);
+            }
+            
+
+            return finalResult;
         }
 
 

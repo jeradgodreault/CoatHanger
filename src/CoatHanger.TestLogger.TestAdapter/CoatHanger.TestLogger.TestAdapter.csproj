@@ -12,7 +12,7 @@ https://github.com/Microsoft/vstest-docs/blob/master/docs/report.md#create-a-tes
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<TargetFramework>netstandard1.5</TargetFramework>
+		<TargetFramework>netstandard2.0</TargetFramework>
 		<AssemblyName>CoatHanger.TestLogger.TestAdapter</AssemblyName>
 		<Version>$(PackageVersion)</Version>
 		<IsPackable>false</IsPackable>
@@ -28,7 +28,11 @@ https://github.com/Microsoft/vstest-docs/blob/master/docs/report.md#create-a-tes
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="15.0.0" />
 		<PackageReference Include="System.ValueTuple" Version="4.3.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\CoatHanger.Core\CoatHanger.Core.csproj" />
 	</ItemGroup>
 </Project>

@@ -1,0 +1,180 @@
+﻿<style>
+    th, td, tr {
+        border: 1px solid black
+    }
+
+    .heading {
+        background-color: lightslategray;
+        text-align: center
+    }
+    .section {
+        background-color:lightgray;
+        font-weight:bolder;
+        text-align:left
+    }
+
+    .sub-heading {
+        background-color: lightgray;
+        text-align: center;
+            font-weight:bolder;
+    }
+
+
+</style>
+
+<h1>Test Case Report</h1>
+
+<table width="75%">    
+    <thead>
+        <tr style="visibility:collapse">
+            <td width="10%"></td>
+            <th width="15%"></th>
+            <th width="15%"></th>
+            <th width="15%"></th>
+            <th width="15%"></th>
+            <th width="15%"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th class="span heading" colspan="6" scope="colgroup">Test Case</th>
+        </tr>
+
+        <!-- ---------------------------------------------------------   -->
+        <!-- ----------------- Test Case Summary -----------------  -->
+        <!-- ---------------------------------------------------------   -->
+
+        <tr>
+
+            <th id="pbed3" class="section">Test Case ID:</th>
+            <td>{{Identifier}}</td>
+
+            <th class="section">Description</th>
+            <td colspan="3">{{Title}}</td>
+
+        </tr>
+        <tr>
+            <th class="section">Work Item References, if applicable:</th>
+            <td>
+                <ul>
+                    {{#WorkItems}}
+                    <li>{{.}}</li>
+                    {{/WorkItems}}
+                </ul>
+            </td>
+
+            <th class="section">Testing Category:</th>
+            <td>
+                <input type="checkbox" id="ts_unit" name="ts_unit" disabled="disabled">
+                <label for="ts_unit">Unit</label>
+
+                <input type="checkbox" id="ts_integration" name="ts_integration" disabled="disabled">
+                <label for="ts_integration">Integration</label>
+
+                <input type="checkbox" id="ts_system" name="ts_system" disabled="disabled">
+                <label for="ts_system">System</label>
+
+                <input type="checkbox" id="ts_Acceptance" name="ts_Acceptance" disabled="disabled">
+                <label for="ts_acceptance">Acceptance</label>
+            </td>
+            <td class="section">Automation Status</td>
+            <td>Automated</td>
+        </tr>
+        <tr>
+            <th class="section">Created By:</th>
+            <td>
+                {{Author.UserName}}
+            </td>
+            <td class="section">Created release version:</td>
+            <td>
+                Release v{{ModifiedReleaseVersion}}
+            </td>
+            <td class="section">Modified release version:</td>
+            <td>Release v{{ModifiedReleaseVersion}}</td>
+        </tr>
+
+        <!-- ---------------------------------------------------------   -->
+        <!-- ----------------- Test Execution Summary -----------------  -->
+        <!-- ---------------------------------------------------------   -->
+        <tr>
+            <th class="span heading" colspan="6" scope="colgroup">Test Execution</th>
+        </tr>
+        <tr>
+            <th class="section">Executed By:</th>
+            <td>
+                {{ExecutedBy.UserName}}
+            </td>
+            <td class="section">Executed Date and Time:</td>
+            <td></td>
+            <td class="section">Environment</td>
+            <td></td>
+
+        </tr>
+        <tr>
+            <th class="section">Test Execution:</th>
+            <td>
+                
+                    <input type="checkbox" name="ts_result_pass"
+                           {{#OutCome}}
+                           checked="checked"
+                           {{/OutCome}}
+                     />
+                    <label for="ts_result_pass">Passed</label>
+
+                    <input type="checkbox" name="ts_result_failed"                            
+                           {{^OutCome}}
+                           checked="checked"
+                           {{/OutCome}}
+                           />
+                    <label for="ts_result_failed">Failed</label>
+                
+
+
+            </td>
+
+            <td class="section">Failure Notes</td>
+            <td></td>
+
+            <td class="section">Duration Estimate</td>
+            <td></td>
+        </tr>
+
+        <!-- ---------------------------------------------------------   -->
+        <!-- ----------------- Test Pre-Conditions -----------------  -->
+        <!-- ---------------------------------------------------------   -->
+        <tr>
+            <th class="span heading" colspan="6" scope="colgroup">Preconditions</th>
+        </tr>
+        <tr>
+            <th class="section">Prerequisite:</th>
+            <td colspan="5"></td>
+        </tr>
+        <!-- ---------------------------------------------------------   -->
+        <!-- ----------------- Test Steps -----------------              -->
+        <!-- ---------------------------------------------------------   -->
+
+        <tr>
+            <th class="span heading" colspan="6" scope="colgroup"> Test Procedure</th>
+        </tr>
+        <tr>
+            <th class="sub-heading">Step #</th>
+            <td class="sub-heading">Action</td>
+            <td class="sub-heading" colspan="2">Expected Outcome</td>
+            <td class="sub-heading" colspan="2">Actual Result</td>
+        </tr>
+        {{#TestSteps}}
+        <tr>
+            <th class="section">Step {{StepNumber}}</th>
+            <td>{{Action}}</td>
+            <td colspan="2">
+                {{#ExpectedOutcome}}
+                    {{Title}}
+                {{/ExpectedOutcome}}
+            </td>
+            <td colspan="2">✔️ Passed</td>
+        </tr>
+        {{#TestSteps}}
+    </tbody>
+</table>
+
+

@@ -6,13 +6,15 @@ using System.Text;
 
 namespace CoatHanger.Core
 {
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class TestCaseAttribute : TestMethodAttribute
     {
         public string Identifier { get; set; }
         
-        public TestCaseAttribute(string title) : base(title) 
+        public TestCaseAttribute(string testCaseTitle) : base(testCaseTitle) 
         {
-            
+            // Using TestMethodAttribute so that the VS test explorer shows the friendlier names. 
         }
 
         public TestCaseAttribute(string title, string identifier) : this(title)
@@ -22,8 +24,7 @@ namespace CoatHanger.Core
 
         public override Microsoft.VisualStudio.TestTools.UnitTesting.TestResult[] Execute(ITestMethod testMethod)
         {
-            var results = new Microsoft.VisualStudio.TestTools.UnitTesting.TestResult[] { testMethod.Invoke(null) };
-            return results;
+            return base.Execute(testMethod);            
         }
     }
 }
