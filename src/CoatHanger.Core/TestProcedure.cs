@@ -19,7 +19,7 @@ namespace CoatHanger.Core
         private int ExpectedResultStepNumber { get; set; } = 1;
 
 
-        public T SetInput<T>(string variableName, T valueOf)
+        public T GivenInput<T>(string variableName, T valueOf)
         {
             Inputs.Add(variableName, valueOf);
 
@@ -77,7 +77,7 @@ namespace CoatHanger.Core
         /// <param name="value">The variable **value** that we are Verify</param>
         /// <param name="assertionMethod">The Assertion method for verfication.</param>
         /// <param name="to">Expected value of verfication</param>
-        public void Verify<T>(string that, T value, Action<T, T> assertionMethod, T to)
+        public void ThenVerify<T>(string that, T value, Action<T, T> assertionMethod, T to)
         {
             AddManualStep
             (

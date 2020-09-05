@@ -46,7 +46,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: -1 
@@ -62,7 +62,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
             	
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (                  
                   that: nameof(result)
                 , value:  result
@@ -79,7 +79,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 0
@@ -95,7 +95,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
 
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (
                   that: nameof(result)
                 , value: result
@@ -113,7 +113,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 15
@@ -129,7 +129,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
 
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (
                   that: nameof(result)
                 , value: result
@@ -146,7 +146,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 20
@@ -162,7 +162,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
 
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (
                   that: nameof(result)
                 , value: result
@@ -180,7 +180,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 24
@@ -196,7 +196,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
 
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (
                   that: nameof(result)
                 , value: result
@@ -215,7 +215,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 25
@@ -231,7 +231,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
 
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (
                   that: nameof(result)
                 , value: result
@@ -248,7 +248,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 27
@@ -264,7 +264,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
 
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (
                   that: nameof(result)
                 , value: result
@@ -282,7 +282,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 30
@@ -298,7 +298,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
 
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (
                   that: nameof(result)
                 , value: result
@@ -315,7 +315,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             FormcastService service = new FormcastService();
 
             // given            
-            int temperature = TestProcedure.SetInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 31
@@ -331,7 +331,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
 
             // then 
-            TestProcedure.Verify
+            TestProcedure.ThenVerify
             (
                   that: nameof(result)
                 , value: result

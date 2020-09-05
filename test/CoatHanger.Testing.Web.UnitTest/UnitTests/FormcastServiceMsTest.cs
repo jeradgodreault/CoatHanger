@@ -4,7 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace CoatHanger.Testing.Web.UnitTest
 {
     /// <summary>
-    /// Purpose of this test is to show everything using the MS Testing framework. 
+    /// TRAINING PURPOSE ONLY. This class is used as a reference before being converted into a "coat hanger" test. 
+    /// Hopfully this will help you 
     /// </summary>
     [TestClass]
     public class FormcastServiceMsTest

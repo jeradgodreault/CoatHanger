@@ -80,7 +80,6 @@ namespace CoatHanger
         }
 
 
-        #region constructor overload for the different ways people might represent a release.
 
         /// <summary>
         /// The regression attribute are used to help generate release documents. In some releases you may want to 
@@ -93,9 +92,5 @@ namespace CoatHanger
         {
             // empty
         }
-
-        #endregion
-
-
     }
 }

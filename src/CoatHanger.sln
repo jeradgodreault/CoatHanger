@@ -19,13 +19,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoatHanger.TestRunner", "Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoatHanger.TestAdapter", "CoatHanger.TestAdapter\CoatHanger.TestAdapter.csproj", "{842AD969-73B4-48AA-9C9D-9A9DC14AE6D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoatHanger.TestLogger", "CoatHanger.TestLogger\CoatHanger.TestLogger.csproj", "{FBBC424A-F0F4-4654-8403-1205E18974AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoatHanger.TestLogger", "CoatHanger.TestLogger\CoatHanger.TestLogger.csproj", "{FBBC424A-F0F4-4654-8403-1205E18974AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestLogger", "TestLogger", "{194A87C1-F62C-4CF6-9C19-63858D8E134B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoatHanger.TestLogger.TestAdapter", "CoatHanger.TestLogger.TestAdapter\CoatHanger.TestLogger.TestAdapter.csproj", "{A8EB1596-C293-43BA-B44C-BDEF033D125E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoatHanger.TestLogger.TestAdapter", "CoatHanger.TestLogger.TestAdapter\CoatHanger.TestLogger.TestAdapter.csproj", "{A8EB1596-C293-43BA-B44C-BDEF033D125E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoatHanger.Core.Testing.UnitTest", "..\test\CoatHanger.Core.Testing.UnitTest\CoatHanger.Core.Testing.UnitTest.csproj", "{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoatHanger.Core.Testing.UnitTest", "..\test\CoatHanger.Core.Testing.UnitTest\CoatHanger.Core.Testing.UnitTest.csproj", "{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoatHanger.WebDriver.Selenium", "CoatHanger.WebDriver.Selenium\CoatHanger.WebDriver.Selenium.csproj", "{26DAB8AE-D27C-4DFF-BA7D-0F6C241D0229}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,10 @@ Global
 		{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDE83C8D-6B99-44EA-8AFC-ED6258CB464E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26DAB8AE-D27C-4DFF-BA7D-0F6C241D0229}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26DAB8AE-D27C-4DFF-BA7D-0F6C241D0229}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26DAB8AE-D27C-4DFF-BA7D-0F6C241D0229}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26DAB8AE-D27C-4DFF-BA7D-0F6C241D0229}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
