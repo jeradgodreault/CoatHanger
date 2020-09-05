@@ -32,6 +32,7 @@ namespace CoatHanger.Testing.Web.UnitTest.UITests
         }
 
         [TestMethod]
+        [Ignore("Work in progress")]
         public void WhereMenuNavigationIncludeLinkToPage()
         {
             _webDriver.Navigate().GoToUrl("http://localhost:51306");

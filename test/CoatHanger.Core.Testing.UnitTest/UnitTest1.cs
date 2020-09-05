@@ -9,6 +9,7 @@ namespace CoatHanger.Core.Testing.UnitTest
     public class UnitTest1
     {
         [TestMethod]
+        [Ignore("Work-in-progress")]
         public void TestMethod1()
         {
             // arrange 
