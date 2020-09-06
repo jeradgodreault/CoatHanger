@@ -1,25 +1,51 @@
-﻿using System;
+﻿using CoatHanger.Core;
+using System;
 
 namespace CoatHanger
 {
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = false)]
     public class TestSuiteAttribute : Attribute
     {
-        public Type SuiteType { get; set; }
+        public Type TestSuite { get; set; }
 
-        public TestSuiteAttribute(Type suiteClass)
+        /// <summary>
+        /// Mark the test suite the methods should fall under. 
+        /// For example, [TestSuite(suitClass= typeOf(WeatherForcastSuite)], 
+        /// Where WeatherForcastSuite inherit (directly or indirectly) of SystemSpecification class.  
+        /// </summary>
+        /// <example>
+        /// Represent a tree hierarchy of test suite. 
+        /// <code>
+        ///  -- System Suite
+        ///  |-- Weather Forecast Suite
+        ///  |   |-- Test Case A.1
+        ///  |   |-- Test Case A.2
+        ///  |   |-- Temperature Calculation Suite
+        ///  |   |   |-- Test Case B.1
+        ///  |   |   `-- Test Case B.2
+        ///  |   `-- Weather Grid Suite
+        ///  |       |-- Test Case C.1
+        ///  |       `-- Test Case C.2
+        ///  `-- About Suite
+        ///      -- Layout Suite
+        ///          |-- Test Case D.1
+        ///          `-- Test Case D.2
+        /// </code>
+        /// </example>
+        public TestSuiteAttribute(Type testSuiteType) 
         {
-            SuiteType = suiteClass;
+            // null guard
+            if (testSuiteType == null) throw new ArgumentNullException($"You cannot pass null into the {nameof(TestSuiteAttribute)} attribute.");
 
-            //if (suiteType is ISuite)
-            //{
-            //    var instance = (ISuite)Activator.CreateInstance(suiteType);
 
-            //} else
-            //{
-            //    throw new ArgumentException($"The type {suiteType.FullName} is an invalid parameter for {nameof(TestSuiteAttribute)}. " +
-            //        $"It must implement the {nameof(ISuite)} interface.");
-            //}
+            if (testSuiteType.IsSubclassOf(typeof(SystemSpecification)))
+            {
+                TestSuite = testSuiteType;
+            } else
+            {
+                throw new ArgumentException($"The type {testSuiteType.FullName} is an invalid parameter for {nameof(TestSuiteAttribute)}. " +
+                    $"It must inherit the {nameof(SystemSpecification)} class.");
+            }
         }
     }
 }

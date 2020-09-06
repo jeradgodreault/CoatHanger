@@ -14,7 +14,7 @@ namespace CoatHanger.Testing.Web.UnitTest
     /// Use the <see cref="FormcastServiceMsTest"/> as example of MSTest implementation. 
     /// </summary>
     [TestClass]
-    [CoatHanger.TestSuite(suiteClass: typeof(WeatherForcastSuite))]
+    [CoatHanger.TestSuite(testSuiteType: typeof(WeatherForcastSuite))]
     public class FormcastServiceCoatHangerTest
     {
         private TestProcedure TestProcedure;
