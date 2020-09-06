@@ -51,56 +51,56 @@ namespace CoatHanger.Core.Testing.UnitTest
         ///         |-- Test Case D.1
         ///         `-- Test Case D.2
         /// </summary>
-        private CoatHangerSuite GetSuite()
+        private TestSuite GetSuite()
         {
-            var systemSuite = new CoatHangerSuite()
+            var systemSuite = new TestSuite()
             {
-                Identifier = "System",
+                TestSuiteID = "System",
                 Title = "System Specification",
-                TestSuites = new List<CoatHangerSuite>()
+                TestSuites = new List<TestSuite>()
                 {
-                    new CoatHangerSuite
+                    new TestSuite
                     {
-                        Identifier = "A",
+                        TestSuiteID = "A",
                         Title = "Weather Forecast",
 
-                        TestSuites = new List<CoatHangerSuite>()
+                        TestSuites = new List<TestSuite>()
                         {
-                            new CoatHangerSuite
+                            new TestSuite
                             {
-                                Identifier = "B",
+                                TestSuiteID = "B",
                                 Title = "Temperature Calculation Suite",
-                                TestCases = new List<CoatHangerTestCase>()
+                                TestCases = new List<TestCase>()
                                 {
-                                    new CoatHangerTestCase()
+                                    new TestCase()
                                     {
                                         TestCaseID = "A.1",
-                                        TestCaseDescription = "When the temperature is less than zero degree celcius",
+                                        Title = "When the temperature is less than zero degree celcius",
                                         Author = new Author("godreaj"),
                                         WorkItems = new List<string> { "111", "222", "333" },
-                                        TestExecution = new CoatHangerExecution()
+                                        TestExecution = new TestExecution()
                                         {
                                             Outcome = true,
                                             ExecutedBy = new Author("desktop-j9fucdd\\buildserver"),
                                             ExecuteStartDate = "2020-05-01 11:45",
                                             ExecuteEndDate = "2020-05-01 11:46",
                                         },
-                                        TestSteps = new List<CoatHangerTestStep>()
+                                        TestSteps = new List<TestStep>()
                                         {
-                                            new CoatHangerTestStep()
+                                            new TestStep()
                                             {
-                                                TestStepNumber = 1,
+                                                StepNumber = 1,
                                                 Action = "Set the variable temperature to -2.",
                                                 ExpectedOutcome = null,
                                             },
-                                            new CoatHangerTestStep()
+                                            new TestStep()
                                             {
-                                                TestStepNumber = 2,
+                                                StepNumber = 2,
                                                 Action = "Examine the system outputs",
-                                                ExpectedOutcome = new CoatHangerExpectedResult()
+                                                ExpectedOutcome = new ExpectedOutcome()
                                                 {
                                                     StepNumber = 1,
-                                                    ExpectedResultDescription = "The system shall output the value freezing."
+                                                    Description = "The system shall output the value freezing."
                                                 },
                                             },
 
@@ -110,18 +110,18 @@ namespace CoatHanger.Core.Testing.UnitTest
 
                             },
 
-                            new CoatHangerSuite
+                            new TestSuite
                             {
-                                Identifier = "C",
+                                TestSuiteID = "C",
                                 Title = "Weather Grid"
                             },
                         },
 
 
                     },
-                    new CoatHangerSuite
+                    new TestSuite
                     {
-                        Identifier = "D",
+                        TestSuiteID = "D",
                         Title = "About"
                     }
                 }

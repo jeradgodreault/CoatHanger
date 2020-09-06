@@ -13,11 +13,10 @@ namespace CoatHanger.Core
 
     public class TestProcedure
     {
-        private List<CoatHangerTestStep> Steps { get; set; } = new List<CoatHangerTestStep>();
+        private List<TestStep> Steps { get; set; } = new List<TestStep>();
         private OrderedDictionary Inputs { get; set; } = new OrderedDictionary();
         private int StepNumber { get; set; } = 1;
         private int ExpectedResultStepNumber { get; set; } = 1;
-
 
         public T GivenInput<T>(string variableName, T valueOf)
         {
@@ -35,7 +34,6 @@ namespace CoatHanger.Core
             return function.Invoke();
         }
 
-
         public T CallFunction<T>(string functionName, Func<T> function, string outputVariableName)
         {
             AddManualStep(action: $"Execute the function `{functionName}` and assign the value to the `{outputVariableName}` variable.");
@@ -45,9 +43,9 @@ namespace CoatHanger.Core
 
         public void AddManualStep(string action)
         {
-            Steps.Add(new CoatHangerTestStep()
+            Steps.Add(new TestStep()
             {
-                TestStepNumber = StepNumber++,
+                StepNumber = StepNumber++,
                 Action = action,
             });
         }
@@ -55,14 +53,14 @@ namespace CoatHanger.Core
 
         public void AddManualStep(string action, string expectedResult)
         {
-            Steps.Add(new CoatHangerTestStep()
+            Steps.Add(new TestStep()
             {
-                TestStepNumber = StepNumber++,
+                StepNumber = StepNumber++,
                 Action = action,
-                ExpectedOutcome = new CoatHangerExpectedResult()
+                ExpectedOutcome = new ExpectedOutcome()
                 {
                     StepNumber = ExpectedResultStepNumber++,
-                    ExpectedResultDescription = expectedResult,
+                    Description = expectedResult,
                 }
             });
         }

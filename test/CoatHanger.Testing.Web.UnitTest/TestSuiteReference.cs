@@ -21,13 +21,7 @@ namespace CoatHanger.Testing.Web.UnitTest
     ///         |-- Test Case 1D
     ///         `-- Test Case 2D
     /// </summary>
-    public class SystemSuite : ISuite
-    {
-        public virtual string GetDisplayName() => "System";
-        public virtual string GetSuitePath() => "/" + GetDisplayName();
-    }
-
-    public class WeatherForcastSuite : SystemSuite
+    public class WeatherForcastSuite : SystemSpecification
     {
         public override string GetDisplayName() => "Weather Forcast";
         public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();
@@ -46,7 +40,7 @@ namespace CoatHanger.Testing.Web.UnitTest
     }
 
 
-    public class AboutSuite : SystemSuite
+    public class AboutSuite : SystemSpecification
     {
         public override string GetDisplayName() => "About";
         public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();

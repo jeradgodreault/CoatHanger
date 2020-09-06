@@ -11,7 +11,7 @@ namespace CoatHanger.Core
         public string TestCaseResultHtmlTemplate { get; set; }
 
 
-        public string GetTestResult(CoatHangerSuite suite)
+        public string GetTestResult(TestSuite suite)
         {
 
             // TODO: Paramaterize paths so users can provide their own. 
@@ -42,7 +42,7 @@ namespace CoatHanger.Core
         }
 
 
-        private string DoSomething(CoatHangerSuite currentSuite, int depth)
+        private string DoSomething(TestSuite currentSuite, int depth)
         {
             var result = "";
 
@@ -71,7 +71,7 @@ namespace CoatHanger.Core
 
     public static class Helpers
     {
-        public static IEnumerable<CoatHangerSuite> Descendants(this CoatHangerSuite testSuite)
+        public static IEnumerable<TestSuite> Descendants(this TestSuite testSuite)
         {
             return testSuite.TestSuites.Concat(testSuite.TestSuites.SelectMany(n => n.TestSuites));
         }
