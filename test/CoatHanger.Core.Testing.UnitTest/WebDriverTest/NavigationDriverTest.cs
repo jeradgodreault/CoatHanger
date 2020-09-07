@@ -11,7 +11,7 @@ using System.Text;
 namespace CoatHanger.Core.Testing.UnitTest
 {
     [TestClass]
-    [Ignore("Work-in-progress, need to setup pipeline")]
+    [Ignore("Work-in-progress, need to setup pipeline.")]
     public class NavigationDriverTest
     {
         private TestContext testContextInstance;
