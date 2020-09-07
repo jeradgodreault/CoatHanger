@@ -10,6 +10,7 @@ namespace CoatHanger.Testing.Web.UnitTest.UITests
 {
 
     [TestClass]
+    [Ignore("Work-in-progress, need to setup pipeline")]
     public class PrivacyPolicyPageTest
     {
         private TestContext testContextInstance;
@@ -32,7 +33,6 @@ namespace CoatHanger.Testing.Web.UnitTest.UITests
         }
 
         [TestMethod]
-        [Ignore("Work in progress")]
         public void WhereMenuNavigationIncludeLinkToPage()
         {
             _webDriver.Navigate().GoToUrl("http://localhost:51306");
@@ -43,6 +43,13 @@ namespace CoatHanger.Testing.Web.UnitTest.UITests
 
             var titleElement = _webDriver.FindElement(By.TagName("h1"));
             Assert.AreEqual(titleElement.Text, "Privacy Policy");
+        }
+
+
+        [TestCleanup]
+        public void AfterTestExecution()
+        {
+            _webDriver.Quit();
         }
     }
 }

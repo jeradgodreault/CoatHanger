@@ -16,7 +16,7 @@ namespace CoatHanger.WebDriver
     {
         private IWebDriver _seleniumDriver { get; set; }
         private TestProcedure _testProcedure;
-        private INavigation _navigation;
+        private WebNavigation _navigation;
 
         public CoatHangerDriver(IWebDriver seleniumDriver, ref TestProcedure testProcedure)
         {
@@ -57,6 +57,13 @@ namespace CoatHanger.WebDriver
             return new WebElement(ref element, ref _testProcedure, "");
         }
 
+        /// <inheritdoc cref="ISearchContext.FindElement"/>
+        public IWebElement FindElementStep(By by, string friendlyName)
+        {
+            var element = _seleniumDriver.FindElement(by);
+            return new WebElement(ref element, ref _testProcedure, friendlyName);
+        }
+
         /// <inheritdoc cref="ISearchContext.FindElements"/>
         public ReadOnlyCollection<IWebElement> FindElements(By by)
         {
@@ -69,8 +76,15 @@ namespace CoatHanger.WebDriver
             return _seleniumDriver.Manage();
         }
 
-        /// <inheritdoc cref="IWebDriver.Navigate"/>
+
+        [Obsolete(message: "Use NavigateStep() to get better control of test cases outputs", error: false)]
         public INavigation Navigate()
+        {
+            return _navigation;
+        }
+
+        /// <inheritdoc cref="IWebDriver.Navigate"/>
+        public WebNavigation NavigateStep()
         {
             return _navigation;
         }

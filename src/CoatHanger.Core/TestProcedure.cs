@@ -13,7 +13,7 @@ namespace CoatHanger.Core
 
     public class TestProcedure
     {
-        private List<TestStep> Steps { get; set; } = new List<TestStep>();
+        public List<TestStep> Steps { get; private set; } = new List<TestStep>();
         private OrderedDictionary Inputs { get; set; } = new OrderedDictionary();
         private int StepNumber { get; set; } = 1;
         private int ExpectedResultStepNumber { get; set; } = 1;
