@@ -7,47 +7,9 @@ using System.Linq;
 namespace CoatHanger.Core.Testing.UnitTest
 {
     [TestClass]
-    public class UnitTest1
+    public class ReportServiceTest
     {
-        [TestMethod]
-        public void TestMethod1()
-        {
-            // arrange 
-            var reportService = new ReportService();
-            var product = GetProductModel();
-
-            // act
-            var result = reportService.GetTestResult(product);
-
-            // assert
-            Assert.IsNotNull(result);
-
-            using (StreamWriter file = new StreamWriter(@"C:\temp\TestMethod.html", append: false))
-            {
-                file.WriteLine(result);
-            }
-        }
-
-        [TestMethod]
-        public void TestMethod2()
-        {
-            // arrange 
-            var reportService = new TraceabilityMatrixReportService();
-            var product = GetProductModel();
-
-            // act
-            var result = reportService.GetTestResult(product);
-
-            // assert
-
-            Assert.IsNotNull(result);
-
-            using (StreamWriter file = new StreamWriter(@"C:\temp\TestMethod2.html", append: false))
-            {
-                file.WriteLine(result);
-            }
-        }
-
+       
         [TestMethod]
         public void WhenGeneratingTracabilityMatrixReport_ExamineRequirementID()
         {
@@ -106,20 +68,6 @@ namespace CoatHanger.Core.Testing.UnitTest
 
             Assert.AreEqual(1, result.TestCases[0].TraceableRequirementCount);
             Assert.AreEqual(2, result.TestCases[1].TraceableRequirementCount);
-        }
-
-        [TestMethod]
-        public void Example4()
-        {
-            // arrange
-            var service = new TraceabilityMatrixReportService();
-            var product = GetProductModel();
-
-            // act 
-            var result = service.ConvertToDto(product);
-
-            // assert
-      
         }
 
         /// <summary>
