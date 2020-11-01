@@ -2,45 +2,40 @@
 
 namespace CoatHanger.Testing.Web.UnitTest
 {
-
-
     /// <summary>
     /// Represent a tree hierarchy of test suite. 
-    /// -- System Suite
-    /// |-- Weather Forecast Suite
-    /// |   |-- Test Case 1A
-    /// |   |-- Test Case 2A
-    /// |   |-- Temperature Calculation Suite
+    /// -- System Specification
+    /// |-- Weather Forecast Feature   
+    /// |   |-- Temperature Calculation Function
     /// |   |   |-- Test Case 1B
     /// |   |   `-- Test Case 2B
-    /// |   `-- Weather Grid Suite
+    /// |   `-- Weather Grid Function
     /// |       |-- Test Case 1C
     /// |       `-- Test Case 2C
-    /// `-- About Suite
-    ///     -- Layout Suite
+    /// `-- About Suite Feature
+    ///     -- Layout Function
     ///         |-- Test Case 1D
     ///         `-- Test Case 2D
     /// </summary>
-    public class WeatherForcastSuite : SystemSpecification
+    public class WeatherForcastFeature : SystemSpecification
     {
         public override string GetDisplayName() => "Weather Forcast";
         public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();
     }
 
-    public class TemperatureCalculationSuite : WeatherForcastSuite
+    public class TemperatureCalculationFunction : WeatherForcastFeature
     {
         public override string GetDisplayName() => "Temperature Calculation";
         public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();
     }
 
-    public class WeatherGridSuite : WeatherForcastSuite
+    public class WeatherPageFunction : WeatherForcastFeature
     {
         public override string GetDisplayName() => "Weather Page Layout";
         public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();
     }
 
-
-    public class AboutSuite : SystemSpecification
+    public class AboutPageFunction : SystemSpecification
     {
         public override string GetDisplayName() => "About";
         public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();

@@ -16,6 +16,9 @@
     <None Update="Template\TestCaseResultDetailReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Template\TraceabilityMatrixTableReport.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\TraceabilityMatrixDetailReport.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

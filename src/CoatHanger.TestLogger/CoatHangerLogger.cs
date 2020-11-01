@@ -136,7 +136,7 @@ namespace CoatHanger.TestLogger
 
             var testSuites = assemblies
                 .SelectMany(a => a.ExportedTypes)
-                .Where(t => t.IsDefined(typeof(TestSuiteAttribute)))
+                .Where(t => t.IsDefined(typeof(FunctionAttribute)))
                 .ToList();
 
 

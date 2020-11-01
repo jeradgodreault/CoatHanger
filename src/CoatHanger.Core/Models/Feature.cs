@@ -2,27 +2,44 @@
 
 namespace CoatHanger.Core.Models
 {
-    public class TestSuite
+
+    public class Product
     {
-        public string TestSuiteID { get; set; }
+        public string ProductID { get; set; }
         public string Title { get; set; }
         public string Summary { get; set; }
-        public List<TestSuite> TestSuites { get; set; } = new List<TestSuite>();
+        public List<Feature> Features { get; set; } = new List<Feature>();
+    }
+
+    public class Feature
+    {
+        public string FeatureID { get; set; }
+        public string Title { get; set; }
+        public string Summary { get; set; }
+        public List<Function> Functions { get; set; } = new List<Function>();
+    }
+
+    public class Function
+    {
+        public string FunctionID { get; set; }
+        public string Title { get; set; }
+        public string Summary { get; set; }
         public List<TestCase> TestCases { get; set; } = new List<TestCase>();
     }
 
     public class TestCase
     {
         public string TestCaseID { get; set; }
-        public string Title { get; set; }
+        public string Scenario { get; set; }
+        /// <summary>
+        /// This field describes the test case objective.
+        /// </summary>
         public string Description { get; set; }
         public List<Release> Releases { get; set; }
         public List<string> WorkItems { get; set; }
         public Author Author { get; set; }
         public List<TestStep> TestSteps { get; set; }
-
         public TestExecution TestExecution { get; set; }
-
         public bool IsAutomated { get; set; } = true;
     }
 
@@ -46,6 +63,7 @@ namespace CoatHanger.Core.Models
         public int StepNumber { get; set; }
         public string Action { get; set; }
         public ExpectedOutcome ExpectedOutcome { get; set; }
+        public bool IsSharedStep { get; set; } 
     }
 
     public class ExpectedOutcome
@@ -53,10 +71,5 @@ namespace CoatHanger.Core.Models
         public int StepNumber { get; set; }
         public string Description { get; set; }
     }
-
-
-    // mustache variables 
-
-
 }
 

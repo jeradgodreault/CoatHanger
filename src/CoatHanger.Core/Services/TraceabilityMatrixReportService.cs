@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace CoatHanger.Core
 {
-    public class ReportService
+    public class TraceabilityMatrixReportService
     {
         public string TestCaseResultHtmlTemplate { get; set; }
 
@@ -19,14 +19,12 @@ namespace CoatHanger.Core
             // Fetch the templates htmls.
             var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            string layoutFilePath = Path.Combine(assemblyPath, @"Template\_layout.html");
-            string testCaseReportFilePath = Path.Combine(assemblyPath, @"Template\TestCaseResultDetailReport.html");
-            //string traceabilityMatrixFilePath = Path.Combine(assemblyPath, @"Template\TraceabilityMatrixDetailReport.html");
+            string layoutFilePath = Path.Combine(assemblyPath, @"Template\_layout.html");            
+            string traceabilityMatrixFilePath = Path.Combine(assemblyPath, @"Template\TraceabilityMatrixTableReport.html");
 
             // TODO Cache templates.
             string layoutHtml = File.ReadAllText(layoutFilePath);
-            TestCaseResultHtmlTemplate = File.ReadAllText(testCaseReportFilePath);
-
+            TestCaseResultHtmlTemplate = File.ReadAllText(traceabilityMatrixFilePath);
 
             string reportHtml = "";
             //reportHtml += testCaseResultHtml;
@@ -34,20 +32,17 @@ namespace CoatHanger.Core
             // There always a system layer
             reportHtml += DoSomething(product); // System suite is always the top node.
 
-
-
-
-
             return layoutHtml.Replace("<div id='coat-hanger-content-body' />", $@"<div id='coat-hanger-content-body'>{reportHtml}</div>");
         }
 
-        public TraceabilityMatrixTableDTO ConvertToDto(Feature feature)
+        public TraceabilityMatrixTableDTO ConvertToDto(Product product)
         {
             var matrix = new TraceabilityMatrixTableDTO();
             matrix.Requirements = new List<RequirementDTO>();
             matrix.TestCases = new List<TestCaseDTO>();
 
-            foreach (var testCase in feature.Functions
+            foreach(var testCase in product.Features
+                .SelectMany(f=> f.Functions)
                 .Where(ts => ts.TestCases.Count > 0)
                 .SelectMany(ts => ts.TestCases)
             )
@@ -64,7 +59,7 @@ namespace CoatHanger.Core
                 var testCaseDto = new TestCaseDTO()
                 {
                     TestCaseID = testCase.TestCaseID,
-                    TestCaseDescription = testCase.Description,
+                    TestCaseDescription = testCase.Description,                    
                     TraceableRequirements = requirements,
                     TraceableRequirementCount = requirements.Count
                 };
@@ -79,7 +74,7 @@ namespace CoatHanger.Core
                 matrix.TestCases.Add(testCaseDto);
             }
 
-            foreach (var testcase in matrix.TestCases)
+            foreach(var testcase in matrix.TestCases)
             {
                 testcase.RequirementMatrix = matrix.Requirements
                     .Select(r => new RequirementMatrixResultDTO()
@@ -89,7 +84,6 @@ namespace CoatHanger.Core
                     })
                     .ToList();
             }
-          
 
             return matrix;
         }
@@ -113,7 +107,7 @@ namespace CoatHanger.Core
                     }
                     result += "</div>";
                 }
-            }
+             }
 
             return result;
         }

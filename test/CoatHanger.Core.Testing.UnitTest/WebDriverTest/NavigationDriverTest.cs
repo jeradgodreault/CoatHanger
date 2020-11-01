@@ -118,7 +118,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             _webDriver.NavigateStep().GoToUrl(url: url, testCaseIncludeDomain: false);
             
             // assert
-            Assert.AreEqual("Use the browser to navigate to `/wiki/Unit_testing`", _testProcedure.Steps[0].Action);
+            Assert.AreEqual(" browser to navigate to `/wiki/UnUse theit_testing`", _testProcedure.Steps[0].Action);
         }
 
         [TestMethod]

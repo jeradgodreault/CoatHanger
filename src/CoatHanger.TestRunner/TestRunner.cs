@@ -27,7 +27,7 @@ namespace CoatHanger.TestRunner
                     .Where(t => t.IsDefined(typeof(TestCaseAttribute)))
                     ;
 
-                var testSuiteAttribute = (TestSuiteAttribute)Attribute.GetCustomAttribute(test, typeof(TestSuiteAttribute));
+                var testSuiteAttribute = (FunctionAttribute)Attribute.GetCustomAttribute(test, typeof(FunctionAttribute));
 
                 //var results = GetInheritedClasses(testSuiteAttribute.SuiteType);
 
@@ -57,7 +57,7 @@ namespace CoatHanger.TestRunner
         {
             var tests = assemblies
                 .SelectMany(a => a.ExportedTypes)
-                .Where(t => t.IsDefined(typeof(TestSuiteAttribute)))
+                .Where(t => t.IsDefined(typeof(FunctionAttribute)))
                 .ToList();
 
             return tests;

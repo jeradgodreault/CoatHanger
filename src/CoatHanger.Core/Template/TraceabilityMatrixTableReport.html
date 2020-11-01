@@ -1,0 +1,44 @@
+﻿<style>
+    th, td, tr {
+        border: 1px solid black
+    }
+
+    .heading {
+        background-color: lightslategray;
+        text-align: center
+    }
+
+    .section {
+        background-color: lightgray;
+        font-weight: bolder;
+        text-align: left
+    }
+
+    .sub-heading {
+        background-color: lightgray;
+        text-align: center;
+        font-weight: bolder;
+    }
+</style>
+
+
+<h3>Requirement Traceability Matrix</h3>
+<table>
+    <thead>
+       <tr>
+           <th class="section">Description</th>
+           <th class="section">Requirement ID</th>
+           <th class="section">Tese Case ID</th>
+       </tr>
+    <tbody>
+        {{#TestSteps}}
+            {{#ExpectedOutCome}}
+                <tr>
+                    <td>{{ExpectedOutCome.ExpectedResultDescription}}</td>
+                    <td>{{TestCaseID}}.{{ExpectedOutCome.StepNumber}}</td>
+                    <td>{{TestCaseID}}.{{TestStepNumber}}</td>
+                </tr>
+            {{/ExpectedOutCome}}
+        {{/TestSteps}}
+    </tbody>
+</table>

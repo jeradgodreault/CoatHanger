@@ -1,6 +1,6 @@
 ﻿namespace CoatHanger.Core
 {
-    public interface ISuite
+    public interface IProduct
     {
         string GetDisplayName();
         string GetSuitePath();

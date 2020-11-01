@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -18,6 +18,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CoatHanger.Core\CoatHanger.Core.csproj" />
     <ProjectReference Include="..\..\src\CoatHanger.WebDriver.Selenium\CoatHanger.WebDriver.Selenium.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="WebDriverTest\WebElementTestPage.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

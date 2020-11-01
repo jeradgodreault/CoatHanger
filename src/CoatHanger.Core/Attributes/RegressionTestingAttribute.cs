@@ -2,11 +2,9 @@
 
 namespace CoatHanger
 {
-
     [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class RegressionTestingAttribute : ReleaseAttribute
     {
-
         /// <summary>
         /// The regression attribute are used to help generate release documents. In some releases you may want to 
         /// expliclity highlight certain test cases to stackholder/mangers. 

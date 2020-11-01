@@ -65,7 +65,6 @@ namespace CoatHanger.Testing.Web.UnitTest
         }
 
         [TestMethod("When the temperature is exactly 20 degree celcius")]
-
         public void WhenTemperatureExactlyTwenty_ExpectMild()
         {
             // arrange
@@ -93,7 +92,6 @@ namespace CoatHanger.Testing.Web.UnitTest
             // assert
             Assert.AreEqual("Mild", result);
         }
-
 
         [TestMethod("When the temperature is exactly 25 degree celcius")]
         public void WhenTemperatureExactlyThanTwentyFive_ExpectMild()
