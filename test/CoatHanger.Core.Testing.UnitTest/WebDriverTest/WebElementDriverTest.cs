@@ -127,11 +127,6 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
         }
 
 
-
-
-
-
-
         private string GetSamplePage()
         {
             return File.ReadAllText("./WebDriverTest/WebElementTestPage.html");

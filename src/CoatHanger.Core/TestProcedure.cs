@@ -10,13 +10,17 @@ using System.Reflection;
 namespace CoatHanger.Core
 {
 
-
     public class TestProcedure
     {
         public List<TestStep> Steps { get; private set; } = new List<TestStep>();
         private OrderedDictionary Inputs { get; set; } = new OrderedDictionary();
         private int StepNumber { get; set; } = 1;
         private int ExpectedResultStepNumber { get; set; } = 1;
+
+        /// <summary>
+        /// Determine if all the steps will be consider as shared step. 
+        /// </summary>
+        public bool IsSharedStepMode { get; set; }
 
         public T GivenInput<T>(string variableName, T valueOf)
         {
@@ -47,9 +51,9 @@ namespace CoatHanger.Core
             {
                 StepNumber = StepNumber++,
                 Action = action,
+                IsSharedStep = IsSharedStepMode
             });
         }
-
 
         public void AddManualStep(string action, string expectedResult)
         {
@@ -57,6 +61,7 @@ namespace CoatHanger.Core
             {
                 StepNumber = StepNumber++,
                 Action = action,
+                IsSharedStep = IsSharedStepMode,
                 ExpectedOutcome = new ExpectedOutcome()
                 {
                     StepNumber = ExpectedResultStepNumber++,
@@ -64,9 +69,6 @@ namespace CoatHanger.Core
                 }
             });
         }
-
-        
-
 
         /// <summary>
         /// Verify **that** the variable is **asserted** **to** an expected value.

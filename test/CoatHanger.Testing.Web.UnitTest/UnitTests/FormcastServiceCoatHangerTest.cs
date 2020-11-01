@@ -1,7 +1,9 @@
 using CoatHanger.Core;
+using CoatHanger.Core.Models;
 using CoatHanger.Testing.Web.Services.WeatherForcast;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.IO;
 using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 
@@ -14,7 +16,7 @@ namespace CoatHanger.Testing.Web.UnitTest
     /// Use the <see cref="FormcastServiceMsTest"/> as example of MSTest implementation. 
     /// </summary>
     [TestClass]
-    [CoatHanger.TestSuite(testSuiteType: typeof(WeatherForcastSuite))]
+    [CoatHanger.Function(functionType: typeof(TemperatureCalculationFunction))]
     public class FormcastServiceCoatHangerTest
     {
         private TestProcedure TestProcedure;
@@ -32,15 +34,14 @@ namespace CoatHanger.Testing.Web.UnitTest
             TestProcedure = new TestProcedure();
         }
 
-        [TestCleanup]
-        public void AfterTestExecution()
-        {
-            
-        }
-
-        [CoatHanger.TestCase(description: "When the temperature is less than zero degree celcius")]
+        [CoatHanger.TestCase
+        (
+            identifier: "A.1", 
+            scenario: "When the temperature is less than zero degree celcius",
+            description: "This test case verifies the **freezing** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("godreaj")]
-        [CoatHanger.Release("1.1.0")]
+        [CoatHanger.Release("1.0.0")]
         public void WhenTemperatureIsLessThanZero_ExpectFreezing()
         {
             FormcastService service = new FormcastService();
@@ -49,7 +50,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
-                valueOf: -1 
+                valueOf: -1
             );
 
             // when 
@@ -60,18 +61,23 @@ namespace CoatHanger.Testing.Web.UnitTest
                 inputVariables: new List<string> { nameof(temperature) },
                 outputVariableName: nameof(result)
             );
-            	
+
             // then 
             TestProcedure.ThenVerify
-            (                  
+            (
                   that: nameof(result)
-                , value:  result
+                , value: result
                 , AreEqual
                 , to: "Freezing"
             );
         }
 
-        [CoatHanger.TestCase(description: "When the temperature is exactly zero degree celcius")]
+        [CoatHanger.TestCase
+        (
+            identifier: "A.1.1",
+            scenario: "When the temperature is exactly zero degree celcius",
+            description: "This test case verifies the **freezing** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("godreaj")]
         [CoatHanger.Release("1.1.0")]
         public void WhenTemperatureIsZero_ExpectFreezing()
@@ -104,7 +110,12 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
-        [CoatHanger.TestCase(description: "When the temperature is between 1 and 20 degree celcius")]
+        [CoatHanger.TestCase
+        (
+            identifier:"A.3", 
+            scenario: "When the temperature is between 1 and 20 degree celcius",
+            description: "This test case verifies the **cool** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
         [CoatHanger.RegressionTesting("1.1.0")]
@@ -114,7 +125,7 @@ namespace CoatHanger.Testing.Web.UnitTest
 
             // given            
             int temperature = TestProcedure.GivenInput
-            (
+            ( 
                 variableName: nameof(temperature),
                 valueOf: 15
             );
@@ -137,8 +148,13 @@ namespace CoatHanger.Testing.Web.UnitTest
                 , to: "Cool"
             );
         }
-
-        [CoatHanger.TestCase(description: "When the temperature is exactly 20 degree celcius")]
+ 
+        [CoatHanger.TestCase
+        (
+            identifier: "A.4", 
+            scenario: "When the temperature is exactly 20 degree celcius",
+            description: "This test case verifies the **mild** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
         public void WhenTemperatureExactlyTwenty_ExpectMild()
@@ -172,7 +188,12 @@ namespace CoatHanger.Testing.Web.UnitTest
         }
 
 
-        [CoatHanger.TestCase(description: "When the temperature is less than 25 degree celcius")]
+        [CoatHanger.TestCase
+        (
+            identifier: "A.5", 
+            scenario: "When the temperature is less than 25 degree celcius",
+            description: "This test case verifies the **mild** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
         public void WhenTemperatureLessThanTwentyFive_ExpectMild()
@@ -207,7 +228,12 @@ namespace CoatHanger.Testing.Web.UnitTest
         }
 
 
-        [CoatHanger.TestCase(description: "When the temperature is exactly 25 degree celcius")]
+        [CoatHanger.TestCase
+        (
+            identifier: "A.6", 
+            scenario: "When the temperature is exactly 25 degree celcius",
+            description: "This test case verifies the **mild** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
         public void WhenTemperatureExactlyThanTwentyFive_ExpectMild()
@@ -240,7 +266,12 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
-        [CoatHanger.TestCase(description: "When the temperature is between 25 and 29 degree celcius")]
+        [CoatHanger.TestCase
+        (
+            identifier: "A.7", 
+            scenario: "When the temperature is between 25 and 29 degree celcius",
+            description: "This test case verifies the **hot** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
         public void WhenTemperatureBetweenTwentyFiveAndLessThanThirty_ExpectHot()
@@ -274,7 +305,12 @@ namespace CoatHanger.Testing.Web.UnitTest
 
         }
 
-        [CoatHanger.TestCase(description: "When the temperature is exactly 30 degree celcius")]
+        [CoatHanger.TestCase
+        (
+            identifier: "A.8",
+            scenario: "When the temperature is exactly 30 degree celcius",
+            description: "This test case verifies the **scorching** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
         public void WhenTemperatureExactlyThirty_ExpectScorching()
@@ -307,7 +343,12 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
-        [CoatHanger.TestCase(description: "When the temperature is greater than 30 degree celcius")]
+        [CoatHanger.TestCase
+        (
+            identifier: "A.9", 
+            scenario: "When the temperature is greater than 30 degree celcius",
+            description: "This test case verifies the **scorching** temperature label is being calculated correctly."
+        )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
         public void WhenTemperatureGreaterThanThirty_ExpectScorching()

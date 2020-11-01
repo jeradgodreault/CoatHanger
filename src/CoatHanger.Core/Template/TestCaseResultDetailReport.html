@@ -1,5 +1,4 @@
 ﻿
-
 <div id="{{TestCaseID}}">
     <table>
         <thead>
@@ -13,10 +12,6 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th class="span heading" colspan="6" scope="colgroup">Test Case</th>
-            </tr>
-
             <!-- ---------------------------------------------------------   -->
             <!-- ----------------- Test Case Summary -----------------  -->
             <!-- ---------------------------------------------------------   -->
@@ -166,17 +161,7 @@
             {{/TestSteps}}
         </tbody>
     </table>
-
-    <ul>
-        {{#TestSteps}}
-        <li>
-            Step {{TestStepNumber}}|{{Action}}|
-            {{#ExpectedOutcome}}
-            {{ExpectedResultDescription}}
-            {{/ExpectedOutcome}}
-            |
-        </li>
-        {{/TestSteps}}
-    </ul>
+    <br />
+    <hr />
 </div>
 

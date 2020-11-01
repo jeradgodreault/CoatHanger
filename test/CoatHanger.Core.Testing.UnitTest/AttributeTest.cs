@@ -17,10 +17,10 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type classDirectlyInheirtFromSystem = typeof(ChildSuite);
             
             // act
-            var result = new TestSuiteAttribute(classDirectlyInheirtFromSystem);
+            var result = new FunctionAttribute(classDirectlyInheirtFromSystem);
 
             // assert
-            Assert.AreEqual(typeof(ChildSuite),  result.TestSuite);
+            Assert.AreEqual(typeof(ChildSuite),  result.Function);
         }
 
         [TestMethod]
@@ -30,10 +30,10 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type classDirectlyInheirtFromSystem = typeof(GrandChildSuite);
             
             // act
-            var result = new TestSuiteAttribute(classDirectlyInheirtFromSystem);
+            var result = new FunctionAttribute(classDirectlyInheirtFromSystem);
 
             // assert
-            Assert.AreEqual(typeof(GrandChildSuite), result.TestSuite);
+            Assert.AreEqual(typeof(GrandChildSuite), result.Function);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type systemSpecification = typeof(SystemSpecification);
 
             // act
-            new TestSuiteAttribute(systemSpecification);
+            new FunctionAttribute(systemSpecification);
 
             // assert
             Assert.Fail("The system did not throw an exceptions");
@@ -58,7 +58,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type nullType = null;
 
             // act
-            new TestSuiteAttribute(nullType);
+            new FunctionAttribute(nullType);
 
             // assert
             Assert.Fail("The system did not throw an exceptions");
@@ -74,7 +74,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type classNotInheritFromSystemSpecification = typeof(ClassNotInheritFromSystemSpecification);
 
             // act
-            new TestSuiteAttribute(classNotInheritFromSystemSpecification);
+            new FunctionAttribute(classNotInheritFromSystemSpecification);
 
             // assert
             Assert.Fail("The system did not throw an exceptions");
