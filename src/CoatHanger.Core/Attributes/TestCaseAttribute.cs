@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CoatHanger.Core.Enums;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace CoatHanger
@@ -8,6 +9,8 @@ namespace CoatHanger
     {
         public string Identifier { get; set; }
         public string Description { get; set; }
+        public TestingCategory Category { get; set; } = TestingCategory.Unit;
+        
 
         public TestCaseAttribute(string scenario) : base(scenario)
         {
@@ -19,10 +22,15 @@ namespace CoatHanger
             Identifier = identifier;
         }
 
-        public TestCaseAttribute(string scenario, string identifier = null, string description = null) 
+        public TestCaseAttribute(string scenario
+            , string identifier = null
+            , string description = null
+            , TestingCategory testingCategory = TestingCategory.Unit
+            ) 
             : this(scenario, identifier)
         {
             Description = description;
+            Category = testingCategory;
         }
 
         public override Microsoft.VisualStudio.TestTools.UnitTesting.TestResult[] Execute(ITestMethod testMethod)

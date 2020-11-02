@@ -1,4 +1,5 @@
 using CoatHanger.Core;
+using CoatHanger.Core.Enums;
 using CoatHanger.Core.Models;
 using CoatHanger.Testing.Web.Services.WeatherForcast;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,6 +43,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("godreaj")]
         [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureIsLessThanZero_ExpectFreezing()
         {
             FormcastService service = new FormcastService();
@@ -80,7 +82,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("godreaj")]
         [CoatHanger.Release("1.1.0")]
-        public void WhenTemperatureIsZero_ExpectFreezing()
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
+        public void WhenTemperatureIsZero_ExpectFreezing() 
         {
             FormcastService service = new FormcastService();
 
@@ -119,6 +122,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
         [CoatHanger.RegressionTesting("1.1.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureBetweenOneAndLessThanTwenty_ExpectCool()
         {
             FormcastService service = new FormcastService();
@@ -157,6 +161,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyTwenty_ExpectMild()
         {
             FormcastService service = new FormcastService();
@@ -196,6 +201,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureLessThanTwentyFive_ExpectMild()
         {
             FormcastService service = new FormcastService();
@@ -236,6 +242,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyThanTwentyFive_ExpectMild()
         {
             FormcastService service = new FormcastService();
@@ -274,6 +281,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureBetweenTwentyFiveAndLessThanThirty_ExpectHot()
         {
             FormcastService service = new FormcastService();
@@ -313,6 +321,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyThirty_ExpectScorching()
         {
             FormcastService service = new FormcastService();
@@ -351,6 +360,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureGreaterThanThirty_ExpectScorching()
         {
             FormcastService service = new FormcastService();
