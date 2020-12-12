@@ -76,7 +76,6 @@ namespace CoatHanger.WebDriver
             return _seleniumDriver.Manage();
         }
 
-
         [Obsolete(message: "Use NavigateStep() to get better control of test cases outputs", error: false)]
         public INavigation Navigate()
         {
@@ -128,23 +127,52 @@ namespace CoatHanger.WebDriver
         /// <inheritdoc cref="INavigation.Back"/>
         public void Back()
         {
-            _testProcedure.AddManualStep("Use the browser *back* button.");
+            Back(skipCoatHangerStep: false);
+        }
+
+        public void Back(bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep(stepActionOverride ?? "Use the browser *back* button.");
+            }
+            
             _seleniumNavigation.Back();
         }
 
         /// <inheritdoc cref="INavigation.Forward"/>
         public void Forward()
         {
-            _testProcedure.AddManualStep("Use the browser *forward* button.");
+            Forward(skipCoatHangerStep: false);
+        }
+
+        public void Forward(bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep(stepActionOverride ?? "Use the browser *forward* button.");
+            }
+            
             _seleniumNavigation.Forward();
         }
 
         /// <inheritdoc cref="INavigation.Refresh"/>
         public void Refresh()
         {
-            _testProcedure.AddManualStep("Use the browser *refresh* button.");
+            Refresh(skipCoatHangerStep: false);
+        }
+
+        /// <inheritdoc cref="INavigation.Refresh"/>
+        public void Refresh(bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep(stepActionOverride ?? "Use the browser *refresh* button.");
+            }
+            
             _seleniumNavigation.Refresh();
         }
+
 
         /// <summary>
         ///  Load a new web page in the current browser window.
@@ -154,17 +182,29 @@ namespace CoatHanger.WebDriver
         /// <inheritdoc cref="INavigation.GoToUrl(Uri)"/>
         public void GoToUrl(Uri url, bool testCaseIncludeDomain)
         {
-            _testProcedure.AddManualStep
-            (
-                testCaseIncludeDomain
-                ? $"Use the browser to navigate to `{url}`"
-                : $"Use the browser to navigate to `{url.PathAndQuery}`"
-            );
+            var stepActionOverride = (!testCaseIncludeDomain)
+                ? $"Use the browser to navigate to `{url.PathAndQuery}`"
+                : null; // use the defaultActionMessage;
+
+            GoToUrl(url: url, skipCoatHangerStep: false, stepActionOverride: stepActionOverride);
+        }
+
+        /// <inheritdoc cref="INavigation.GoToUrl(Uri)"/>
+        public void GoToUrl(Uri url, bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep
+                (
+                    stepActionOverride ?? $"Use the browser to navigate to `{url}`"
+                );
+            }
+            
             _seleniumNavigation.GoToUrl(url);
         }
 
         #region  Alternative Go To Url methods  
-        
+
         /// <inheritdoc cref="INavigation.GoToUrl(string)"/>
         public void GoToUrl(string url)
         {
@@ -172,6 +212,17 @@ namespace CoatHanger.WebDriver
         }
 
         /// <inheritdoc cref="INavigation.GoToUrl(string)"/>
+        public void GoToUrl(string url, bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            GoToUrl(url: new Uri(url), skipCoatHangerStep: false, stepActionOverride: stepActionOverride);
+        }
+
+        /// <summary>
+        ///  Load a new web page in the current browser window.
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="testCaseIncludeDomain">Determines if you want the coat hanger test case to output "https://www.domain/Action?parms" vs "/Action?Parms" </param>
+        /// <inheritdoc cref="INavigation.GoToUrl(Uri)"/>
         public void GoToUrl(string url, bool testCaseIncludeDomain)
         {
             GoToUrl(url: new Uri(url), testCaseIncludeDomain: testCaseIncludeDomain);
@@ -224,14 +275,32 @@ namespace CoatHanger.WebDriver
         /// <inheritdoc cref="IWebElement.Clear"/>
         public void Clear()
         {
-            _testProcedure.AddManualStep($"Clear all the contents in the `{_testFriendlyName}` {GetTestCaseElementType()}.");
+            Clear(skipCoatHangerStep: false);
+        }
+
+        public void Clear(bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep(stepActionOverride ?? $"Clear all the contents in the `{_testFriendlyName}` {GetTestCaseElementType()}.");
+            }
+            
             _seleniumElement.Clear();
         }
 
         /// <inheritdoc cref="IWebElement.Click"/>
         public void Click()
         {
-            _testProcedure.AddManualStep($"Click the `{_testFriendlyName}` {GetTestCaseElementType()}.");
+            Click(skipCoatHangerStep: false);
+        }
+
+        public void Click(bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep(stepActionOverride ?? $"Click the `{_testFriendlyName}` {GetTestCaseElementType()}.");
+            }
+            
             _seleniumElement.Click();
         }
 
@@ -250,6 +319,16 @@ namespace CoatHanger.WebDriver
         /// <inheritdoc cref="IWebElement.GetAttribute(string)"/>
         public string GetAttribute(string attributeName)
         {
+            return GetAttribute(attributeName, skipCoatHangerStep: false);
+        }
+
+        public string GetAttribute(string attributeName, bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep(stepActionOverride ?? $"Get the `{_testFriendlyName}` {GetTestCaseElementType()} current value.");
+            }
+            
             return _seleniumElement.GetAttribute(attributeName);
         }
 
@@ -266,18 +345,35 @@ namespace CoatHanger.WebDriver
             return _seleniumElement.GetProperty(propertyName);
         }
 
-
         /// <inheritdoc cref="IWebElement.SendKeys"/>
         public void SendKeys(string text)
         {
-            _testProcedure.AddManualStep($"Enter the value `{text}` in the {_testFriendlyName} {GetTestCaseElementType()}.");            
+            SendKeys(text, skipCoatHangerStep: false);
+        }
+
+        /// <inheritdoc cref="IWebElement.SendKeys"/>
+        public void SendKeys(string text, bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep(stepActionOverride ?? $"Enter the value `{text}` in the {_testFriendlyName} {GetTestCaseElementType()}.");
+            }
+            
             _seleniumElement.SendKeys(text);
         }
 
         /// <inheritdoc cref="IWebElement.Submit"/>
         public void Submit()
         {
-            _testProcedure.AddManualStep("Submit the form.");
+            Submit(skipCoatHangerStep: false);
+        }
+
+        public void Submit(bool skipCoatHangerStep, string stepActionOverride = null)
+        {
+            if (!skipCoatHangerStep)
+            {
+                _testProcedure.AddManualStep(stepActionOverride ?? "Submit the form.");
+            }
             _seleniumElement.Submit();
         }
 
@@ -288,7 +384,7 @@ namespace CoatHanger.WebDriver
         private string GetTestCaseElementType()
         {
             var elementType = "element"; // when in doubt... use generic term like element.
-            var attribute = GetAttribute("type");
+            var attribute = GetAttribute(attributeName: "type", skipCoatHangerStep: true);
 
             if (TagName == "option")
             {

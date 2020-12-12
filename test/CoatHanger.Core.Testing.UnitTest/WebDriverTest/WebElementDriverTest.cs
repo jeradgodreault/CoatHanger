@@ -15,8 +15,8 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
     {
         private TestContext testContextInstance;
         private CoatHangerDriver _webDriver;
-        private TestProcedure _testProcedure;        
-
+        private TestProcedure _testProcedure;
+        private static ChromeDriver _chromeDriver;
 
         /// <summary>
         ///  Gets or sets the test context which provides
@@ -28,11 +28,23 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             set { testContextInstance = value; }
         }
 
+        [ClassInitialize()] 
+        public static void Setup(TestContext context)
+        {
+            _chromeDriver = new ChromeDriver();            
+        }
+
+        [ClassCleanup()]
+        public static void Cleanup()
+        {
+            _chromeDriver.Quit();
+        }
+
         [TestInitialize()]
         public void BeforeTestExecution()
         {
             _testProcedure = new TestProcedure();
-            _webDriver = new CoatHangerDriver(new ChromeDriver(), ref _testProcedure);
+            _webDriver = new CoatHangerDriver(_chromeDriver, ref _testProcedure);
         }
 
         [TestMethod]
@@ -132,13 +144,5 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             return File.ReadAllText("./WebDriverTest/WebElementTestPage.html");
         }
 
-
-
-
-        [TestCleanup]
-        public void AfterTestExecution()
-        {
-            _webDriver.Quit();
-        }
     }
 }

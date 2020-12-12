@@ -218,35 +218,5 @@ namespace CoatHanger.Core.Testing.UnitTest
 
             return systemSuite;
         }
-
-        public class SystemSuite : IProduct
-        {
-            public virtual string GetDisplayName() => "System";
-            public virtual string GetSuitePath() => "/" + GetDisplayName();
-        }
-
-        public class WeatherForcastSuite : SystemSuite
-        {
-            public override string GetDisplayName() => "Weather Forcast";
-            public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();
-        }
-
-        public class TemperatureCalculationSuite : WeatherForcastSuite
-        {
-            public override string GetDisplayName() => "Temperature Calculation";
-            public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();
-        }
-
-        public class WeatherGridSuite : WeatherForcastSuite
-        {
-            public override string GetDisplayName() => "Weather Page Layout";
-            public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();
-        }
-
-        public class AboutSuite : SystemSuite
-        {
-            public override string GetDisplayName() => "About";
-            public override string GetSuitePath() => base.GetSuitePath() + "/" + GetDisplayName();
-        }
     }
 }

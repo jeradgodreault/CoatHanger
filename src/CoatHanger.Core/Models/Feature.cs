@@ -2,7 +2,9 @@
 
 namespace CoatHanger.Core.Models
 {
-
+    /// <summary>
+    /// A software solution that is created to solve a specific industry need or business problem.
+    /// </summary>
     public class Product
     {
         public string ProductID { get; set; }
@@ -11,6 +13,9 @@ namespace CoatHanger.Core.Models
         public List<Feature> Features { get; set; } = new List<Feature>();
     }
 
+    /// <summary>
+    /// Features are the "tools" you use within a system to complete a set of tasks or actions.
+    /// </summary>
     public class Feature
     {
         public string FeatureID { get; set; }
@@ -19,6 +24,9 @@ namespace CoatHanger.Core.Models
         public List<Function> Functions { get; set; } = new List<Function>();
     }
 
+    /// <summary>
+    /// Functionality is how those features actually work to provide you with a desired outcome.
+    /// </summary>
     public class Function
     {
         public string FunctionID { get; set; }
@@ -40,7 +48,7 @@ namespace CoatHanger.Core.Models
         public Author Author { get; set; }
         public List<TestStep> TestSteps { get; set; }
         public TestExecution TestExecution { get; set; }
-        public bool IsAutomated { get; set; } = true;
+        public bool IsAutomated { get; set; } = true; 
     }
 
     public class Release
@@ -56,6 +64,12 @@ namespace CoatHanger.Core.Models
         public string ExecuteStartDate { get; set; }
         public string ExecuteEndDate { get; set; }
         public bool Outcome { get; set; }
+    }
+
+    public class PrerequisiteStep
+    {
+        public int StepNumber { get; set; }
+        public string Description { get; set; }
     }
 
     public class TestStep

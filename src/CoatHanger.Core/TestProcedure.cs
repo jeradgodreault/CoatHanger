@@ -13,6 +13,8 @@ namespace CoatHanger.Core
     public class TestProcedure
     {
         public List<TestStep> Steps { get; private set; } = new List<TestStep>();
+        public List<PrerequisiteStep> PrerequisiteSteps { get; private set; } = new List<PrerequisiteStep>();
+        private int PrerequisiteStep { get; set; } = 1;
         private OrderedDictionary Inputs { get; set; } = new OrderedDictionary();
         private int StepNumber { get; set; } = 1;
         private int ExpectedResultStepNumber { get; set; } = 1;
@@ -43,6 +45,31 @@ namespace CoatHanger.Core
             AddManualStep(action: $"Execute the function `{functionName}` and assign the value to the `{outputVariableName}` variable.");
 
             return function.Invoke();
+        }
+
+        public void AddPrerequisiteStep(string description)
+        {
+            if (string.IsNullOrEmpty(description)) throw new ArgumentNullException("Prerequisite step description cannot be null or empty. Please provide a value.");
+
+            PrerequisiteSteps.Add(new PrerequisiteStep()
+            {
+                StepNumber = PrerequisiteStep++,
+                Description = description
+            });
+        }
+
+        public void AddPrerequisiteStep(string description, Action setupPrerequisiteAction)
+        {
+            AddPrerequisiteStep(description);
+
+            try
+            {
+                setupPrerequisiteAction.Invoke();
+            }
+            catch (Exception ex)
+            {
+                new Exception($"Unable to setup the Prerequisite Step - `${description}`", ex);
+            }
         }
 
         public void AddManualStep(string action)
@@ -87,6 +114,26 @@ namespace CoatHanger.Core
 
             assertionMethod.Invoke(to, value);
         }
+
+        /// <summary>
+        /// Verify **that** the variable is **asserted** **to** an expected value. 
+        /// </summary>
+        /// <param name="that">The variable **name** that we are Verify</param>
+        /// <param name="value">The variable **value** that we are Verify</param>
+        /// <param name="assertionMethod">The Assertion method for verfication.</param>
+        /// <param name="to">Expected value of verfication</param>
+        /// <param name="expectedResultNotMetMessage">The override failure comment for not meeting the expected result </param>
+        public void ThenVerify<T>(string that, T value, Action<T, T, string> assertionMethod, T to, string expectedResultNotMetMessage) 
+        {
+            AddManualStep
+            (
+                action: $"Examine the {that} variable.",
+                expectedResult: $"The system shall output the value {to}"
+            );
+
+            assertionMethod.Invoke(to, value, expectedResultNotMetMessage);
+        }
+
 
         public string ToJson()
         {

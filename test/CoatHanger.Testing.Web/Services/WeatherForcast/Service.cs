@@ -6,23 +6,23 @@ namespace CoatHanger.Testing.Web.Services.WeatherForcast
     public class FormcastService
     {
         /// <summary>
-        /// Format the tempature into human-friendly version based on some **arbitrary** business requirements. 
+        /// Format the temperature into human-friendly version based on some **arbitrary** business requirements. 
         /// </summary>
-        public string GetTemperatureSummary(int tempature)
+        public string GetTemperatureSummary(int temperature)
         {
-            if (tempature <= 0)
+            if (temperature <= 0)
             {
                 return "Freezing";
             }
-            else if (tempature < 20)
+            else if (temperature < 20)
             {
                 return "Cool";
             }
-            else if (tempature < 25)
+            else if (temperature < 25)
             {
                 return "Mild";
             }
-            else if (tempature < 30)
+            else if (temperature < 30)
             {
                 return "Hot";
             }

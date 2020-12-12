@@ -3,7 +3,7 @@
 namespace CoatHanger
 {
     [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-    public class RegressionTestingAttribute : ReleaseAttribute
+    public class RegressionReleaseAttribute : ReleaseAttribute
     {
         /// <summary>
         /// The regression attribute are used to help generate release documents. In some releases you may want to 
@@ -12,7 +12,7 @@ namespace CoatHanger
         /// Yours going to run automated test cases anyways.  
         /// </summary>
         /// <param name="releaseVersion">The release version you want associate this regression testing.</param>
-        public RegressionTestingAttribute(params string[] releaseVersions) : base(releaseVersions)
+        public RegressionReleaseAttribute(params string[] releaseVersions) : base(releaseVersions)
         {
             //empty, use base class.
         }
@@ -24,7 +24,7 @@ namespace CoatHanger
         /// Yours going to run automated test cases anyways.  
         /// </summary>
         /// <param name="releaseVersion">The release version you want associate this regression testing.</param>
-        public RegressionTestingAttribute(params int[] releaseVersions) : base(releaseVersions)
+        public RegressionReleaseAttribute(params int[] releaseVersions) : base(releaseVersions)
         {
             //empty, use base class.
         }

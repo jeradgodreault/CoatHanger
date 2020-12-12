@@ -17,6 +17,7 @@ namespace CoatHanger.Core.Testing.UnitTest
         private TestContext testContextInstance;
         private CoatHangerDriver _webDriver;
         private TestProcedure _testProcedure;
+        private static ChromeDriver _chromeDriver;
 
         /// <summary>
         ///  Gets or sets the test context which provides
@@ -28,11 +29,23 @@ namespace CoatHanger.Core.Testing.UnitTest
             set { testContextInstance = value; }
         }
 
+        [ClassInitialize()]
+        public static void Setup(TestContext context)
+        {
+            _chromeDriver = new ChromeDriver();
+        }
+
+        [ClassCleanup()]
+        public static void Cleanup()
+        {
+            _chromeDriver.Quit();
+        }
+
         [TestInitialize()]
         public void BeforeTestExecution()
         {
             _testProcedure = new TestProcedure();
-            _webDriver = new CoatHangerDriver(new ChromeDriver(), ref _testProcedure);
+            _webDriver = new CoatHangerDriver(_chromeDriver, ref _testProcedure);
         }
 
         /// <summary>
@@ -71,6 +84,40 @@ namespace CoatHanger.Core.Testing.UnitTest
         }
 
         [TestMethod]
+        public void WhenNavigating_Back_WithActionOverrideMessage_ExpectCustomAction()
+        {
+            // arrange
+            WebNavigation navigation = _webDriver.NavigateStep();
+            navigation.GoToUrl("https://en.wikipedia.org/wiki/Unit_testing");
+            var pageTitle = _webDriver.Title;
+
+            // act
+            navigation.GoToUrl("https://en.wikipedia.org/wiki/Requirements_analysis");
+            navigation.Back(skipCoatHangerStep: false, stepActionOverride: "Go back now!!");
+
+            // assert
+            Assert.AreEqual("Go back now!!", _testProcedure.Steps[2].Action);
+            Assert.AreEqual(pageTitle, _webDriver.Title);
+        }
+
+        [TestMethod]
+        public void WhenNavigating_Back_WithSkipEnabled_ExpectNoAction()
+        {
+            // arrange
+            WebNavigation navigation = _webDriver.NavigateStep();
+            navigation.GoToUrl("https://en.wikipedia.org/wiki/Unit_testing"); // step 1
+            var pageTitle = _webDriver.Title;
+
+            // act
+            navigation.GoToUrl("https://en.wikipedia.org/wiki/Requirements_analysis"); // step 2
+            navigation.Back(skipCoatHangerStep: true); // step 3            
+
+            // assert
+            Assert.AreEqual(2, _testProcedure.Steps.Count);
+            Assert.AreEqual(pageTitle, _webDriver.Title);
+        }
+
+        [TestMethod]
         public void WhenNavigating_Forward_ExpectAction()
         {
             // arrange
@@ -84,6 +131,43 @@ namespace CoatHanger.Core.Testing.UnitTest
 
             // assert
             Assert.AreEqual("Use the browser *forward* button.", _testProcedure.Steps[2].Action);
+            Assert.AreEqual(pageTitle, _webDriver.Title);
+
+        }
+
+        [TestMethod]
+        public void WhenNavigating_Forward_WithSkipEnabled_ExpectNoAction()
+        {
+            // arrange
+            WebNavigation navigation = _webDriver.NavigateStep();
+            navigation.GoToUrl("https://en.wikipedia.org/wiki/Unit_testing"); // step 1
+            var pageTitle = _webDriver.Title; 
+            navigation.Back(); // step 2
+
+            // act
+            navigation.Forward(skipCoatHangerStep: true); // step 3
+
+            // assert
+            Assert.AreEqual(2, _testProcedure.Steps.Count);
+            Assert.AreEqual(pageTitle, _webDriver.Title);
+
+        }
+
+        [TestMethod]
+        public void WhenNavigating_Forward_WithActionOverrideMessage_ExpectCustomAction()
+        {
+            // arrange
+            WebNavigation navigation = _webDriver.NavigateStep();
+            navigation.GoToUrl("https://en.wikipedia.org/wiki/Unit_testing"); // step 1
+            var pageTitle = _webDriver.Title;
+            navigation.Back(); // step 2
+
+            // act
+            navigation.Forward(skipCoatHangerStep: false
+                , stepActionOverride: "Quickly hit the forward button!"); // step 3
+
+            // assert
+            Assert.AreEqual("Quickly hit the forward button!", _testProcedure.Steps[2].Action);
             Assert.AreEqual(pageTitle, _webDriver.Title);
 
         }
@@ -118,7 +202,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             _webDriver.NavigateStep().GoToUrl(url: url, testCaseIncludeDomain: false);
             
             // assert
-            Assert.AreEqual(" browser to navigate to `/wiki/UnUse theit_testing`", _testProcedure.Steps[0].Action);
+            Assert.AreEqual("Use the browser to navigate to `/wiki/Unit_testing`", _testProcedure.Steps[0].Action);
         }
 
         [TestMethod]
@@ -135,13 +219,6 @@ namespace CoatHanger.Core.Testing.UnitTest
         }
 
         #endregion
-
-
-        [TestCleanup]
-        public void AfterTestExecution()
-        {
-            _webDriver.Quit();
-        }
 
     }
 }

@@ -121,7 +121,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         )]
         [CoatHanger.TestDesigner("smithj")]
         [CoatHanger.Release("1.0.0")]
-        [CoatHanger.RegressionTesting("1.1.0")]
+        [CoatHanger.RegressionRelease("1.1.0")]
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureBetweenOneAndLessThanTwenty_ExpectCool()
         {
@@ -270,6 +270,7 @@ namespace CoatHanger.Testing.Web.UnitTest
                 , value: result
                 , AreEqual
                 , to: "Hot"
+                , expectedResultNotMetMessage: "The system failed to display the hot temperature"
             );
         }
 
