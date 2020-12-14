@@ -17,8 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CoatHanger.Core\CoatHanger.Core.csproj" />
-    <ProjectReference Include="..\..\src\CoatHanger.TestLogger.TestAdapter\CoatHanger.TestLogger.TestAdapter.csproj" />
-    <ProjectReference Include="..\..\src\CoatHanger.TestLogger\CoatHanger.TestLogger.csproj" />
     <ProjectReference Include="..\..\src\CoatHanger.WebDriver.Selenium\CoatHanger.WebDriver.Selenium.csproj" />
     <ProjectReference Include="..\CoatHanger.Testing.Web\CoatHanger.Testing.Web.csproj" />
   </ItemGroup>
