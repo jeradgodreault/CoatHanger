@@ -1,12 +1,9 @@
 ﻿using CoatHanger.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CoatHanger.Testing.Web.UnitTest
 {
-   
+
     [TestClass]
     public class CoatHangerManager
     {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Schema;
-
-namespace CoatHanger.Core.Models
+﻿namespace CoatHanger.Core.Models
 {
     public readonly struct SemVer
     {

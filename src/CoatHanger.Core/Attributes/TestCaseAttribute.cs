@@ -10,7 +10,7 @@ namespace CoatHanger
         public string Identifier { get; set; }
         public string Description { get; set; }
         public TestingCategory Category { get; set; } = TestingCategory.Unit;
-        public bool IsManualTest { get; set; } = false;
+        public bool IsManualTest { get; set; }
         
 
         public TestCaseAttribute(string scenario) : base(scenario)

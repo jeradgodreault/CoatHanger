@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CoatHanger.Core.Enums
+﻿namespace CoatHanger.Core.Enums
 {
     /// <summary>
     /// FUNCTIONAL REQUIREMENT (FR) is a description of the service that the software must offer. 

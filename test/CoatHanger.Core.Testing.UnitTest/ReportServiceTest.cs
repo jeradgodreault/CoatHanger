@@ -1,8 +1,6 @@
 using CoatHanger.Core.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace CoatHanger.Core.Testing.UnitTest
 {
@@ -137,7 +135,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                                             {
                                                 StepNumber = 3,
                                                 Action = "Examine the system outputs",
-                                                ExpectedOutcome = new ExpectedOutcome()
+                                                ExpectedOutcome = new ExpectedOutcome
                                                 {
                                                     StepNumber = 1,
                                                     Description = "The system shall output the value freezing."
@@ -152,14 +150,14 @@ namespace CoatHanger.Core.Testing.UnitTest
                                         Scenario = "When the temperature is exactly zero degree celcius",
                                         Author = new Author("godreaj"),
                                         WorkItems = null,
-                                        TestExecution = new TestExecution()
+                                        TestExecution = new TestExecution
                                         {
                                             Outcome = true,
                                             ExecutedBy = new Author("desktop-j9fucdd\\buildserver"),
                                             ExecuteStartDate = "2020-05-01 11:45",
                                             ExecuteEndDate = "2020-05-01 11:46",
                                         },
-                                        TestSteps = new List<TestStep>()
+                                        TestSteps = new List<TestStep>
                                         {
                                             new TestStep()
                                             {
@@ -177,7 +175,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                                             {
                                                 StepNumber = 3,
                                                 Action = "Examine the result variable.",
-                                                ExpectedOutcome = new ExpectedOutcome()
+                                                ExpectedOutcome = new ExpectedOutcome
                                                 {
                                                     StepNumber = 1,
                                                     Description = "The system shall output the value Freezing."
@@ -187,7 +185,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                                             {
                                                 StepNumber = 4,
                                                 Action = "Examine the icon.",
-                                                ExpectedOutcome = new ExpectedOutcome()
+                                                ExpectedOutcome = new ExpectedOutcome
                                                 {
                                                     StepNumber = 2,
                                                     Description = "The system shall displayed a ice icon."

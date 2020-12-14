@@ -1,10 +1,8 @@
 ﻿using CoatHanger.Core;
-using CoatHanger.Core.Enums;
 using OpenQA.Selenium;
 using System;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.Net.Http;
 
 namespace CoatHanger.WebDriver
 {

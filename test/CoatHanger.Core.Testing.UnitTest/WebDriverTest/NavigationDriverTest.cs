@@ -1,12 +1,7 @@
 ﻿using CoatHanger.WebDriver;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CoatHanger.Core.Testing.UnitTest
 {
@@ -29,7 +24,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             set { testContextInstance = value; }
         }
 
-        [ClassInitialize()]
+        [ClassInitialize]
         public static void Setup(TestContext context)
         {
             _chromeDriver = new ChromeDriver();

@@ -2,10 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
 {
@@ -28,13 +25,13 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             set { testContextInstance = value; }
         }
 
-        [ClassInitialize()] 
+        [ClassInitialize] 
         public static void Setup(TestContext context)
         {
             _chromeDriver = new ChromeDriver();            
         }
 
-        [ClassCleanup()]
+        [ClassCleanup]
         public static void Cleanup()
         {
             _chromeDriver.Quit();
@@ -52,7 +49,9 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
         {
             // arrange
             var samplePage = GetSamplePage();
+#pragma warning disable CS0618 // explicitly testing selenium interface version. 
             _webDriver.Navigate().GoToUrl("data:text/html;charset=utf-8," + samplePage);
+#pragma warning restore CS0618 
             var element = _webDriver.FindElement(By.Id("test_button"), "Test");
 
             // act
@@ -67,7 +66,9 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
         {
             // arrange
             var samplePage = GetSamplePage();
+#pragma warning disable CS0618 // explicitly testing selenium interface version. 
             _webDriver.Navigate().GoToUrl("data:text/html;charset=utf-8," + samplePage);
+#pragma warning restore CS0618 
             var element = _webDriver.FindElement(By.Id("test_submit"), "Test");
 
             // act
@@ -82,7 +83,9 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
         {
             // arrange
             var samplePage = GetSamplePage();
+#pragma warning disable CS0618 // explicitly testing selenium interface version. 
             _webDriver.Navigate().GoToUrl("data:text/html;charset=utf-8," + samplePage);
+#pragma warning restore CS0618 
             var element = _webDriver.FindElement(By.Id("test_text"), "Test");
 
             // act
@@ -97,7 +100,9 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
         {
             // arrange
             var samplePage = GetSamplePage();
+#pragma warning disable CS0618 // explicitly testing selenium interface version. 
             _webDriver.Navigate().GoToUrl("data:text/html;charset=utf-8," + samplePage);
+#pragma warning restore CS0618 
             var element = _webDriver.FindElement(By.Id("test_textarea"), "Test");
 
             // act
@@ -113,7 +118,9 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
         {
             // arrange
             var samplePage = GetSamplePage();
+#pragma warning disable CS0618 // explicitly testing selenium interface version. 
             _webDriver.Navigate().GoToUrl("data:text/html;charset=utf-8," + samplePage);
+#pragma warning restore CS0618 
             var element = _webDriver.FindElement(By.Id("test_text"), "Test");
 
             // act
@@ -128,7 +135,9 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
         {
             // arrange
             var samplePage = GetSamplePage();
+#pragma warning disable CS0618 // explicitly testing selenium interface version. 
             _webDriver.Navigate().GoToUrl("data:text/html;charset=utf-8," + samplePage);
+#pragma warning restore CS0618 
             var element = _webDriver.FindElement(By.Id("test_textarea"), "Test");
 
             // act

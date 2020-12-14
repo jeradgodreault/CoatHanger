@@ -3,9 +3,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace CoatHanger.Core
 {
@@ -112,7 +109,7 @@ namespace CoatHanger.Core
                 StepNumber = StepNumber++,
                 Action = action,
                 IsSharedStep = IsSharedStepMode,
-                ExpectedOutcome = new ExpectedOutcome()
+                ExpectedOutcome = new ExpectedOutcome
                 {
                     StepNumber = ExpectedResultStepNumber++,
                     Description = expectedResult,

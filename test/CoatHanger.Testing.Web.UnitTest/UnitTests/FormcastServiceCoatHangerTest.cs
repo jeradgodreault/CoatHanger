@@ -1,15 +1,10 @@
 using CoatHanger.Core;
 using CoatHanger.Core.Enums;
-using CoatHanger.Core.Models;
 using CoatHanger.Testing.Web.Services.WeatherForcast;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.IO;
 using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
-using System.Diagnostics;
 using System.Reflection;
-using System;
-using System.Linq;
 
 namespace CoatHanger.Testing.Web.UnitTest
 {
@@ -38,7 +33,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             TestProcedure.StartTesting();
         }
 
-        [TestCleanup()]
+        [TestCleanup]
         public void AfterTestExecution()
         {
             CoatHangerManager.CoatHangerService.AddTestCase
