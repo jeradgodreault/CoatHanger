@@ -6,8 +6,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
-
-
+using System.Diagnostics;
+using System.Reflection;
+using System;
+using System.Linq;
 
 namespace CoatHanger.Testing.Web.UnitTest
 {
@@ -33,6 +35,18 @@ namespace CoatHanger.Testing.Web.UnitTest
         {
             // Between each test run reset
             TestProcedure = new TestProcedure();
+            TestProcedure.StartTesting();
+        }
+
+        [TestCleanup()]
+        public void AfterTestExecution()
+        {
+            CoatHangerManager.CoatHangerService.AddTestCase
+            (
+                assembly: Assembly.GetExecutingAssembly(), 
+                testContext: TestContext,
+                testProcedure: TestProcedure
+            );
         }
 
         [CoatHanger.TestCase
@@ -390,6 +404,46 @@ namespace CoatHanger.Testing.Web.UnitTest
                 , AreEqual
                 , to: "Scorching"
             );
+        }
+
+        [CoatHanger.TestCase
+       (
+           manualTest: true,
+           identifier: "A.10",
+           scenario: "Where the performance of the temperature page is examined.",
+           description: "This test case verifies bug item #45214 - page is too slow."
+       )]
+        [CoatHanger.TestDesigner("smithj")]
+        [CoatHanger.Release("1.4.1")]
+        [CoatHanger.Requirement(NonFunctionalRequirement.Usability)]
+        public void WhenTemperaturePagePerformanceIsExamined()
+        {
+            // Step 1 
+            TestProcedure.AddManualStep("Navigate to the main page");
+            
+            // Step 2
+            TestProcedure.AddManualStep
+            (
+                actions: new string[]
+                {
+                    "Look for the navigational menu on the top of the screen",
+                    "Hover your mouse over the `Temperature Forcast` menu dropdown",
+                    "Select the 'Today Forcast` dropdown item"
+                }
+            );
+
+            // Step 3
+            TestProcedure.AddManualStep
+            (
+                action: "Observe the time the next page takes to load.",
+                expectedResults: new string[] 
+                {
+                    "The system shall navigated the user to the `Today forcast` page.",
+                    "The page should load within less than 10 seconds"
+                }
+            );
+
+            Inconclusive("Manual Test Case - not yet automated");
         }
     }
 }

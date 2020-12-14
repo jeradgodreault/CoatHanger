@@ -10,6 +10,7 @@ namespace CoatHanger
         public string Identifier { get; set; }
         public string Description { get; set; }
         public TestingCategory Category { get; set; } = TestingCategory.Unit;
+        public bool IsManualTest { get; set; } = false;
         
 
         public TestCaseAttribute(string scenario) : base(scenario)
@@ -26,11 +27,13 @@ namespace CoatHanger
             , string identifier = null
             , string description = null
             , TestingCategory testingCategory = TestingCategory.Unit
+            , bool manualTest = false
             ) 
             : this(scenario, identifier)
         {
             Description = description;
             Category = testingCategory;
+            IsManualTest = manualTest;
         }
 
         public override Microsoft.VisualStudio.TestTools.UnitTesting.TestResult[] Execute(ITestMethod testMethod)

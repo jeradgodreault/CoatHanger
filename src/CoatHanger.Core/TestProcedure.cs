@@ -18,11 +18,19 @@ namespace CoatHanger.Core
         private OrderedDictionary Inputs { get; set; } = new OrderedDictionary();
         private int StepNumber { get; set; } = 1;
         private int ExpectedResultStepNumber { get; set; } = 1;
+        
+        public DateTime TestExecutionStartDateTime { get; private set; }
 
         /// <summary>
         /// Determine if all the steps will be consider as shared step. 
         /// </summary>
         public bool IsSharedStepMode { get; set; }
+
+        public TestProcedure()
+        {
+            // use the dedicate Start() method if you want to exclude the testing code setup 
+            TestExecutionStartDateTime = DateTime.Now;
+        }
 
         public T GivenInput<T>(string variableName, T valueOf)
         {
@@ -38,6 +46,11 @@ namespace CoatHanger.Core
             AddManualStep(action: $"Execute the function `{functionName}` with the input variables `{string.Join(",", inputVariables)}` and assign the value to the `{outputVariableName}` variable.");
 
             return function.Invoke();
+        }
+
+        public void StartTesting()
+        {
+            TestExecutionStartDateTime = DateTime.Now;
         }
 
         public T CallFunction<T>(string functionName, Func<T> function, string outputVariableName)
@@ -72,6 +85,11 @@ namespace CoatHanger.Core
             }
         }
 
+        public void AddManualStep(params string[] actions)
+        {
+            AddManualStep(string.Join(Environment.NewLine + Environment.NewLine, actions));
+        }
+
         public void AddManualStep(string action)
         {
             Steps.Add(new TestStep()
@@ -80,6 +98,11 @@ namespace CoatHanger.Core
                 Action = action,
                 IsSharedStep = IsSharedStepMode
             });
+        }
+
+        public void AddManualStep(string action, params string[] expectedResults)
+        {
+            AddManualStep(action, string.Join(Environment.NewLine + Environment.NewLine, expectedResults));
         }
 
         public void AddManualStep(string action, string expectedResult)
