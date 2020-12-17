@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using CoatHanger.Core.Enums;
+using System.Collections.Generic;
+using YamlDotNet.Core;
+using YamlDotNet.Serialization;
 
 namespace CoatHanger.Core.Models
 {
@@ -37,24 +40,47 @@ namespace CoatHanger.Core.Models
 
     public class TestCase
     {
+        [YamlMember(Alias = "Test Case ID")]
         public string TestCaseID { get; set; }
+
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Scenario { get; set; }
         /// <summary>
         /// This field describes the test case objective.
         /// </summary>
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Description { get; set; }
-        public List<Release> Releases { get; set; }
+
+        [YamlMember(Alias = "Testing Category")]
+        public TestingCategory TestingCategory { get; set; }
+
+        public List<string> Releases { get; set; }
+
+        [YamlMember(Alias = "Regression Releases")]
+        public List<string> RegressionReleases { get; set; }
+
         public List<string> WorkItems { get; set; }
+        
         public Author Author { get; set; }
+
+        [YamlMember(Alias = "Test Steps")]
         public List<TestStep> TestSteps { get; set; }
+
+        [YamlMember(Alias = "Test Execution")]
         public TestExecution TestExecution { get; set; }
+        
+        [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
         public bool IsAutomated { get; set; } = true; 
     }
 
     public class Release
     {
+
         public string ReleaseID { get; set; }
+
         public string Title { get; set; }
+        
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Description { get; set; }
     }
 
@@ -68,21 +94,33 @@ namespace CoatHanger.Core.Models
 
     public class PrerequisiteStep
     {
+        [YamlMember(Alias = "Step")]
         public int StepNumber { get; set; }
+
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Description { get; set; }
     }
 
     public class TestStep
     {
+        [YamlMember(Alias = "Step")]
         public int StepNumber { get; set; }
+
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]        
         public string Action { get; set; }
+        
         public ExpectedOutcome ExpectedOutcome { get; set; }
+
+        [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
         public bool IsSharedStep { get; set; } 
     }
 
     public class ExpectedOutcome
     {
+        [YamlMember(Alias = "Step")]
         public int StepNumber { get; set; }
+        
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Description { get; set; }
     }
 }

@@ -129,7 +129,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             description: "This test case verifies the **cool** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("smithj")]
-        [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Release("1.0.0", "1.0.1", "1.2.0")]
         [CoatHanger.RegressionRelease("1.1.0")]
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureBetweenOneAndLessThanTwenty_ExpectCool()
