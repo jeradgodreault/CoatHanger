@@ -40,9 +40,11 @@ namespace CoatHanger.Core.Models
 
     public class TestCase
     {
-        [YamlMember(Alias = "Test Case ID")]
         public string TestCaseID { get; set; }
 
+        /// <summary>
+        /// This field contains a short describes of the scenario of the test case
+        /// </summary>
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Scenario { get; set; }
         /// <summary>
@@ -51,22 +53,18 @@ namespace CoatHanger.Core.Models
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Description { get; set; }
 
-        [YamlMember(Alias = "Testing Category")]
         public TestingCategory TestingCategory { get; set; }
 
         public List<string> Releases { get; set; }
 
-        [YamlMember(Alias = "Regression Releases")]
         public List<string> RegressionReleases { get; set; }
 
         public List<string> WorkItems { get; set; }
         
         public Author Author { get; set; }
 
-        [YamlMember(Alias = "Test Steps")]
         public List<TestStep> TestSteps { get; set; }
 
-        [YamlMember(Alias = "Test Execution")]
         public TestExecution TestExecution { get; set; }
         
         [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
@@ -94,7 +92,6 @@ namespace CoatHanger.Core.Models
 
     public class PrerequisiteStep
     {
-        [YamlMember(Alias = "Step")]
         public int StepNumber { get; set; }
 
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
@@ -103,7 +100,6 @@ namespace CoatHanger.Core.Models
 
     public class TestStep
     {
-        [YamlMember(Alias = "Step")]
         public int StepNumber { get; set; }
 
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]        
@@ -117,8 +113,11 @@ namespace CoatHanger.Core.Models
 
     public class ExpectedOutcome
     {
-        [YamlMember(Alias = "Step")]
-        public int StepNumber { get; set; }
+        /// <summary>
+        /// The Requirement ID for this expected result that the automated test can be traced back to. 
+        /// If requirement id is not provided manually, it will follow the convention of `REQ {TestCaseID}.{ExpectedResultStepNumber}`
+        /// </summary>
+        public string RequirementID { get; set; }
         
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Description { get; set; }

@@ -137,7 +137,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                                                 Action = "Examine the system outputs",
                                                 ExpectedOutcome = new ExpectedOutcome
                                                 {
-                                                    StepNumber = 1,
+                                                    RequirementID = "C.1-1",
                                                     Description = "The system shall output the value freezing."
                                                 },
                                             },
@@ -177,7 +177,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                                                 Action = "Examine the result variable.",
                                                 ExpectedOutcome = new ExpectedOutcome
                                                 {
-                                                    StepNumber = 1,
+                                                    RequirementID = "C.2-1",
                                                     Description = "The system shall output the value Freezing."
                                                 },
                                             },
@@ -187,7 +187,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                                                 Action = "Examine the icon.",
                                                 ExpectedOutcome = new ExpectedOutcome
                                                 {
-                                                    StepNumber = 2,
+                                                    RequirementID = "C.2-2",
                                                     Description = "The system shall displayed a ice icon."
                                                 },
                                             },

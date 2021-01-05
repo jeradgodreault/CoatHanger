@@ -51,7 +51,7 @@ namespace CoatHanger.Core
                     .Where(ts => ts.ExpectedOutcome != null)
                     .Select(step => new RequirementDTO()
                     {
-                        RequirementID = $"{testCase.TestCaseID}-{step.ExpectedOutcome.StepNumber}",
+                        RequirementID = step.ExpectedOutcome.RequirementID,
                         RequirementTitle = step.ExpectedOutcome.Description
                     })
                     .ToList();

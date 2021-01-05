@@ -14,7 +14,7 @@ namespace CoatHanger.Testing.Web.UnitTest
     /// Use the <see cref="FormcastServiceMsTest"/> as example of MSTest implementation. 
     /// </summary>
     [TestClass]
-    [CoatHanger.Function(functionType: typeof(TemperatureCalculationFunction))]
+    [CoatHanger.Function(featureFunctionType: typeof(TemperatureCalculationFunction))]
     public class FormcastServiceCoatHangerTest
     {
         private TestProcedure TestProcedure;
@@ -29,8 +29,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         public void BeforeTestExecution()
         {
             // Between each test run reset
-            TestProcedure = new TestProcedure();
-            TestProcedure.StartTesting();
+            TestProcedure = new TestProcedure();            
         }
 
         [TestCleanup]
@@ -55,6 +54,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureIsLessThanZero_ExpectFreezing()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
             FormcastService service = new FormcastService();
 
             // given            
@@ -94,6 +94,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureIsZero_ExpectFreezing() 
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
             FormcastService service = new FormcastService();
 
             // given            
@@ -134,6 +135,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureBetweenOneAndLessThanTwenty_ExpectCool()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
             FormcastService service = new FormcastService();
 
             // given            
@@ -173,6 +176,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyTwenty_ExpectMild()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
             FormcastService service = new FormcastService();
 
             // given            
@@ -213,6 +218,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureLessThanTwentyFive_ExpectMild()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
             FormcastService service = new FormcastService();
 
             // given            
@@ -254,6 +261,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyThanTwentyFive_ExpectMild()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
             FormcastService service = new FormcastService();
 
             // given            
@@ -294,6 +303,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureBetweenTwentyFiveAndLessThanThirty_ExpectHot()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
             FormcastService service = new FormcastService();
 
             // given            
@@ -334,6 +345,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyThirty_ExpectScorching()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
             FormcastService service = new FormcastService();
 
             // given            
@@ -373,6 +386,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureGreaterThanThirty_ExpectScorching()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
             FormcastService service = new FormcastService();
 
             // given            
@@ -401,7 +416,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
-        [CoatHanger.TestCase
+       [CoatHanger.TestCase
        (
            manualTest: true,
            identifier: "A.10",
@@ -413,6 +428,8 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(NonFunctionalRequirement.Usability)]
         public void WhenTemperaturePagePerformanceIsExamined()
         {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
             // Step 1 
             TestProcedure.AddManualStep("Navigate to the main page");
             
@@ -436,6 +453,68 @@ namespace CoatHanger.Testing.Web.UnitTest
                     "The system shall navigated the user to the `Today forcast` page.",
                     "The page should load within less than 10 seconds"
                 }
+            );
+
+            Inconclusive("Manual Test Case - not yet automated");
+        }
+
+        [CoatHanger.TestCase
+        (
+            manualTest: true,
+            identifier: "A.01",
+            scenario: "Where the performance of the \"contact us\" page is examined.",
+            description: "This test case verifies cross cutting concern of about page performance."
+        )]
+        [CoatHanger.TestDesigner("smithj")]
+        [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(NonFunctionalRequirement.Usability)]
+        public void WhenAboutPagePerformanceIsExamined()
+        {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
+            // Step 1 
+            TestProcedure.AddManualStep("Navigate to the main page");
+            
+            // Step 2
+            TestProcedure.AddManualStep
+            (
+                actions: new string[]
+                {
+                    "Look for the navigational menu on the top of the screen",
+                    "Hover your mouse over the `About Us` menu dropdown",
+                    "Select the 'Contact Us` dropdown item"
+                }
+            );
+
+            // Step 3 - shows a service layer agreement example
+            TestProcedure.AddManualStep
+            (
+                action: "Observe the time the next page takes to load.",
+                expectedResult: "The page should load within less than 5 seconds",
+                requirementID: "SLA-0001" // SLA = service-level-agreement 
+            );
+
+            // Step 4 - shows a requirement example
+            TestProcedure.AddManualStep
+            (
+                action: "Verify the contact us page loaded.",
+                expectedResult: "The system shall navigated the user to the `Contact us` page.",
+                requirementID: "REQ-0123" // REQ = Requirement
+            );
+
+            // Step 5 - shows user story example
+            TestProcedure.AddManualStep
+            (
+                action: "Examine the body of the page.",
+                expectedResult: "As a new customer, I want to see emails of the current management staff, so that I can contact them about question or concerns about services they provide.",
+                requirementID: "US-9997" // US = User Story
+            );
+
+            // Step 6 - shows how requirementID will be auto generated if not provided.
+            TestProcedure.AddManualStep
+            (
+                action: "Examine the footer page.",
+                expectedResult: "The system shall include a `© Coathanger YYYY` notice with the current year."
             );
 
             Inconclusive("Manual Test Case - not yet automated");

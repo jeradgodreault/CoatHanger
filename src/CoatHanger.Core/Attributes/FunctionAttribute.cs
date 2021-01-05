@@ -6,7 +6,7 @@ namespace CoatHanger
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = false)]
     public class FunctionAttribute : Attribute
     {
-        public Type Function { get; set; }
+        public IFeatureFunction Function { get; set; }
 
         /// <summary>
         /// Mark the test suite the methods should fall under. 
@@ -30,19 +30,19 @@ namespace CoatHanger
         ///          `-- Test Case: Scenario C.2
         /// </code>
         /// </example>
-        public FunctionAttribute(Type functionType) 
+        public FunctionAttribute(Type featureFunctionType) 
         {
             // null guard
-            if (functionType == null) throw new ArgumentNullException($"You cannot pass null into the {nameof(FunctionAttribute)} attribute.");
+            if (featureFunctionType == null) throw new ArgumentNullException($"You cannot pass null into the {nameof(FunctionAttribute)} attribute.");
 
-
-            if (functionType.IsSubclassOf(typeof(SystemSpecification)))
+            if (typeof(IFeatureFunction).IsAssignableFrom(featureFunctionType))
             {
-                Function = functionType;
-            } else
+                Function = (IFeatureFunction)Activator.CreateInstance(featureFunctionType);
+            }
+            else
             {
-                throw new ArgumentException($"The type {functionType.FullName} is an invalid parameter for {nameof(FunctionAttribute)}. " +
-                    $"It must inherit the {nameof(SystemSpecification)} class.");
+                throw new ArgumentException($"The type {featureFunctionType.FullName} is an invalid parameter for {nameof(FunctionAttribute)}. " +
+                    $"It must implement the {nameof(IFeatureFunction)} class.");
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.EventEmitters;
@@ -31,6 +32,8 @@ namespace CoatHanger.Core
 
             var classType = assembly.GetType(testContext.FullyQualifiedTestClassName);
             var unitTestMethod = classType.GetMethod(testContext.TestName);
+
+            
 
             //Class Only attributes 
             //var function = (FunctionAttribute)Attribute.GetCustomAttribute(classType, typeof(FunctionAttribute));
@@ -69,7 +72,6 @@ namespace CoatHanger.Core
                 {
                     testCase.RegressionReleases = regressionReleaseAttribute.RegressionReleaseVersions;
                 }
-
 
                 // TODO: Add a paramaters to exclude this step. 
                 testCase.TestExecution = new TestExecution()

@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace CoatHanger.Core
 {
@@ -13,8 +15,9 @@ namespace CoatHanger.Core
         public List<PrerequisiteStep> PrerequisiteSteps { get; private set; } = new List<PrerequisiteStep>();
         private int PrerequisiteStep { get; set; } = 1;
         private OrderedDictionary Inputs { get; set; } = new OrderedDictionary();
-        private int StepNumber { get; set; } = 1;
-        private int ExpectedResultStepNumber { get; set; } = 1;
+        private int CurrentStepNumber { get; set; } = 1;
+        private int CurrentExpectedResultStepNumber { get; set; } = 1;
+        private TestCaseAttribute TestCaseAttribute { get; set; }
         
         public DateTime TestExecutionStartDateTime { get; private set; }
 
@@ -23,10 +26,37 @@ namespace CoatHanger.Core
         /// </summary>
         public bool IsSharedStepMode { get; set; }
 
+        private bool IsStarted { get; set; } = false;
+
         public TestProcedure()
         {
-            // use the dedicate Start() method if you want to exclude the testing code setup 
-            TestExecutionStartDateTime = DateTime.Now;
+
+        }
+
+        /// <summary>
+        /// Start the testing procedure 
+        /// </summary>
+        public void Start(MethodBase currentMethod)
+        {
+            if (!IsStarted)
+            {               
+                IsStarted = true;
+
+                var testCaseAttribute = (TestCaseAttribute)Attribute.GetCustomAttribute(currentMethod, typeof(TestCaseAttribute));
+
+                if (testCaseAttribute == null)
+                {
+                    throw new ArgumentException("The current method does not support the " + nameof(TestCaseAttribute));
+                }
+
+                TestCaseAttribute = testCaseAttribute;
+                TestExecutionStartDateTime = DateTime.Now;
+
+            } 
+            else
+            {
+                throw new InvalidOperationException("A test procedure can only be called once.");
+            }
         }
 
         public T GivenInput<T>(string variableName, T valueOf)
@@ -43,11 +73,6 @@ namespace CoatHanger.Core
             AddManualStep(action: $"Execute the function `{functionName}` with the input variables `{string.Join(",", inputVariables)}` and assign the value to the `{outputVariableName}` variable.");
 
             return function.Invoke();
-        }
-
-        public void StartTesting()
-        {
-            TestExecutionStartDateTime = DateTime.Now;
         }
 
         public T CallFunction<T>(string functionName, Func<T> function, string outputVariableName)
@@ -91,7 +116,7 @@ namespace CoatHanger.Core
         {
             Steps.Add(new TestStep()
             {
-                StepNumber = StepNumber++,
+                StepNumber = CurrentStepNumber++,
                 Action = action,
                 IsSharedStep = IsSharedStepMode
             });
@@ -104,17 +129,27 @@ namespace CoatHanger.Core
 
         public void AddManualStep(string action, string expectedResult)
         {
+            AddManualStep(action: action
+                , expectedResult: expectedResult
+                , requirementID: $"{TestCaseAttribute.Identifier}-{CurrentExpectedResultStepNumber}");
+        }
+
+        public void AddManualStep(string action, string expectedResult, string requirementID)
+        {
             Steps.Add(new TestStep()
             {
-                StepNumber = StepNumber++,
+                StepNumber = CurrentStepNumber,
                 Action = action,
                 IsSharedStep = IsSharedStepMode,
                 ExpectedOutcome = new ExpectedOutcome
                 {
-                    StepNumber = ExpectedResultStepNumber++,
+                    RequirementID = requirementID,
                     Description = expectedResult,
                 }
             });
+
+            CurrentStepNumber++;
+            CurrentExpectedResultStepNumber++;
         }
 
         /// <summary>
@@ -149,6 +184,24 @@ namespace CoatHanger.Core
             (
                 action: $"Examine the {that} variable.",
                 expectedResult: $"The system shall output the value {to}"
+            );
+
+            assertionMethod.Invoke(to, value, expectedResultNotMetMessage);
+        }
+
+        /// <summary>
+        /// Verify **that** the variable is **asserted** **to** an expected value. 
+        /// </summary>
+        /// <param name="value">The variable **value** that we are Verify</param>
+        /// <param name="assertionMethod">The Assertion method for verfication.</param>
+        /// <param name="to">Expected value of verfication</param>
+        /// <param name="expectedResultNotMetMessage">The override failure comment for not meeting the expected result </param>
+        public void ThenVerify<T>(string action, string expectedResult, T value, Action<T, T, string> assertionMethod, T to, string expectedResultNotMetMessage)
+        {
+            AddManualStep
+            (
+                action: action,
+                expectedResult: expectedResult
             );
 
             assertionMethod.Invoke(to, value, expectedResultNotMetMessage);

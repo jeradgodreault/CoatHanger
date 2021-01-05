@@ -11,26 +11,14 @@ namespace CoatHanger.Core.Testing.UnitTest
         public void WhenGivenAClassDirectlyInheirtFromSystemSpec_ExpectSuccess()
         {
             // arrange 
-            Type classDirectlyInheirtFromSystem = typeof(ChildSuite);
+            Type classDirectlyInheirtFromSystem = typeof(ClassImplFeatureInterface);
             
             // act
             var result = new FunctionAttribute(classDirectlyInheirtFromSystem);
 
             // assert
-            Assert.AreEqual(typeof(ChildSuite),  result.Function);
-        }
-
-        [TestMethod]
-        public void WhenGivenAClassDesendentOfFromSystemSpec_ExpectSuccess()
-        {
-            // arrange 
-            Type classDirectlyInheirtFromSystem = typeof(GrandChildSuite);
-            
-            // act
-            var result = new FunctionAttribute(classDirectlyInheirtFromSystem);
-
-            // assert
-            Assert.AreEqual(typeof(GrandChildSuite), result.Function);
+            Assert.IsNotNull(result.Function);
+            Assert.AreEqual("System -> Feature",  result.Function.Summary);
         }
 
         [TestMethod]
@@ -38,7 +26,7 @@ namespace CoatHanger.Core.Testing.UnitTest
         public void WhenGiveSystemSpecType_ExpectFailure()
         {
             // arrange
-            Type systemSpecification = typeof(SystemSpecification);
+            Type systemSpecification = typeof(ClassImplProductInterface);
 
             // act
             new FunctionAttribute(systemSpecification);
@@ -83,16 +71,34 @@ namespace CoatHanger.Core.Testing.UnitTest
             public string GetSuitePath() => "/" + GetDisplayName();
         }
 
-        internal class ChildSuite : SystemSpecification
+        internal class ClassImplProductInterface : IProduct
         {
-            public override string GetDisplayName() => "Child Suite";
-            public override string GetSuitePath() => "System -> Child Suite";
+            public string ProductID => throw new NotImplementedException();
+
+            public string Title => "System";
+
+            public string Summary => "/";
         }
 
-        internal class GrandChildSuite : ChildSuite
+
+        internal class ClassImplFeatureInterface : IFeatureFunction
         {
-            public override string GetDisplayName() => "Grand Child Suite";
-            public override string GetSuitePath() => "System -> Child Suite -> Grand Child Suite";
+            public string FunctionID => throw new NotImplementedException();
+            public string Title => "Feature";
+            public string Summary => "System -> Feature";
+
+            public IProductFeature Feature => throw new NotImplementedException();
+        }
+
+        internal class ClassImplFunctionInterface : IFeatureFunction
+        {
+            public string FunctionID => throw new NotImplementedException();
+
+            public string Title => "Function";
+
+            public string Summary => "System -> Feature -> Function";
+
+            public IProductFeature Feature => throw new NotImplementedException();
         }
 
 
