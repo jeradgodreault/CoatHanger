@@ -5,7 +5,6 @@ namespace CoatHanger.Core.Models
     public class Author
     {
         public string UserName { get; set; }
-        public string JobTitle { get; set; }
 
         public Author(string username)
         {

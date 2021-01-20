@@ -45,7 +45,7 @@ namespace CoatHanger.Testing.Web.UnitTest
 
         [CoatHanger.TestCase
         (
-            identifier: "A.1", 
+            identifier: "A.99", 
             scenario: "When the temperature is less than zero degree celcius",
             description: "This test case verifies the **freezing** temperature label is being calculated correctly."
         )]

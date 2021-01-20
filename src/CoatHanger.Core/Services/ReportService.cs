@@ -48,8 +48,9 @@ namespace CoatHanger.Core
             matrix.TestCases = new List<TestCaseDTO>();
 
             foreach (var testCase in feature.Functions
-                .Where(ts => ts.TestCases.Count > 0)
-                .SelectMany(ts => ts.TestCases)
+                .Where(ts => ts.Scenarios.Count > 0)
+                .SelectMany(ts => ts.Scenarios)
+                .SelectMany(ts=> ts.TestCases)
             )
             {
                 var requirements = testCase.TestSteps
@@ -57,7 +58,7 @@ namespace CoatHanger.Core
                     .Select(step => new RequirementDTO()
                     {
                         RequirementID = $"{testCase.TestCaseID}-{step.ExpectedOutcome.RequirementID}",
-                        RequirementTitle = step.ExpectedOutcome.Description
+                        RequirementTitle = step.ExpectedOutcome.ExpectedResult
                     })
                     .ToList();
 
@@ -107,7 +108,7 @@ namespace CoatHanger.Core
                     result += "<div class='indent'>\n\t";
                     result += $"<h2>{function.Title}</h2> \n\n";
 
-                    foreach (var testCase in function.TestCases)
+                    foreach (var testCase in function.Scenarios)
                     {
                         result += Nustache.Core.Render.StringToString(TestCaseResultHtmlTemplate, testCase);
                     }

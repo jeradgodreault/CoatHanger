@@ -2,7 +2,8 @@
 {
     /// <summary>
     /// FUNCTIONAL REQUIREMENT (FR) is a description of the service that the software must offer. 
-    /// It describes a software system or its component.
+    /// It describes a software system or its component. The summary examples are for reference only. 
+    /// Every business defines requirement types differently. 
     /// </summary>
     public enum FunctionalRequirement
     {
@@ -14,6 +15,9 @@
         /// These requirements examine every transaction’s entry, changing, deleting, canceling, and error checking. 
         /// </summary>
         TransactionHandling,
+        /// <summary>
+        /// These are the routine things the system will do, such as reporting.
+        /// </summary>
         AdministrativeFunction,
         /// <summary>
         /// They concern the information users share with the system and their authentication level.
@@ -40,13 +44,33 @@
         /// </summary>
         Search,
         /// <summary>
-        /// These are laws, regulations from the government, and even internal policies that the organizations and their systems must follow.
+        /// These are laws, regulations from the government
         /// </summary>
         Legal,
         /// <summary>
         /// These are laws, regulations from the government, and even internal policies that the organizations and their systems must follow.
         /// </summary>
-        Regulatory
+        Regulatory,
+
+        /// <summary>
+        /// Internal policies that the organizations and their systems must follow.
+        /// </summary>
+        Policy,
+
+        /// <summary>
+        /// These are what the user of the system can do, such as place an order or browse the online catalogue.
+        /// </summary>
+        UserRequirement,
+        /// <summary>
+        /// These are things like software and hardware specifications, system responses, or system actions.
+        /// </summary>
+        ProductFeature,
+
+        /// <summary>
+        /// A user story is a lightweight method for quickly capturing the "who", "what" and "why" of a product requirement. 
+        /// In simple terms, user stories are stated ideas of requirements that express what users need.
+        /// </summary>
+        UserStory
     }
 
     /// <summary>
@@ -98,5 +122,7 @@
         /// the lack of interoperability happens when people do not follow standards.
         /// </summary>
         Interoperability,
+        ProductProperty,
+        UserExpectation
     }
 }

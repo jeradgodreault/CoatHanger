@@ -12,6 +12,7 @@ namespace CoatHanger.Core.Models
     {
         public string ProductID { get; set; }
         public string Title { get; set; }
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Summary { get; set; }
         public List<Feature> Features { get; set; } = new List<Feature>();
     }
@@ -23,6 +24,7 @@ namespace CoatHanger.Core.Models
     {
         public string FeatureID { get; set; }
         public string Title { get; set; }
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Summary { get; set; }
         public List<Function> Functions { get; set; } = new List<Function>();
     }
@@ -35,7 +37,23 @@ namespace CoatHanger.Core.Models
         public string FunctionID { get; set; }
         public string Title { get; set; }
         public string Summary { get; set; }
-        public List<TestCase> TestCases { get; set; } = new List<TestCase>();
+        public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
+    }
+
+    public class Scenario
+    {
+        public string ScenarioID { get; set; }
+        public string Title { get; set; }
+        public List<Requirement> Requirements { get; set; }
+        public List<TestCase> TestCases { get; set; }
+        public string CurrentVersion { get; set; }
+        public string CreatedRelease { get; set; }
+    }
+
+    public class Requirement
+    {
+        public string RequirementID { get; set; }
+        public string Title { get; set; }
     }
 
     public class TestCase
@@ -46,7 +64,7 @@ namespace CoatHanger.Core.Models
         /// This field contains a short describes of the scenario of the test case
         /// </summary>
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
-        public string Scenario { get; set; }
+        public string Title { get; set; }
         /// <summary>
         /// This field describes the test case objective.
         /// </summary>
@@ -69,11 +87,20 @@ namespace CoatHanger.Core.Models
         
         [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
         public bool IsAutomated { get; set; } = true; 
+
+        public TestStatus TestStatus { get; set; }
+    }
+    
+    public enum TestStatus
+    {
+        Failed = 0,
+        Passed = 1,
+        Blocked = 2,
+        NotRun = 3
     }
 
     public class Release
     {
-
         public string ReleaseID { get; set; }
 
         public string Title { get; set; }
@@ -87,7 +114,7 @@ namespace CoatHanger.Core.Models
         public Author ExecutedBy { get; set; }
         public string ExecuteStartDate { get; set; }
         public string ExecuteEndDate { get; set; }
-        public bool Outcome { get; set; }
+        public bool IsCompleted { get; set; }
     }
 
     public class PrerequisiteStep
@@ -108,7 +135,9 @@ namespace CoatHanger.Core.Models
         public ExpectedOutcome ExpectedOutcome { get; set; }
 
         [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
-        public bool IsSharedStep { get; set; } 
+        public bool IsSharedStep { get; set; }
+
+        public string Comment { get; set; }
     }
 
     public class ExpectedOutcome
@@ -120,7 +149,7 @@ namespace CoatHanger.Core.Models
         public string RequirementID { get; set; }
         
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
-        public string Description { get; set; }
+        public string ExpectedResult { get; set; }
     }
 }
 

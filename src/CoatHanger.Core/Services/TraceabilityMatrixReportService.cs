@@ -43,7 +43,8 @@ namespace CoatHanger.Core
 
             foreach(var testCase in product.Features
                 .SelectMany(f=> f.Functions)
-                .Where(ts => ts.TestCases.Count > 0)
+                .Where(ts => ts.Scenarios.Count > 0)
+                .SelectMany(ts => ts.Scenarios)
                 .SelectMany(ts => ts.TestCases)
             )
             {
@@ -52,7 +53,7 @@ namespace CoatHanger.Core
                     .Select(step => new RequirementDTO()
                     {
                         RequirementID = step.ExpectedOutcome.RequirementID,
-                        RequirementTitle = step.ExpectedOutcome.Description
+                        RequirementTitle = step.ExpectedOutcome.ExpectedResult
                     })
                     .ToList();
 
@@ -101,7 +102,7 @@ namespace CoatHanger.Core
                     result += "<div class='indent'>\n\t";
                     result += $"<h2>{function.Title}</h2> \n\n";
 
-                    foreach (var testCase in function.TestCases)
+                    foreach (var testCase in function.Scenarios)
                     {
                         result += Nustache.Core.Render.StringToString(TestCaseResultHtmlTemplate, testCase);
                     }

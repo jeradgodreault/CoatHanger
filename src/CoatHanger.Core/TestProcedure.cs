@@ -124,7 +124,7 @@ namespace CoatHanger.Core
 
         public void AddManualStep(string action, params string[] expectedResults)
         {
-            AddManualStep(action, string.Join(Environment.NewLine + Environment.NewLine, expectedResults));
+            AddManualStep(action, string.Join(Environment.NewLine, expectedResults));
         }
 
         public void AddManualStep(string action, string expectedResult)
@@ -144,7 +144,7 @@ namespace CoatHanger.Core
                 ExpectedOutcome = new ExpectedOutcome
                 {
                     RequirementID = requirementID,
-                    Description = expectedResult,
+                    ExpectedResult = expectedResult,
                 }
             });
 

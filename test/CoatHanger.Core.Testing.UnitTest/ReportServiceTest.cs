@@ -7,7 +7,7 @@ namespace CoatHanger.Core.Testing.UnitTest
     [TestClass]
     public class ReportServiceTest
     {
-       
+
         [TestMethod]
         public void WhenGeneratingTracabilityMatrixReport_ExamineRequirementID()
         {
@@ -49,7 +49,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             // act 
             var result = service.ConvertToDto(product);
 
-            foreach(var item in result.TestCases)
+            foreach (var item in result.TestCases)
             {
                 Assert.AreEqual(result.Requirements.Count, item.RequirementMatrix.Count);
             }
@@ -102,57 +102,22 @@ namespace CoatHanger.Core.Testing.UnitTest
                             {
                                 FunctionID = "B",
                                 Title = "Temperature Calculation Function",
-                                TestCases = new List<TestCase>()
+                                Scenarios = new List<Scenario>()
                                 {
-                                    new TestCase()
+                                    new Scenario()
                                     {
-                                        TestCaseID = "C.1",
-                                        Scenario = "When the temperature is less than zero degree celcius",
-                                        Author = new Author("godreaj"),
-                                        WorkItems = new List<string> { "111", "222", "333" },
-                                        TestExecution = new TestExecution()
-                                        {
-                                            Outcome = true,
-                                            ExecutedBy = new Author("desktop-j9fucdd\\buildserver"),
-                                            ExecuteStartDate = "2020-05-01 11:45",
-                                            ExecuteEndDate = "2020-05-01 11:46",
-                                        },
-                                        TestSteps = new List<TestStep>()
-                                        {
-                                            new TestStep()
-                                            {
-                                                StepNumber = 1,
-                                                Action = "Set the variable temperature to -2.",
-                                                ExpectedOutcome = null,
-                                            },
-                                            new TestStep()
-                                            {
-                                                StepNumber = 2,
-                                                Action = "Execute the function `GetTemperatureSummary` with the input variables `temperature` and assign the value to the `result` variable.",
-                                                ExpectedOutcome = null,
-                                            },
-                                            new TestStep()
-                                            {
-                                                StepNumber = 3,
-                                                Action = "Examine the system outputs",
-                                                ExpectedOutcome = new ExpectedOutcome
-                                                {
-                                                    RequirementID = "C.1-1",
-                                                    Description = "The system shall output the value freezing."
-                                                },
-                                            },
-                                        },
 
-                                    },
-                                    new TestCase()
+                                        TestCases = new List<TestCase>()
+                                        {
+                                                     new TestCase()
                                     {
                                         TestCaseID = "C.2",
-                                        Scenario = "When the temperature is exactly zero degree celcius",
+                                        Title = "When the temperature is exactly zero degree celcius",
                                         Author = new Author("godreaj"),
                                         WorkItems = null,
                                         TestExecution = new TestExecution
                                         {
-                                            Outcome = true,
+                                            IsCompleted = true,
                                             ExecutedBy = new Author("desktop-j9fucdd\\buildserver"),
                                             ExecuteStartDate = "2020-05-01 11:45",
                                             ExecuteEndDate = "2020-05-01 11:46",
@@ -178,7 +143,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                                                 ExpectedOutcome = new ExpectedOutcome
                                                 {
                                                     RequirementID = "C.2-1",
-                                                    Description = "The system shall output the value Freezing."
+                                                    ExpectedResult = "The system shall output the value Freezing."
                                                 },
                                             },
                                             new TestStep()
@@ -188,13 +153,64 @@ namespace CoatHanger.Core.Testing.UnitTest
                                                 ExpectedOutcome = new ExpectedOutcome
                                                 {
                                                     RequirementID = "C.2-2",
-                                                    Description = "The system shall displayed a ice icon."
+                                                    ExpectedResult = "The system shall displayed a ice icon."
                                                 },
                                             },
                                         },
                                     }
-                                }
+                                        }
 
+                                    },
+
+                                    new Scenario()
+                                    {
+                                        TestCases = new List<TestCase>()
+                                {
+                                    new TestCase()
+                                    {
+                                        TestCaseID = "C.1",
+                                        Title = "When the temperature is less than zero degree celcius",
+                                        Author = new Author("godreaj"),
+                                        WorkItems = new List<string> { "111", "222", "333" },
+                                        TestExecution = new TestExecution()
+                                        {
+                                            IsCompleted = true,
+                                            ExecutedBy = new Author("desktop-j9fucdd\\buildserver"),
+                                            ExecuteStartDate = "2020-05-01 11:45",
+                                            ExecuteEndDate = "2020-05-01 11:46",
+                                        },
+                                        TestSteps = new List<TestStep>()
+                                        {
+                                            new TestStep()
+                                            {
+                                                StepNumber = 1,
+                                                Action = "Set the variable temperature to -2.",
+                                                ExpectedOutcome = null,
+                                            },
+                                            new TestStep()
+                                            {
+                                                StepNumber = 2,
+                                                Action = "Execute the function `GetTemperatureSummary` with the input variables `temperature` and assign the value to the `result` variable.",
+                                                ExpectedOutcome = null,
+                                            },
+                                            new TestStep()
+                                            {
+                                                StepNumber = 3,
+                                                Action = "Examine the system outputs",
+                                                ExpectedOutcome = new ExpectedOutcome
+                                                {
+                                                    RequirementID = "C.1-1",
+                                                    ExpectedResult = "The system shall output the value freezing."
+                                                },
+                                            },
+                                        },
+
+                                    },
+
+
+                                }
+                                    }
+                                }
                             },
 
                             new Function
@@ -203,15 +219,13 @@ namespace CoatHanger.Core.Testing.UnitTest
                                 Title = "Weather Grid"
                             },
                         },
-
-
                     },
                     new Feature
                     {
                         FeatureID = "D",
                         Title = "About"
                     }
-                }            
+                }
             };
 
             return systemSuite;
