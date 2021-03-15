@@ -4,9 +4,9 @@ using System;
 namespace CoatHanger
 {
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = false)]
-    public class FunctionAttribute : Attribute
+    public class AreaAttribute : Attribute
     {
-        public IFeatureFunction Function { get; set; }
+        public FunctionArea Area { get; set; }
 
         /// <summary>
         /// Mark the test suite the methods should fall under. 
@@ -30,19 +30,19 @@ namespace CoatHanger
         ///          `-- Test Case: Scenario C.2
         /// </code>
         /// </example>
-        public FunctionAttribute(Type featureFunctionType) 
+        public AreaAttribute(Type areaType) 
         {
             // null guard
-            if (featureFunctionType == null) throw new ArgumentNullException($"You cannot pass null into the {nameof(FunctionAttribute)} attribute.");
+            if (areaType == null) throw new ArgumentNullException($"You cannot pass null into the {nameof(AreaAttribute)} attribute.");
 
-            if (typeof(IFeatureFunction).IsAssignableFrom(featureFunctionType))
+            if (typeof(FunctionArea).IsAssignableFrom(areaType))
             {
-                Function = (IFeatureFunction)Activator.CreateInstance(featureFunctionType);
+                Area = (FunctionArea)Activator.CreateInstance(areaType);
             }
             else
             {
-                throw new ArgumentException($"The type {featureFunctionType.FullName} is an invalid parameter for {nameof(FunctionAttribute)}. " +
-                    $"It must implement the {nameof(IFeatureFunction)} class.");
+                throw new ArgumentException($"The type {areaType.FullName} is an invalid parameter for {nameof(AreaAttribute)}. " +
+                    $"It must implement the {nameof(FunctionArea)} class.");
             }
         }
     }

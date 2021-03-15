@@ -14,11 +14,11 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type classDirectlyInheirtFromSystem = typeof(ClassImplFeatureInterface);
             
             // act
-            var result = new FunctionAttribute(classDirectlyInheirtFromSystem);
+            var result = new AreaAttribute(classDirectlyInheirtFromSystem);
 
             // assert
-            Assert.IsNotNull(result.Function);
-            Assert.AreEqual("System -> Feature",  result.Function.Summary);
+            Assert.IsNotNull(result.Area);
+            Assert.AreEqual("System -> Feature",  result.Area.Summary);
         }
 
         [TestMethod]
@@ -29,7 +29,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type systemSpecification = typeof(ClassImplProductInterface);
 
             // act
-            new FunctionAttribute(systemSpecification);
+            new AreaAttribute(systemSpecification);
 
             // assert
             Assert.Fail("The system did not throw an exceptions");
@@ -43,7 +43,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type nullType = null;
 
             // act
-            new FunctionAttribute(nullType);
+            new AreaAttribute(nullType);
 
             // assert
             Assert.Fail("The system did not throw an exceptions");
@@ -59,7 +59,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             Type classNotInheritFromSystemSpecification = typeof(ClassNotInheritFromSystemSpecification);
 
             // act
-            new FunctionAttribute(classNotInheritFromSystemSpecification);
+            new AreaAttribute(classNotInheritFromSystemSpecification);
 
             // assert
             Assert.Fail("The system did not throw an exceptions");
@@ -73,7 +73,7 @@ namespace CoatHanger.Core.Testing.UnitTest
 
         internal class ClassImplProductInterface : IProduct
         {
-            public string ProductID => throw new NotImplementedException();
+            public string ID => throw new NotImplementedException();
 
             public string Title => "System";
 
@@ -81,24 +81,24 @@ namespace CoatHanger.Core.Testing.UnitTest
         }
 
 
-        internal class ClassImplFeatureInterface : IFeatureFunction
+        internal class ClassImplFeatureInterface : FunctionArea
         {
-            public string FunctionID => throw new NotImplementedException();
-            public string Title => "Feature";
-            public string Summary => "System -> Feature";
+            public override string ID => throw new NotImplementedException();
+            public override string Title => "Feature";
+            public override string Summary => "System -> Feature";
 
-            public IProductFeature Feature => throw new NotImplementedException();
+            public override FeatureArea Parent => throw new NotImplementedException();
         }
 
-        internal class ClassImplFunctionInterface : IFeatureFunction
+        internal class ClassImplFunctionInterface : FunctionArea
         {
-            public string FunctionID => throw new NotImplementedException();
+            public override string ID => throw new NotImplementedException();
 
-            public string Title => "Function";
+            public override string Title => "Function";
 
-            public string Summary => "System -> Feature -> Function";
+            public override string Summary => "System -> Feature -> Function";
 
-            public IProductFeature Feature => throw new NotImplementedException();
+            public override FeatureArea Parent => throw new NotImplementedException();
         }
 
 

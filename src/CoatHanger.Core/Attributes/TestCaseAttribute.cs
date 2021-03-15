@@ -18,7 +18,7 @@ namespace CoatHanger
             // Using TestMethodAttribute so that the VS test explorer shows the friendlier names. 
         }
 
-        public TestCaseAttribute(string scenario, string identifier) : this(scenario)
+        public TestCaseAttribute(string scenario, string identifier) : this($"{identifier} - {scenario}")
         {
             Identifier = identifier;
         }

@@ -58,7 +58,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             _webDriver.Navigate().GoToUrl(url);
 
             // assert
-            Assert.AreEqual("Use the browser to navigate to `https://en.wikipedia.org/wiki/Unit_testing`", _testProcedure.Steps[0].Action);
+            Assert.AreEqual("Use the browser to navigate to `https://en.wikipedia.org/wiki/Unit_testing`", _testProcedure.Steps[0].Actions);
         }
 
         [TestMethod]
@@ -74,7 +74,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             navigation.Back();
 
             // assert
-            Assert.AreEqual("Use the browser *back* button.", _testProcedure.Steps[2].Action);
+            Assert.AreEqual("Use the browser *back* button.", _testProcedure.Steps[2].Actions);
             Assert.AreEqual(pageTitle, _webDriver.Title);
         }
 
@@ -91,7 +91,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             navigation.Back(skipCoatHangerStep: false, stepActionOverride: "Go back now!!");
 
             // assert
-            Assert.AreEqual("Go back now!!", _testProcedure.Steps[2].Action);
+            Assert.AreEqual("Go back now!!", _testProcedure.Steps[2].Actions);
             Assert.AreEqual(pageTitle, _webDriver.Title);
         }
 
@@ -125,7 +125,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             navigation.Forward();
 
             // assert
-            Assert.AreEqual("Use the browser *forward* button.", _testProcedure.Steps[2].Action);
+            Assert.AreEqual("Use the browser *forward* button.", _testProcedure.Steps[2].Actions);
             Assert.AreEqual(pageTitle, _webDriver.Title);
 
         }
@@ -162,7 +162,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                 , stepActionOverride: "Quickly hit the forward button!"); // step 3
 
             // assert
-            Assert.AreEqual("Quickly hit the forward button!", _testProcedure.Steps[2].Action);
+            Assert.AreEqual("Quickly hit the forward button!", _testProcedure.Steps[2].Actions);
             Assert.AreEqual(pageTitle, _webDriver.Title);
 
         }
@@ -179,7 +179,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             navigation.Refresh();
 
             // assert
-            Assert.AreEqual("Use the browser *refresh* button.", _testProcedure.Steps[1].Action);
+            Assert.AreEqual("Use the browser *refresh* button.", _testProcedure.Steps[1].Actions);
             Assert.AreEqual(pageTitle, _webDriver.Title);
         }
 
@@ -197,7 +197,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             _webDriver.NavigateStep().GoToUrl(url: url, testCaseIncludeDomain: false);
             
             // assert
-            Assert.AreEqual("Use the browser to navigate to `/wiki/Unit_testing`", _testProcedure.Steps[0].Action);
+            Assert.AreEqual("Use the browser to navigate to `/wiki/Unit_testing`", _testProcedure.Steps[0].Actions);
         }
 
         [TestMethod]
@@ -210,7 +210,7 @@ namespace CoatHanger.Core.Testing.UnitTest
             _webDriver.NavigateStep().GoToUrl(url: url, testCaseIncludeDomain: true);
 
             // assert
-            Assert.AreEqual("Use the browser to navigate to `https://en.wikipedia.org/wiki/Unit_testing`", _testProcedure.Steps[0].Action);
+            Assert.AreEqual("Use the browser to navigate to `https://en.wikipedia.org/wiki/Unit_testing`", _testProcedure.Steps[0].Actions);
         }
 
         #endregion

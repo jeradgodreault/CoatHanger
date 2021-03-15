@@ -130,7 +130,7 @@ namespace CoatHanger.Core.Models
         public int StepNumber { get; set; }
 
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]        
-        public string Action { get; set; }
+        public List<string> Actions { get; set; }
         
         public ExpectedOutcome ExpectedOutcome { get; set; }
 

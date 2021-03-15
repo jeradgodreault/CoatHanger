@@ -22,7 +22,7 @@ namespace CoatHanger.Testing.Web.UnitTest
 
     public class CHWeatherProduct : IProduct
     {
-        public string ProductID => "CHW";
+        public string ID => "CHW";
 
         public string Title => "CoatHanger Weather Product";
 
@@ -45,63 +45,63 @@ perferendis doloribus asperiores repellat.
 ";
     }
 
-    public class WeatherForcastFeature : IProductFeature
+    public class WeatherForcastFeature : FeatureArea
     {
-        public string FeatureID => "CHW.A";
+        public override string ID => "CHW.A";
 
-        public string Title => "Weather Forcast Feature";
+        public override string Title => "Weather Forcast Feature";
 
-        public string Summary
+        public override string Summary
             => @"The weather forcast feature is a lorem ipsum dolor sit amet, consectetur adipiscing elit, 
 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
-        public IProduct Product => new CHWeatherProduct();
+        public override IProduct Parent => new CHWeatherProduct();
     }
 
-    public class AboutPageFeature : IProductFeature
+    public class AboutPageFeature : FeatureArea
     {
-        public string FeatureID => "CHW.B";
+        public override string ID => "CHW.B";
 
-        public string Title => "About Page Feature";
+        public override string Title => "About Page Feature";
 
-        public string Summary
+        public override string Summary
             => @"The about page feature is a lorem ipsum dolor sit amet, consectetur adipiscing elit, 
 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
-        public IProduct Product => new CHWeatherProduct();
+        public override IProduct Parent => new CHWeatherProduct();
     }
 
-    public class TemperatureCalculationFunction : IFeatureFunction
+    public class TemperatureCalculationFunction : FunctionArea
     {
-        public string FunctionID => "CHW.A.1";
+        public override string ID => "CHW.A.1";
 
-        public string Title => "Temperature Calculation";
+        public override string Title => "Temperature Calculation";
 
-        public string Summary => "Determine if the temperature is freezing, cold, or hot.";
+        public override string Summary => "Determine if the temperature is freezing, cold, or hot.";
 
-        public IProductFeature Feature => new WeatherForcastFeature();
+        public override FeatureArea Parent => new WeatherForcastFeature();
     }
 
-    public class WeatherPageLayoutFunction : IFeatureFunction
+    public class WeatherPageLayoutFunction : FunctionArea
     {
-        public string FunctionID => "CHW.A.2";
+        public override string ID => "CHW.A.2";
 
-        public string Title => "Weather Page Layout";
+        public override string Title => "Weather Page Layout";
 
-        public string Summary => "A webpage that will display the weather information.";
+        public override string Summary => "A webpage that will display the weather information.";
 
-        public IProductFeature Feature => new WeatherForcastFeature();
+        public override FeatureArea Parent => new WeatherForcastFeature();
     }
 
-    public class AboutPageLayoutFunction : IFeatureFunction
+    public class AboutPageLayoutFunction : FunctionArea
     {
-        public string FunctionID => "CHW.B.1";
+        public override string ID => "CHW.B.1";
 
-        public string Title => "About Page Layout";
+        public override string Title => "About Page Layout";
 
-        public string Summary => "a webpage that will display the about page.";
+        public override string Summary => "a webpage that will display the about page.";
 
-        public IProductFeature Feature => new AboutPageFeature();
+        public override FeatureArea Parent => new AboutPageFeature();
     }
 
 }

@@ -35,7 +35,6 @@ namespace CoatHanger.WebDriver
 
         public ReadOnlyCollection<string> WindowHandles => _seleniumDriver.WindowHandles;
 
-
         /// <summary>
         /// For example, if your on a login page. You might use "username" to represent the element friendly name. 
         /// So that when you call .SendKeys("yourusername"), the test step will be "Enter the value "yourusername" in the username textbox."
@@ -132,7 +131,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep(stepActionOverride ?? "Use the browser *back* button.");
+                _testProcedure.AddStep(stepActionOverride ?? "Use the browser *back* button.");
             }
             
             _seleniumNavigation.Back();
@@ -148,7 +147,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep(stepActionOverride ?? "Use the browser *forward* button.");
+                _testProcedure.AddStep(stepActionOverride ?? "Use the browser *forward* button.");
             }
             
             _seleniumNavigation.Forward();
@@ -165,7 +164,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep(stepActionOverride ?? "Use the browser *refresh* button.");
+                _testProcedure.AddStep(stepActionOverride ?? "Use the browser *refresh* button.");
             }
             
             _seleniumNavigation.Refresh();
@@ -192,7 +191,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep
+                _testProcedure.AddStep
                 (
                     stepActionOverride ?? $"Use the browser to navigate to `{url}`"
                 );
@@ -280,7 +279,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep(stepActionOverride ?? $"Clear all the contents in the `{_testFriendlyName}` {GetTestCaseElementType()}.");
+                _testProcedure.AddStep(stepActionOverride ?? $"Clear all the contents in the `{_testFriendlyName}` {GetTestCaseElementType()}.");
             }
             
             _seleniumElement.Clear();
@@ -296,7 +295,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep(stepActionOverride ?? $"Click the `{_testFriendlyName}` {GetTestCaseElementType()}.");
+                _testProcedure.AddStep(stepActionOverride ?? $"Click the `{_testFriendlyName}` {GetTestCaseElementType()}.");
             }
             
             _seleniumElement.Click();
@@ -324,7 +323,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep(stepActionOverride ?? $"Get the `{_testFriendlyName}` {GetTestCaseElementType()} current value.");
+                _testProcedure.AddStep(stepActionOverride ?? $"Get the `{_testFriendlyName}` {GetTestCaseElementType()} current value.");
             }
             
             return _seleniumElement.GetAttribute(attributeName);
@@ -354,7 +353,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep(stepActionOverride ?? $"Enter the value `{text}` in the {_testFriendlyName} {GetTestCaseElementType()}.");
+                _testProcedure.AddStep(stepActionOverride ?? $"Enter the value `{text}` in the {_testFriendlyName} {GetTestCaseElementType()}.");
             }
             
             _seleniumElement.SendKeys(text);
@@ -370,7 +369,7 @@ namespace CoatHanger.WebDriver
         {
             if (!skipCoatHangerStep)
             {
-                _testProcedure.AddManualStep(stepActionOverride ?? "Submit the form.");
+                _testProcedure.AddStep(stepActionOverride ?? "Submit the form.");
             }
             _seleniumElement.Submit();
         }

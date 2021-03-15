@@ -58,7 +58,7 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             element.Click();
 
             // assert
-            Assert.AreEqual("Click the `Test` button.", _testProcedure.Steps[1].Action);
+            Assert.AreEqual("Click the `Test` button.", _testProcedure.Steps[1].Actions);
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             element.Click();
 
             // assert
-            Assert.AreEqual("Click the `Test` button.", _testProcedure.Steps[1].Action);
+            Assert.AreEqual("Click the `Test` button.", _testProcedure.Steps[1].Actions);
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             element.SendKeys("Hello World");
 
             // assert
-            Assert.AreEqual("Enter the value `Hello World` in the Test textbox.", _testProcedure.Steps[1].Action);
+            Assert.AreEqual("Enter the value `Hello World` in the Test textbox.", _testProcedure.Steps[1].Actions);
         }
 
         [TestMethod]
@@ -109,7 +109,7 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             element.SendKeys("Send Keys Data");
 
             // assert
-            Assert.AreEqual("Enter the value `Send Keys Data` in the Test textbox.", _testProcedure.Steps[1].Action);
+            Assert.AreEqual("Enter the value `Send Keys Data` in the Test textbox.", _testProcedure.Steps[1].Actions);
         }
 
 
@@ -127,7 +127,7 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             element.Clear();
 
             // assert
-            Assert.AreEqual("Clear all the contents in the `Test` textbox.", _testProcedure.Steps[1].Action);
+            Assert.AreEqual("Clear all the contents in the `Test` textbox.", _testProcedure.Steps[1].Actions);
         }
 
         [TestMethod]
@@ -144,7 +144,7 @@ namespace CoatHanger.Core.Testing.UnitTest.WebDriverTest
             element.Clear();
 
             // assert
-            Assert.AreEqual("Clear all the contents in the `Test` textbox.", _testProcedure.Steps[1].Action);
+            Assert.AreEqual("Clear all the contents in the `Test` textbox.", _testProcedure.Steps[1].Actions);
         }
 
 

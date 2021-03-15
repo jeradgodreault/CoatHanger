@@ -1,8 +1,11 @@
 ﻿using CoatHanger.Core.Models;
-using Newtonsoft.Json;
+using CoatHanger.Core.Step;
+using CoatHanger.Core.Style;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -14,11 +17,10 @@ namespace CoatHanger.Core
         public List<TestStep> Steps { get; private set; } = new List<TestStep>();
         public List<PrerequisiteStep> PrerequisiteSteps { get; private set; } = new List<PrerequisiteStep>();
         private int PrerequisiteStep { get; set; } = 1;
-        private OrderedDictionary Inputs { get; set; } = new OrderedDictionary();
         private int CurrentStepNumber { get; set; } = 1;
         private int CurrentExpectedResultStepNumber { get; set; } = 1;
         private TestCaseAttribute TestCaseAttribute { get; set; }
-        
+
         public DateTime TestExecutionStartDateTime { get; private set; }
 
         /// <summary>
@@ -51,7 +53,6 @@ namespace CoatHanger.Core
 
                 TestCaseAttribute = testCaseAttribute;
                 TestExecutionStartDateTime = DateTime.Now;
-
             } 
             else
             {
@@ -59,27 +60,16 @@ namespace CoatHanger.Core
             }
         }
 
-        public T GivenInput<T>(string variableName, T valueOf)
+        public GivenWhenThen StartGivenWhenThen(MethodBase currentMethod)
         {
-            Inputs.Add(variableName, valueOf);
-
-            AddManualStep(action: $"Set the variable { variableName } to { valueOf }.");
-
-            return valueOf;
+            Start(currentMethod);
+            return new GivenWhenThen(this);
         }
 
-        public T CallFunction<T>(string functionName, Func<T> function, List<string> inputVariables, string outputVariableName)
+        public ArrangeActAssert StartArrangeActAssert(MethodBase currentMethod)
         {
-            AddManualStep(action: $"Execute the function `{functionName}` with the input variables `{string.Join(",", inputVariables)}` and assign the value to the `{outputVariableName}` variable.");
-
-            return function.Invoke();
-        }
-
-        public T CallFunction<T>(string functionName, Func<T> function, string outputVariableName)
-        {
-            AddManualStep(action: $"Execute the function `{functionName}` and assign the value to the `{outputVariableName}` variable.");
-
-            return function.Invoke();
+            Start(currentMethod);
+            return new ArrangeActAssert(this);
         }
 
         public void AddPrerequisiteStep(string description)
@@ -107,27 +97,27 @@ namespace CoatHanger.Core
             }
         }
 
-        public void AddManualStep(params string[] actions)
+        public void AddStep(params string[] actions)
         {
-            AddManualStep(string.Join(Environment.NewLine + Environment.NewLine, actions));
+            AddStep(string.Join(Environment.NewLine + Environment.NewLine, actions));
         }
 
-        public void AddManualStep(string action)
+        public void AddStep(string action)
         {
             Steps.Add(new TestStep()
             {
                 StepNumber = CurrentStepNumber++,
-                Action = action,
+                Actions = new List<string> { action },
                 IsSharedStep = IsSharedStepMode
             });
         }
 
-        public void AddManualStep(string action, params string[] expectedResults)
+        public void AddStep(string action, params string[] expectedResults)
         {
-            AddManualStep(action, string.Join(Environment.NewLine, expectedResults));
+            AddStep(action, string.Join(Environment.NewLine, expectedResults));
         }
 
-        public void AddManualStep(string action, string expectedResult)
+        public void AddStep(string action, string expectedResult)
         {
             AddManualStep(action: action
                 , expectedResult: expectedResult
@@ -139,7 +129,7 @@ namespace CoatHanger.Core
             Steps.Add(new TestStep()
             {
                 StepNumber = CurrentStepNumber,
-                Action = action,
+                Actions = new List<string> { action },
                 IsSharedStep = IsSharedStepMode,
                 ExpectedOutcome = new ExpectedOutcome
                 {
@@ -161,7 +151,7 @@ namespace CoatHanger.Core
         /// <param name="to">Expected value of verfication</param>
         public void ThenVerify<T>(string that, T value, Action<T, T> assertionMethod, T to)
         {
-            AddManualStep
+            AddStep
             (
                 action: $"Examine the {that} variable.", 
                 expectedResult: $"The system shall output the value {to}"
@@ -180,7 +170,7 @@ namespace CoatHanger.Core
         /// <param name="expectedResultNotMetMessage">The override failure comment for not meeting the expected result </param>
         public void ThenVerify<T>(string that, T value, Action<T, T, string> assertionMethod, T to, string expectedResultNotMetMessage) 
         {
-            AddManualStep
+            AddStep
             (
                 action: $"Examine the {that} variable.",
                 expectedResult: $"The system shall output the value {to}"
@@ -198,19 +188,13 @@ namespace CoatHanger.Core
         /// <param name="expectedResultNotMetMessage">The override failure comment for not meeting the expected result </param>
         public void ThenVerify<T>(string action, string expectedResult, T value, Action<T, T, string> assertionMethod, T to, string expectedResultNotMetMessage)
         {
-            AddManualStep
+            AddStep
             (
                 action: action,
                 expectedResult: expectedResult
             );
 
             assertionMethod.Invoke(to, value, expectedResultNotMetMessage);
-        }
-
-
-        public string ToJson()
-        {
-            return JsonConvert.SerializeObject(Steps);
         }
     }
 }

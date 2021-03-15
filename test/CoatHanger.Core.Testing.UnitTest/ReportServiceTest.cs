@@ -127,19 +127,19 @@ namespace CoatHanger.Core.Testing.UnitTest
                                             new TestStep()
                                             {
                                                 StepNumber = 1,
-                                                Action = "Set the variable temperature to 0.",
+                                                Actions = new List<string> { "Set the variable temperature to 0." },
                                                 ExpectedOutcome = null,
                                             },
                                             new TestStep()
                                             {
                                                 StepNumber = 2,
-                                                Action = "Execute the function `GetTemperatureSummary` with the input variables `temperature` and assign the value to the `result` variable.",
+                                                Actions = new List<string> {"Execute the function `GetTemperatureSummary` with the input variables `temperature` and assign the value to the `result` variable." },
                                                 ExpectedOutcome = null,
                                             },
                                             new TestStep()
                                             {
                                                 StepNumber = 3,
-                                                Action = "Examine the result variable.",
+                                                Actions = new List<string> {"Examine the result variable." },
                                                 ExpectedOutcome = new ExpectedOutcome
                                                 {
                                                     RequirementID = "C.2-1",
@@ -149,7 +149,7 @@ namespace CoatHanger.Core.Testing.UnitTest
                                             new TestStep()
                                             {
                                                 StepNumber = 4,
-                                                Action = "Examine the icon.",
+                                                Actions = new List<string> {"Examine the icon." },
                                                 ExpectedOutcome = new ExpectedOutcome
                                                 {
                                                     RequirementID = "C.2-2",
@@ -184,19 +184,19 @@ namespace CoatHanger.Core.Testing.UnitTest
                                             new TestStep()
                                             {
                                                 StepNumber = 1,
-                                                Action = "Set the variable temperature to -2.",
+                                                Actions = new List<string> {"Set the variable temperature to -2." },
                                                 ExpectedOutcome = null,
                                             },
                                             new TestStep()
                                             {
                                                 StepNumber = 2,
-                                                Action = "Execute the function `GetTemperatureSummary` with the input variables `temperature` and assign the value to the `result` variable.",
+                                                Actions = new List<string> {"Execute the function `GetTemperatureSummary` with the input variables `temperature` and assign the value to the `result` variable." },
                                                 ExpectedOutcome = null,
                                             },
                                             new TestStep()
                                             {
                                                 StepNumber = 3,
-                                                Action = "Examine the system outputs",
+                                                Actions = new List<string> {"Examine the system outputs" },
                                                 ExpectedOutcome = new ExpectedOutcome
                                                 {
                                                     RequirementID = "C.1-1",

@@ -46,6 +46,7 @@ namespace CoatHanger.Core
                 .Where(ts => ts.Scenarios.Count > 0)
                 .SelectMany(ts => ts.Scenarios)
                 .SelectMany(ts => ts.TestCases)
+                .OrderBy(ts => ts.TestCaseID)
             )
             {
                 var requirements = testCase.TestSteps
@@ -55,6 +56,7 @@ namespace CoatHanger.Core
                         RequirementID = step.ExpectedOutcome.RequirementID,
                         RequirementTitle = step.ExpectedOutcome.ExpectedResult
                     })
+                    .OrderBy(step => step.RequirementID)
                     .ToList();
 
                 var testCaseDto = new TestCaseDTO()

@@ -1,7 +1,6 @@
 ﻿using CoatHanger.Core.Configuration;
 using CoatHanger.Core.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,7 +25,7 @@ namespace CoatHanger.Core
         {
             Product = new Product()
             {
-                ProductID = product.ProductID,
+                ProductID = product.ID,
                 Title = product.Title,
                 Summary = product.Summary
             };
@@ -45,11 +44,11 @@ namespace CoatHanger.Core
             var unitTestMethod = classType.GetMethod(testContext.TestName);
             
             //Class Only attributes 
-            var functionAttribute = (FunctionAttribute)Attribute.GetCustomAttribute(classType, typeof(FunctionAttribute));
+            var functionAttribute = (AreaAttribute)Attribute.GetCustomAttribute(classType, typeof(AreaAttribute));
 
             if (functionAttribute == null)
             {
-                throw new ArgumentException($"The class {classType.FullName} does not have the required {nameof(FunctionAttribute)}");
+                throw new ArgumentException($"The class {classType.FullName} does not have the required {nameof(AreaAttribute)}");
             }
 
             AddFeatureIfNotExist(functionAttribute);
@@ -122,17 +121,17 @@ namespace CoatHanger.Core
             }
         }
 
-        private void AddFeatureIfNotExist(FunctionAttribute functionAttribute)
+        private void AddFeatureIfNotExist(AreaAttribute functionAttribute)
         {
-            if (!Product.Features.Any(f => f.FeatureID == functionAttribute.Function.Feature.FeatureID))
+            if (!Product.Features.Any(f => f.FeatureID == functionAttribute.Area.Parent.ID))
             {
                 lock (Product)
                 {
                     var feature = new Feature()
                     {
-                        FeatureID = functionAttribute.Function.Feature.FeatureID,
-                        Summary = functionAttribute.Function.Feature.Summary,
-                        Title = functionAttribute.Function.Feature.Title,
+                        FeatureID = functionAttribute.Area.Parent.ID,
+                        Summary = functionAttribute.Area.Parent.Summary,
+                        Title = functionAttribute.Area.Parent.Title,
                     };
 
                     Product.Features.Add(feature);
@@ -140,21 +139,21 @@ namespace CoatHanger.Core
             }
         }
 
-        private Function AddFunctionIfNotExist(FunctionAttribute functionAttribute)
+        private Function AddFunctionIfNotExist(AreaAttribute functionAttribute)
         {
             var feature = Product.Features
-                .Where(f => f.FeatureID == functionAttribute.Function.Feature.FeatureID)
+                .Where(f => f.FeatureID == functionAttribute.Area.Parent.ID)
                 .Single();
 
-            if (!feature.Functions.Any(f => f.FunctionID == functionAttribute.Function.FunctionID))
+            if (!feature.Functions.Any(f => f.FunctionID == functionAttribute.Area.ID))
             {
                 lock (Product)
                 {
                     var function = new Function()
                     {
-                        FunctionID = functionAttribute.Function.FunctionID,
-                        Summary = functionAttribute.Function.Summary,
-                        Title = functionAttribute.Function.Title,
+                        FunctionID = functionAttribute.Area.ID,
+                        Summary = functionAttribute.Area.Summary,
+                        Title = functionAttribute.Area.Title,
                     };
 
                     feature.Functions.Add(function);
@@ -162,7 +161,7 @@ namespace CoatHanger.Core
             }
 
             return feature.Functions
-                .Where(f => f.FunctionID == functionAttribute.Function.FunctionID)
+                .Where(f => f.FunctionID == functionAttribute.Area.ID)
                 .Single();
         }
 
@@ -205,7 +204,7 @@ namespace CoatHanger.Core
         {
             Product = new Product()
             {
-                ProductID = product.ProductID,
+                ProductID = product.ID,
                 Title = product.Title,
                 Summary = product.Summary
             };
