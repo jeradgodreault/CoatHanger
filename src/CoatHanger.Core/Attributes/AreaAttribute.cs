@@ -6,7 +6,7 @@ namespace CoatHanger
     [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = false)]
     public class AreaAttribute : Attribute
     {
-        public FunctionArea Area { get; set; }
+        public IAreaPath Area { get; set; }
 
         /// <summary>
         /// Mark the test suite the methods should fall under. 
@@ -35,14 +35,14 @@ namespace CoatHanger
             // null guard
             if (areaType == null) throw new ArgumentNullException($"You cannot pass null into the {nameof(AreaAttribute)} attribute.");
 
-            if (typeof(FunctionArea).IsAssignableFrom(areaType))
+            if (typeof(IAreaPath).IsAssignableFrom(areaType))
             {
-                Area = (FunctionArea)Activator.CreateInstance(areaType);
+                Area = (IAreaPath)Activator.CreateInstance(areaType);
             }
             else
             {
                 throw new ArgumentException($"The type {areaType.FullName} is an invalid parameter for {nameof(AreaAttribute)}. " +
-                    $"It must implement the {nameof(FunctionArea)} class.");
+                    $"It must implement the {nameof(IAreaPath)} interface.");
             }
         }
     }

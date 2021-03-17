@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <UserSecretsId>01814c76-88b1-4fbd-92b5-33efad501a3f</UserSecretsId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>A testing framework where the automated tests are the requirements.</Description>
     <Copyright>Jerad Godreault</Copyright>
     <Authors>Jerad Godreault</Authors>
-    <Version>0.1.0</Version>
+    <Version>0.3.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/jeradgodreault/CoatHanger</PackageProjectUrl>
     <Company>CoatHanger</Company>
@@ -15,6 +16,11 @@
     <PackageTags>Testing, Documentation</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

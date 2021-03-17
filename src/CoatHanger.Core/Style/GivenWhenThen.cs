@@ -1,4 +1,5 @@
 ﻿using CoatHanger.Core.Style;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,6 +29,26 @@ namespace CoatHanger.Core.Step
             setup.Invoke();
         }
 
+        public GivenWhenThen Given(string that)
+        {
+            that = that.ToGivenFormat();
+            TestProcedure.AddStep((Givens.Count == 0)
+               ? $"Given {that}"
+               : $"And {that}"
+            );
+
+            Givens.Add(that);
+
+            return this;
+        }
+
+        public GivenWhenThen Given(string that, Action by)
+        {
+            Given(that);
+            by.Invoke();
+            return this;
+        }
+
         /// <summary>
         /// A short cut of writing Given in a single line 
         /// leveraging using String.Format() and same line out parameter.
@@ -39,6 +60,30 @@ namespace CoatHanger.Core.Step
         {
             Given(string.Format(thatFormat, value));
             input = value;
+            return this;
+        }
+
+        public GivenWhenThen Given<T>(string thatFormat, T value)
+        {
+            Given(string.Format(thatFormat, value));
+            return this;
+        }
+
+        public GivenWhenThen GivenTemplate<T>(string template, T value, out T input)
+        {
+            input = value;
+            return GivenTemplate(template, value);
+        }
+
+        public GivenWhenThen GivenTemplate<T>(string template, T value)
+        {
+            
+            var thatTemplate = Nustache.Core.Render.StringToString(template.ToGivenFormat(), value);
+            Givens.Add(template);
+
+            TestProcedure.AddStep((Givens.Count == 0) ? $"Given {thatTemplate}" : $"And {thatTemplate}");
+
+            
             return this;
         }
 
@@ -56,6 +101,12 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
+        public GivenWhenThen AndGiven<T>(string thatFormat, T value)
+        {
+            AndGiven(string.Format(thatFormat, value));
+            return this;
+        }
+
         public GivenWhenThen AndGivenTemplate<T>(string template, T value, out T input)
         {
             if (Givens.Count == 0) throw new InvalidOperationException("You need to call Given first before chaining it with 'AndGiven'");
@@ -68,30 +119,10 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
-        public GivenWhenThen Given(string that)
-        {
-            that = that.ToGivenFormat();
-            TestProcedure.AddStep((Givens.Count == 0)
-               ? $"Given {that}"
-               : $"And {that}"
-            );
-
-            Givens.Add(that);
-
-            return this;
-        }
-
         public GivenWhenThen AndGiven(string that)
         {
             if (Givens.Count == 0) throw new InvalidOperationException("You need to call Given first before chaining it with 'AndGiven'");
             return Given(that);
-        }
-
-        public GivenWhenThen Given(string that, Action by)
-        {
-            Given(that);
-            by.Invoke();
-            return this;
         }
 
         public GivenWhenThen AndGiven(string that, Action by)
@@ -199,7 +230,58 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
-    }
-    
-    
+        public GivenWhenThen Then(string that, Func<VerificationStep, VerificationStep> ToVerify)
+        {
+            that = that.ToThenFormat();
+            string expectOutcome = (Thens.Count == 0) ? $"Then {that}" : $"And {that}";
+
+            var verification = ToVerify.Invoke(new VerificationStep());
+            TestProcedure.AddStep(verification.GetActionStep().ToArray(), expectOutcome);
+            
+            Thens.Add(that);
+
+            return this;
+        }
+
+        public class VerificationStep
+        {
+            private List<string> Actions { get; set; } = new List<string>();
+            private bool IsNewStep = false;
+
+            public VerificationStep()
+            {
+
+            }
+
+            public VerificationStep Statement(string statement)
+            {
+                Actions.Add(statement);
+
+                return this;
+            }
+
+            public VerificationStep Confirm<T>(string that, T actual, Action<T, T> assertionMethod, T expected)
+            {
+                assertionMethod.Invoke(expected, actual);
+                Actions.Add("Confirm that:" + "\r" + that);
+
+                return this;
+            }
+
+            public VerificationStep And<T>(string that, T actual, Action<T, T> assertionMethod, T expected)
+            {
+                assertionMethod.Invoke(expected, actual);
+
+                Actions[Actions.Count - 1] = Actions[Actions.Count - 1] + "\r" + that;
+
+                return this;
+            }
+
+            public List<string> GetActionStep()
+            {
+                return Actions;
+            }
+
+        }
+    }   
 }

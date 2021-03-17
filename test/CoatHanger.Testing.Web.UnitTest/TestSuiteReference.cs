@@ -20,13 +20,13 @@ namespace CoatHanger.Testing.Web.UnitTest
     ///         `-- Test Case 2D
     /// </summary>
 
-    public class CHWeatherProduct : IProduct
+    public class CHWeatherProduct : ProductArea
     {
-        public string ID => "CHW";
+        public override string ID => "CHW";
 
-        public string Title => "CoatHanger Weather Product";
+        public override string Title => "CoatHanger Weather Product";
 
-        public string Summary 
+        public override string Summary 
             => @"CoatHanger Weather Product is a lorem ipsum dolor sit amet, 
 consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -45,7 +45,7 @@ perferendis doloribus asperiores repellat.
 ";
     }
 
-    public class WeatherForcastFeature : FeatureArea
+    public class WeatherForcastFeature : FeatureArea<CHWeatherProduct>
     {
         public override string ID => "CHW.A";
 
@@ -55,10 +55,10 @@ perferendis doloribus asperiores repellat.
             => @"The weather forcast feature is a lorem ipsum dolor sit amet, consectetur adipiscing elit, 
 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
-        public override IProduct Parent => new CHWeatherProduct();
+        public override CHWeatherProduct Parent => new CHWeatherProduct();
     }
 
-    public class AboutPageFeature : FeatureArea
+    public class AboutPageFeature : FeatureArea<CHWeatherProduct>
     {
         public override string ID => "CHW.B";
 
@@ -68,10 +68,10 @@ sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
             => @"The about page feature is a lorem ipsum dolor sit amet, consectetur adipiscing elit, 
 sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
-        public override IProduct Parent => new CHWeatherProduct();
+        public override CHWeatherProduct Parent => new CHWeatherProduct();
     }
 
-    public class TemperatureCalculationFunction : FunctionArea
+    public class TemperatureCalculationFunction : FunctionArea<WeatherForcastFeature>
     {
         public override string ID => "CHW.A.1";
 
@@ -79,10 +79,10 @@ sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
         public override string Summary => "Determine if the temperature is freezing, cold, or hot.";
 
-        public override FeatureArea Parent => new WeatherForcastFeature();
+        public override WeatherForcastFeature Parent => new WeatherForcastFeature();
     }
 
-    public class WeatherPageLayoutFunction : FunctionArea
+    public class WeatherPageLayoutFunction : FunctionArea<WeatherForcastFeature>
     {
         public override string ID => "CHW.A.2";
 
@@ -90,10 +90,10 @@ sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
         public override string Summary => "A webpage that will display the weather information.";
 
-        public override FeatureArea Parent => new WeatherForcastFeature();
+        public override WeatherForcastFeature Parent => new WeatherForcastFeature();
     }
 
-    public class AboutPageLayoutFunction : FunctionArea
+    public class AboutPageLayoutFunction : FunctionArea<AboutPageFeature>
     {
         public override string ID => "CHW.B.1";
 
@@ -101,7 +101,7 @@ sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
         public override string Summary => "a webpage that will display the about page.";
 
-        public override FeatureArea Parent => new AboutPageFeature();
+        public override AboutPageFeature Parent => new AboutPageFeature();
     }
 
 }

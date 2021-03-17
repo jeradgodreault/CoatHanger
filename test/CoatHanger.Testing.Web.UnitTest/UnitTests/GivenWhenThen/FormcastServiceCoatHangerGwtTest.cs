@@ -227,15 +227,22 @@ namespace CoatHanger.Testing.Web.UnitTest
                 by: () => service.GetTemperatureSummary(temperature),
                 out var result
             );
+            
+            procedure.Then(that: "the temperature will be labeled as not cold.", ToVerify: (step) =>
+            {
+                step.Statement("Examine the results")
+                .Confirm(that: "The value is Mild", actual: result, assertionMethod: Assert.AreEqual, expected: "Mild");
 
-            // then 
-            TestProcedure.ThenVerify
-            (
-                  that: nameof(result)
-                , value: result
-                , AreEqual
-                , to: "Mild"
-            );
+                step.Statement("Examine the results for what its not")
+                .Confirm(that: "The value is not Hot", actual: result, AreNotEqual, expected: "Hot")
+                .And(that: "The value is not cold", actual: result, AreNotEqual,  expected: "Hot")
+                .And(that: "The temperature < 25 ", actual: true, AreEqual, expected: (temperature < 25))
+                .And(that: "The temperature >= 20 ", actual: true, AreEqual, expected: (temperature >= 20))
+                ;
+
+                return step;
+            });
+            
  
         }
 

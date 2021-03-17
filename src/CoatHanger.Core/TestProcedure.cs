@@ -20,6 +20,7 @@ namespace CoatHanger.Core
         private int CurrentStepNumber { get; set; } = 1;
         private int CurrentExpectedResultStepNumber { get; set; } = 1;
         private TestCaseAttribute TestCaseAttribute { get; set; }
+        internal MethodBase TestMethod { get; set; }
 
         public DateTime TestExecutionStartDateTime { get; private set; }
 
@@ -52,6 +53,7 @@ namespace CoatHanger.Core
                 }
 
                 TestCaseAttribute = testCaseAttribute;
+                TestMethod = currentMethod;
                 TestExecutionStartDateTime = DateTime.Now;
             } 
             else
@@ -99,7 +101,7 @@ namespace CoatHanger.Core
 
         public void AddStep(params string[] actions)
         {
-            AddStep(string.Join(Environment.NewLine + Environment.NewLine, actions));
+            AddStep(string.Join(Environment.NewLine, actions));
         }
 
         public void AddStep(string action)
@@ -110,6 +112,18 @@ namespace CoatHanger.Core
                 Actions = new List<string> { action },
                 IsSharedStep = IsSharedStepMode
             });
+        }
+
+        public void AddStep(string[] actions, ExpectedOutcome expectedOutcome)
+        {
+            AddStep(string.Join(Environment.NewLine, actions), expectedOutcome.ExpectedResult, expectedOutcome.RequirementID);
+        }
+
+        public void AddStep(string[] actions, string expectedResults)
+        {
+            AddManualStep(actions: new List<string>(actions)
+            , expectedResult: string.Join(Environment.NewLine, expectedResults)
+            , requirementID: $"{TestCaseAttribute.Identifier}-{CurrentExpectedResultStepNumber}");
         }
 
         public void AddStep(string action, params string[] expectedResults)
@@ -126,10 +140,15 @@ namespace CoatHanger.Core
 
         public void AddManualStep(string action, string expectedResult, string requirementID)
         {
+            AddManualStep(new List<string> { action }, expectedResult, requirementID);
+        }
+
+        public void AddManualStep(List<string> actions, string expectedResult, string requirementID)
+        {
             Steps.Add(new TestStep()
             {
                 StepNumber = CurrentStepNumber,
-                Actions = new List<string> { action },
+                Actions = actions,
                 IsSharedStep = IsSharedStepMode,
                 ExpectedOutcome = new ExpectedOutcome
                 {

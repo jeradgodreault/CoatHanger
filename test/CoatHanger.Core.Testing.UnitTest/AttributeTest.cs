@@ -8,34 +8,6 @@ namespace CoatHanger.Core.Testing.UnitTest
     {
 
         [TestMethod]
-        public void WhenGivenAClassDirectlyInheirtFromSystemSpec_ExpectSuccess()
-        {
-            // arrange 
-            Type classDirectlyInheirtFromSystem = typeof(ClassImplFeatureInterface);
-            
-            // act
-            var result = new AreaAttribute(classDirectlyInheirtFromSystem);
-
-            // assert
-            Assert.IsNotNull(result.Area);
-            Assert.AreEqual("System -> Feature",  result.Area.Summary);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void WhenGiveSystemSpecType_ExpectFailure()
-        {
-            // arrange
-            Type systemSpecification = typeof(ClassImplProductInterface);
-
-            // act
-            new AreaAttribute(systemSpecification);
-
-            // assert
-            Assert.Fail("The system did not throw an exceptions");
-        }
-
-        [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void WhenGivenNullType_ExpectFailure()
         {
@@ -48,8 +20,6 @@ namespace CoatHanger.Core.Testing.UnitTest
             // assert
             Assert.Fail("The system did not throw an exceptions");
         }
-
-
 
         [TestMethod]        
         [ExpectedException(typeof(ArgumentException))]
@@ -71,26 +41,26 @@ namespace CoatHanger.Core.Testing.UnitTest
             public string GetSuitePath() => "/" + GetDisplayName();
         }
 
-        internal class ClassImplProductInterface : IProduct
+        internal class ClassImplProductInterface : ProductArea
         {
-            public string ID => throw new NotImplementedException();
+            public override string ID => "A1";
 
-            public string Title => "System";
+            public override string Title => "System";
 
-            public string Summary => "/";
+            public override string Summary => "/";
         }
 
 
-        internal class ClassImplFeatureInterface : FunctionArea
+        internal class ClassImplFeatureInterface : FunctionArea<ProductArea>
         {
-            public override string ID => throw new NotImplementedException();
+            public override string ID => "A2";
             public override string Title => "Feature";
             public override string Summary => "System -> Feature";
 
-            public override FeatureArea Parent => throw new NotImplementedException();
+            public override ProductArea Parent => throw new NotImplementedException();
         }
 
-        internal class ClassImplFunctionInterface : FunctionArea
+        internal class ClassImplFunctionInterface : FunctionArea<FeatureArea<ProductArea>>
         {
             public override string ID => throw new NotImplementedException();
 
@@ -98,7 +68,7 @@ namespace CoatHanger.Core.Testing.UnitTest
 
             public override string Summary => "System -> Feature -> Function";
 
-            public override FeatureArea Parent => throw new NotImplementedException();
+            public override FeatureArea<ProductArea> Parent => throw new NotImplementedException();
         }
 
 

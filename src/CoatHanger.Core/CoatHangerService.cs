@@ -21,7 +21,7 @@ namespace CoatHanger.Core
         
         public IAuthorFormatter AuthorFormatter { get; set; } = new DefaultAuthorFormatter();
         public IReleaseVersionFormatter ReleaseVersionFormatter { get; set; } = new DefaultReleaseVersionFormatter();
-        public CoatHangerService(IProduct product)
+        public CoatHangerService(ProductArea product)
         {
             Product = new Product()
             {
@@ -41,7 +41,7 @@ namespace CoatHanger.Core
             // TODO: Incomplete. Need to map every attribute. 
 
             var classType = assembly.GetType(testContext.FullyQualifiedTestClassName);
-            var unitTestMethod = classType.GetMethod(testContext.TestName);
+            var unitTestMethod = testProcedure.TestMethod;
             
             //Class Only attributes 
             var functionAttribute = (AreaAttribute)Attribute.GetCustomAttribute(classType, typeof(AreaAttribute));
@@ -123,15 +123,15 @@ namespace CoatHanger.Core
 
         private void AddFeatureIfNotExist(AreaAttribute functionAttribute)
         {
-            if (!Product.Features.Any(f => f.FeatureID == functionAttribute.Area.Parent.ID))
+            if (!Product.Features.Any(f => f.FeatureID == functionAttribute.Area.ParentArea.ID))
             {
                 lock (Product)
                 {
                     var feature = new Feature()
                     {
-                        FeatureID = functionAttribute.Area.Parent.ID,
-                        Summary = functionAttribute.Area.Parent.Summary,
-                        Title = functionAttribute.Area.Parent.Title,
+                        FeatureID = functionAttribute.Area.ParentArea.ID,
+                        Summary = functionAttribute.Area.ParentArea.Summary,
+                        Title = functionAttribute.Area.ParentArea.Title,
                     };
 
                     Product.Features.Add(feature);
@@ -142,7 +142,7 @@ namespace CoatHanger.Core
         private Function AddFunctionIfNotExist(AreaAttribute functionAttribute)
         {
             var feature = Product.Features
-                .Where(f => f.FeatureID == functionAttribute.Area.Parent.ID)
+                .Where(f => f.FeatureID == functionAttribute.Area.ParentArea.ID)
                 .Single();
 
             if (!feature.Functions.Any(f => f.FunctionID == functionAttribute.Area.ID))
@@ -200,7 +200,7 @@ namespace CoatHanger.Core
     {
         Product Product { get; set; }
 
-        public CoatHangerServiceBuilder(IProduct product)
+        public CoatHangerServiceBuilder(ProductArea product)
         {
             Product = new Product()
             {
