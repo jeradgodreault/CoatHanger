@@ -18,6 +18,7 @@ namespace CoatHanger.Core
     public class CoatHangerService
     {
         private Product Product { get; set; }
+        private Assembly Assembly { get; set; }
         
         public IAuthorFormatter AuthorFormatter { get; set; } = new DefaultAuthorFormatter();
         public IReleaseVersionFormatter ReleaseVersionFormatter { get; set; } = new DefaultReleaseVersionFormatter();
@@ -38,6 +39,7 @@ namespace CoatHanger.Core
 
         public void AddTestCase(Assembly assembly, TestContext testContext, TestProcedure testProcedure)
         {
+            Assembly = assembly;
             // TODO: Incomplete. Need to map every attribute. 
 
             var classType = assembly.GetType(testContext.FullyQualifiedTestClassName);
@@ -67,7 +69,7 @@ namespace CoatHanger.Core
                 {
                     TestCaseID = testCaseAttribute.Identifier,
                     Title = testCaseAttribute.DisplayName,
-                    Description = testCaseAttribute.Description,
+                    Description = testCaseAttribute.Title,
                     TestSteps = testProcedure.Steps,
                     TestingCategory = testCaseAttribute.Category
 
@@ -183,7 +185,7 @@ namespace CoatHanger.Core
             }
 
             // serialize yaml directly to a file
-            using (StreamWriter file = File.CreateText(@"c:\temp\CoatHangerSpec.yaml"))
+            using (StreamWriter file = File.CreateText(@$"{Directory.GetCurrentDirectory()}/CoatHangerSpec.yaml"))
             {
                 var serializer = new SerializerBuilder()
                     .WithNamingConvention(PascalCaseNamingConvention.Instance)
@@ -194,7 +196,6 @@ namespace CoatHanger.Core
             }
         }
     }
-
 
     public class CoatHangerServiceBuilder
     {

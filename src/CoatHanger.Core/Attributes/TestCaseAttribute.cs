@@ -8,31 +8,35 @@ namespace CoatHanger
     public class TestCaseAttribute : TestMethodAttribute
     {
         public string Identifier { get; set; }
+        public string Title { get; set; }
         public string Description { get; set; }
         public TestingCategory Category { get; set; } = TestingCategory.Unit;
+        public TestingStyle TestingStyle { get; set; } = TestingStyle.AdhocTesting;
         public bool IsManualTest { get; set; }
         
 
-        public TestCaseAttribute(string scenario) : base(scenario)
+        public TestCaseAttribute(string title) : base(title)
         {
             // Using TestMethodAttribute so that the VS test explorer shows the friendlier names. 
         }
 
-        public TestCaseAttribute(string scenario, string identifier) : this($"{identifier} - {scenario}")
+        public TestCaseAttribute(string title, string identifier) : this($"{identifier} - {title}")
         {
             Identifier = identifier;
         }
 
-        public TestCaseAttribute(string scenario
+        public TestCaseAttribute(string title
             , string identifier = null
             , string description = null
             , TestingCategory testingCategory = TestingCategory.Unit
+            , TestingStyle testingStyle = TestingStyle.AdhocTesting
             , bool manualTest = false
             ) 
-            : this(scenario, identifier)
+            : this(title, identifier)
         {
             Description = description;
             Category = testingCategory;
+            TestingStyle = testingStyle;
             IsManualTest = manualTest;
         }
 

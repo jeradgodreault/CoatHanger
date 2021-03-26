@@ -1,11 +1,8 @@
 ﻿using CoatHanger.Core.Models;
-using CoatHanger.Core.Step;
 using CoatHanger.Core.Style;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Linq.Expressions;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -24,22 +21,18 @@ namespace CoatHanger.Core
 
         public DateTime TestExecutionStartDateTime { get; private set; }
 
-        /// <summary>
-        /// Determine if all the steps will be consider as shared step. 
-        /// </summary>
-        public bool IsSharedStepMode { get; set; }
-
         private bool IsStarted { get; set; } = false;
 
         public TestProcedure()
         {
 
         }
-
         /// <summary>
         /// Start the testing procedure 
         /// </summary>
-        public void Start(MethodBase currentMethod)
+        public void Start(MethodBase currentMethod
+                    , [CallerFilePath] string sourceFilePath = ""
+                    , [CallerLineNumber] int sourceLineNumber = 0)
         {
             if (!IsStarted)
             {               
@@ -62,16 +55,36 @@ namespace CoatHanger.Core
             }
         }
 
-        public GivenWhenThen StartGivenWhenThen(MethodBase currentMethod)
+        /// <summary>
+        /// The end of the testing procedure
+        /// </summary>
+        public void Finish([CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
-            Start(currentMethod);
-            return new GivenWhenThen(this);
+            
         }
 
-        public ArrangeActAssert StartArrangeActAssert(MethodBase currentMethod)
+        public void AddSharedStep(List<string> actions)
         {
-            Start(currentMethod);
-            return new ArrangeActAssert(this);
+            AddSharedStep(actions, new List<Evidence>());
+        }
+
+        public void AddSharedStep(List<string> actions, List<Evidence> evidences)
+        {
+            Steps.Add(new TestStep()
+            {
+                IsSharedStep = true,
+                Actions = actions,                
+                Evidences = evidences,
+                StepNumber = CurrentStepNumber
+            });
+
+            CurrentStepNumber++;
+        }
+
+        public void AddSharedStep(Func<SharedStep> by)
+        {
+            var sharedStep = by.Invoke();
+            AddSharedStep(sharedStep.Actions, sharedStep.Evidences);
         }
 
         public void AddPrerequisiteStep(string description)
@@ -85,18 +98,10 @@ namespace CoatHanger.Core
             });
         }
 
-        public void AddPrerequisiteStep(string description, Action setupPrerequisiteAction)
+        public void AddPrerequisiteStep(string description, Action setup)
         {
             AddPrerequisiteStep(description);
-
-            try
-            {
-                setupPrerequisiteAction.Invoke();
-            }
-            catch (Exception ex)
-            {
-                new Exception($"Unable to setup the Prerequisite Step - `${description}`", ex);
-            }
+            setup.Invoke();
         }
 
         public void AddStep(params string[] actions)
@@ -110,8 +115,14 @@ namespace CoatHanger.Core
             {
                 StepNumber = CurrentStepNumber++,
                 Actions = new List<string> { action },
-                IsSharedStep = IsSharedStepMode
+                IsSharedStep = false
             });
+        }
+
+        public void AddStep(string action, Action by)
+        {
+            by.Invoke();
+            AddStep(action);
         }
 
         public void AddStep(string[] actions, ExpectedOutcome expectedOutcome)
@@ -149,7 +160,7 @@ namespace CoatHanger.Core
             {
                 StepNumber = CurrentStepNumber,
                 Actions = actions,
-                IsSharedStep = IsSharedStepMode,
+                IsSharedStep = false,
                 ExpectedOutcome = new ExpectedOutcome
                 {
                     RequirementID = requirementID,
@@ -159,61 +170,6 @@ namespace CoatHanger.Core
 
             CurrentStepNumber++;
             CurrentExpectedResultStepNumber++;
-        }
-
-        /// <summary>
-        /// Verify **that** the variable is **asserted** **to** an expected value.
-        /// </summary>
-        /// <param name="that">The variable **name** that we are Verify</param>
-        /// <param name="value">The variable **value** that we are Verify</param>
-        /// <param name="assertionMethod">The Assertion method for verfication.</param>
-        /// <param name="to">Expected value of verfication</param>
-        public void ThenVerify<T>(string that, T value, Action<T, T> assertionMethod, T to)
-        {
-            AddStep
-            (
-                action: $"Examine the {that} variable.", 
-                expectedResult: $"The system shall output the value {to}"
-            );
-
-            assertionMethod.Invoke(to, value);
-        }
-
-        /// <summary>
-        /// Verify **that** the variable is **asserted** **to** an expected value. 
-        /// </summary>
-        /// <param name="that">The variable **name** that we are Verify</param>
-        /// <param name="value">The variable **value** that we are Verify</param>
-        /// <param name="assertionMethod">The Assertion method for verfication.</param>
-        /// <param name="to">Expected value of verfication</param>
-        /// <param name="expectedResultNotMetMessage">The override failure comment for not meeting the expected result </param>
-        public void ThenVerify<T>(string that, T value, Action<T, T, string> assertionMethod, T to, string expectedResultNotMetMessage) 
-        {
-            AddStep
-            (
-                action: $"Examine the {that} variable.",
-                expectedResult: $"The system shall output the value {to}"
-            );
-
-            assertionMethod.Invoke(to, value, expectedResultNotMetMessage);
-        }
-
-        /// <summary>
-        /// Verify **that** the variable is **asserted** **to** an expected value. 
-        /// </summary>
-        /// <param name="value">The variable **value** that we are Verify</param>
-        /// <param name="assertionMethod">The Assertion method for verfication.</param>
-        /// <param name="to">Expected value of verfication</param>
-        /// <param name="expectedResultNotMetMessage">The override failure comment for not meeting the expected result </param>
-        public void ThenVerify<T>(string action, string expectedResult, T value, Action<T, T, string> assertionMethod, T to, string expectedResultNotMetMessage)
-        {
-            AddStep
-            (
-                action: action,
-                expectedResult: expectedResult
-            );
-
-            assertionMethod.Invoke(to, value, expectedResultNotMetMessage);
         }
     }
 }

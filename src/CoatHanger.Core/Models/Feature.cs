@@ -1,4 +1,5 @@
 ﻿using CoatHanger.Core.Enums;
+using System;
 using System.Collections.Generic;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
@@ -137,7 +138,26 @@ namespace CoatHanger.Core.Models
         [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
         public bool IsSharedStep { get; set; }
 
+        public List<Evidence> Evidences { get; set; }
+
         public string Comment { get; set; }
+    }
+
+    public class Evidence
+    {
+        public string FileName { get; set; }
+        public EvidenceType EvidenceType { get; set; }
+        public DateTime TimeStamp { get; set; }
+    } 
+
+    public enum EvidenceType
+    {
+        OTHER = 0,
+        CSV = 10,
+        TXT_LOG = 20,
+        JPEG_IMAGE = 30,
+        PNG_IMAGE = 31,
+        GIF_IMAGE = 32,
     }
 
     public class ExpectedOutcome

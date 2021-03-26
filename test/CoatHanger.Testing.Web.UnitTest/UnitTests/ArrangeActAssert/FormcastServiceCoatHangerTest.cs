@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using static Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 using System.Reflection;
 using System.Linq.Expressions;
+using CoatHanger.Core.Style;
 
 namespace CoatHanger.Testing.Web.UnitTest
 {
@@ -18,7 +19,7 @@ namespace CoatHanger.Testing.Web.UnitTest
     [CoatHanger.Area(areaType: typeof(TemperatureCalculationFunction))]
     public class FormcastServiceCoatHangerTest
     {
-        private TestProcedure TestProcedure;
+        private ArrangeActAssertProcedure TestProcedure;
 
         /// <summary>
         ///  Gets or sets the test context which provides
@@ -30,7 +31,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         public void BeforeTestExecution()
         {
             // Between each test run reset
-            TestProcedure = new TestProcedure();            
+            TestProcedure = new ArrangeActAssertProcedure();            
         }
 
         [TestCleanup]
@@ -47,7 +48,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier: "A.99", 
-            scenario: "When the temperature is less than zero degree celcius",
+            title: "When the temperature is less than zero degree celcius",
             description: "This test case verifies the **freezing** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("godreaj")]
@@ -55,11 +56,11 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.UserStory)]
         public void WhenTemperatureIsLessThanZero_ExpectFreezing()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: -1
@@ -68,7 +69,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -89,7 +90,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier: "A.1.1",
-            scenario: "When the temperature is exactly zero degree celcius",
+            title: "When the temperature is exactly zero degree celcius",
             description: "This test case verifies the **freezing** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("godreaj")]
@@ -97,18 +98,18 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureIsZero_ExpectFreezing() 
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 0
             );
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -129,7 +130,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier:"A.3", 
-            scenario: "When the temperature is between 1 and 20 degree celcius",
+            title: "When the temperature is between 1 and 20 degree celcius",
             description: "This test case verifies the **cool** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("smithj")]
@@ -138,19 +139,19 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureBetweenOneAndLessThanTwenty_ExpectCool()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             ( 
                 variableName: nameof(temperature),
                 valueOf: 15
             );
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -171,7 +172,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier: "A.4", 
-            scenario: "When the temperature is exactly 20 degree celcius",
+            title: "When the temperature is exactly 20 degree celcius",
             description: "This test case verifies the **mild** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("smithj")]
@@ -179,19 +180,19 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyTwenty_ExpectMild()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 20
             );
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -213,7 +214,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier: "A.5", 
-            scenario: "When the temperature is less than 25 degree celcius",
+            title: "When the temperature is less than 25 degree celcius",
             description: "This test case verifies the **mild** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("smithj")]
@@ -221,19 +222,19 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureLessThanTwentyFive_ExpectMild()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 24
             );
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -256,7 +257,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier: "A.6", 
-            scenario: "When the temperature is exactly 25 degree celcius",
+            title: "When the temperature is exactly 25 degree celcius",
             description: "This test case verifies the **mild** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("smithj")]
@@ -264,19 +265,19 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyThanTwentyFive_ExpectMild()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 25
             );
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -298,7 +299,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier: "A.7", 
-            scenario: "When the temperature is between 25 and 29 degree celcius",
+            title: "When the temperature is between 25 and 29 degree celcius",
             description: "This test case verifies the **hot** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("smithj")]
@@ -306,19 +307,19 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureBetweenTwentyFiveAndLessThanThirty_ExpectHot()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 27
             );
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -340,7 +341,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier: "A.8",
-            scenario: "When the temperature is exactly 30 degree celcius",
+            title: "When the temperature is exactly 30 degree celcius",
             description: "This test case verifies the **scorching** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("smithj")]
@@ -348,19 +349,19 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureExactlyThirty_ExpectScorching()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 30
             );
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -381,7 +382,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             identifier: "A.9", 
-            scenario: "When the temperature is greater than 30 degree celcius",
+            title: "When the temperature is greater than 30 degree celcius",
             description: "This test case verifies the **scorching** temperature label is being calculated correctly."
         )]
         [CoatHanger.TestDesigner("smithj")]
@@ -389,19 +390,19 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
         public void WhenTemperatureGreaterThanThirty_ExpectScorching()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             FormcastService service = new FormcastService();
 
             // arrange            
-            int temperature = procedure.GivenInput
+            int temperature = TestProcedure.GivenInput
             (
                 variableName: nameof(temperature),
                 valueOf: 31
             );
 
             // act 
-            string result = procedure.CallFunction
+            string result = TestProcedure.CallFunction
             (
                 functionName: nameof(FormcastService.GetTemperatureSummary),
                 function: () => service.GetTemperatureSummary(temperature),
@@ -423,7 +424,7 @@ namespace CoatHanger.Testing.Web.UnitTest
        (
            manualTest: true,
            identifier: "A.10",
-           scenario: "Where the performance of the temperature page is examined.",
+           title: "Where the performance of the temperature page is examined.",
            description: "This test case verifies bug item #45214 - page is too slow."
        )]
         [CoatHanger.TestDesigner("smithj")]
@@ -431,7 +432,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(NonFunctionalRequirement.Usability)]
         public void WhenTemperaturePagePerformanceIsExamined()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             // Step 1 
             TestProcedure.AddStep("Navigate to the main page");
@@ -465,7 +466,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         (
             manualTest: true,
             identifier: "A.01",
-            scenario: "Where the performance of the \"contact us\" page is examined.",
+            title: "Where the performance of the \"contact us\" page is examined.",
             description: "This test case verifies cross cutting concern of about page performance."
         )]
         [CoatHanger.TestDesigner("smithj")]
@@ -473,7 +474,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.Requirement(NonFunctionalRequirement.Usability)]
         public void WhenAboutPagePerformanceIsExamined()
         {
-            var procedure = TestProcedure.StartArrangeActAssert(MethodBase.GetCurrentMethod());
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
 
             // Step 1 
             TestProcedure.AddStep("Navigate to the main page");
