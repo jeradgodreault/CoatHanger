@@ -74,6 +74,8 @@ namespace CoatHanger.Core.Models
 
         public TestingCategory TestingCategory { get; set; }
 
+        public TestingStyle TestingStyle { get; set; }
+
         public List<string> Releases { get; set; }
 
         public List<string> RegressionReleases { get; set; }

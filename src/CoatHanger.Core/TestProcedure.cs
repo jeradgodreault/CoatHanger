@@ -16,17 +16,18 @@ namespace CoatHanger.Core
         private int PrerequisiteStep { get; set; } = 1;
         private int CurrentStepNumber { get; set; } = 1;
         private int CurrentExpectedResultStepNumber { get; set; } = 1;
-        private TestCaseAttribute TestCaseAttribute { get; set; }
+        public TestCaseAttribute TestCase { get; private set; }
         internal MethodBase TestMethod { get; set; }
 
         public DateTime TestExecutionStartDateTime { get; private set; }
 
-        private bool IsStarted { get; set; } = false;
+        public bool IsStarted { get; private set; } = false;
 
         public TestProcedure()
         {
 
         }
+
         /// <summary>
         /// Start the testing procedure 
         /// </summary>
@@ -42,10 +43,10 @@ namespace CoatHanger.Core
 
                 if (testCaseAttribute == null)
                 {
-                    throw new ArgumentException("The current method does not support the " + nameof(TestCaseAttribute));
+                    throw new ArgumentException("The current method does not support the " + nameof(TestCase));
                 }
 
-                TestCaseAttribute = testCaseAttribute;
+                TestCase = testCaseAttribute;
                 TestMethod = currentMethod;
                 TestExecutionStartDateTime = DateTime.Now;
             } 
@@ -68,6 +69,11 @@ namespace CoatHanger.Core
             AddSharedStep(actions, new List<Evidence>());
         }
 
+        public void AddSharedStep(List<string> actions, Evidence evidence)
+        {
+            AddSharedStep(actions, new List<Evidence>() { evidence });
+        }
+
         public void AddSharedStep(List<string> actions, List<Evidence> evidences)
         {
             Steps.Add(new TestStep()
@@ -80,6 +86,33 @@ namespace CoatHanger.Core
 
             CurrentStepNumber++;
         }
+
+        /// <summary>
+        /// Creates a "Take a screenshot" step that assoicate with a Jpeg screenshot.
+        /// </summary>
+        /// <param name="fileName"></param>
+        public void AddScreenshotStep(string fileName)
+        {
+            Steps.Add(new TestStep()
+            {
+                IsSharedStep = false,
+                Actions = new List<string> { "*** Take a screenshot" },
+                Evidences = new List<Evidence>() 
+                { 
+                    new Evidence()
+                    {
+                        EvidenceType = EvidenceType.JPEG_IMAGE,
+                        FileName = fileName,
+                        TimeStamp = DateTime.Now                        
+                    }
+                },
+                StepNumber = CurrentStepNumber
+            });
+
+            CurrentStepNumber++;
+        }
+
+        
 
         public void AddSharedStep(Func<SharedStep> by)
         {
@@ -115,6 +148,18 @@ namespace CoatHanger.Core
             {
                 StepNumber = CurrentStepNumber++,
                 Actions = new List<string> { action },
+                Evidences = new List<Evidence>(),                
+                IsSharedStep = false
+            });
+        }
+
+        public void AddStep(string action, Evidence evidence)
+        {
+            Steps.Add(new TestStep()
+            {
+                StepNumber = CurrentStepNumber++,
+                Actions = new List<string> { action },
+                Evidences = new List<Evidence>() { evidence },
                 IsSharedStep = false
             });
         }
@@ -134,7 +179,7 @@ namespace CoatHanger.Core
         {
             AddManualStep(actions: new List<string>(actions)
             , expectedResult: string.Join(Environment.NewLine, expectedResults)
-            , requirementID: $"{TestCaseAttribute.Identifier}-{CurrentExpectedResultStepNumber}");
+            , requirementID: $"{TestCase.Identifier}-{CurrentExpectedResultStepNumber}");
         }
 
         public void AddStep(string action, params string[] expectedResults)
@@ -146,7 +191,7 @@ namespace CoatHanger.Core
         {
             AddManualStep(action: action
                 , expectedResult: expectedResult
-                , requirementID: $"{TestCaseAttribute.Identifier}-{CurrentExpectedResultStepNumber}");
+                , requirementID: $"{TestCase.Identifier}-{CurrentExpectedResultStepNumber}");
         }
 
         public void AddManualStep(string action, string expectedResult, string requirementID)

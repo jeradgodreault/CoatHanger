@@ -11,9 +11,13 @@ namespace CoatHanger
         public string Title { get; set; }
         public string Description { get; set; }
         public TestingCategory Category { get; set; } = TestingCategory.Unit;
-        public TestingStyle TestingStyle { get; set; } = TestingStyle.AdhocTesting;
+        public TestingStyle Style { get; set; } = TestingStyle.AdhocTesting;
         public bool IsManualTest { get; set; }
-        
+
+        public TestCaseAttribute() : base()
+        {
+
+        }
 
         public TestCaseAttribute(string title) : base(title)
         {
@@ -36,7 +40,7 @@ namespace CoatHanger
         {
             Description = description;
             Category = testingCategory;
-            TestingStyle = testingStyle;
+            Style = testingStyle;
             IsManualTest = manualTest;
         }
 

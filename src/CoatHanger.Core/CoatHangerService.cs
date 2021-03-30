@@ -39,87 +39,92 @@ namespace CoatHanger.Core
 
         public void AddTestCase(Assembly assembly, TestContext testContext, TestProcedure testProcedure)
         {
-            Assembly = assembly;
-            // TODO: Incomplete. Need to map every attribute. 
+            // People might mix & match with coathanger test and normal unit test.
+            // so if the documentation procedure was never started... just skip it and continue.
+            if (testProcedure.IsStarted)
+            {
+                Assembly = assembly;
+                // TODO: Incomplete. Need to map every attribute. 
 
-            var classType = assembly.GetType(testContext.FullyQualifiedTestClassName);
-            var unitTestMethod = testProcedure.TestMethod;
+                var classType = assembly.GetType(testContext.FullyQualifiedTestClassName);
+                var unitTestMethod = testProcedure.TestMethod;
             
-            //Class Only attributes 
-            var functionAttribute = (AreaAttribute)Attribute.GetCustomAttribute(classType, typeof(AreaAttribute));
+                //Class Only attributes 
+                var functionAttribute = (AreaAttribute)Attribute.GetCustomAttribute(classType, typeof(AreaAttribute));
 
-            if (functionAttribute == null)
-            {
-                throw new ArgumentException($"The class {classType.FullName} does not have the required {nameof(AreaAttribute)}");
-            }
-
-            AddFeatureIfNotExist(functionAttribute);
-            var function = AddFunctionIfNotExist(functionAttribute);
-
-            //Method Only attributes 
-            var testCaseAttribute = (TestCaseAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(TestCaseAttribute));
-            var testDesignerAttribute = (TestDesignerAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(TestDesignerAttribute));
-            var requirementAttribute = (RequirementAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(RequirementAttribute));
-            var releaseAttribute = (ReleaseAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(ReleaseAttribute));
-            var regressionReleaseAttribute = (RegressionReleaseAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(RegressionReleaseAttribute));
-
-            if (testCaseAttribute != null)
-            {
-                TestCase testCase = new TestCase()
+                if (functionAttribute == null)
                 {
-                    TestCaseID = testCaseAttribute.Identifier,
-                    Title = testCaseAttribute.DisplayName,
-                    Description = testCaseAttribute.Title,
-                    TestSteps = testProcedure.Steps,
-                    TestingCategory = testCaseAttribute.Category
-
-                };
-
-                if (testDesignerAttribute != null)
-                {
-                    testCase.Author = new Author(testDesignerAttribute.UserName);
-                    // TODO: Add username => to job title mapping table.
+                    throw new ArgumentException($"The class {classType.FullName} does not have the required {nameof(AreaAttribute)}");
                 }
 
-                if (releaseAttribute != null)
-                {
-                    testCase.Releases = releaseAttribute.ReleaseVersions;
-                }
+                AddFeatureIfNotExist(functionAttribute);
+                var function = AddFunctionIfNotExist(functionAttribute);
 
-                if (regressionReleaseAttribute != null)
-                {
-                    testCase.RegressionReleases = regressionReleaseAttribute.RegressionReleaseVersions;
-                }
+                //Method Only attributes 
+                var testCaseAttribute = (TestCaseAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(TestCaseAttribute));
+                var testDesignerAttribute = (TestDesignerAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(TestDesignerAttribute));
+                var requirementAttribute = (RequirementAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(RequirementAttribute));
+                var releaseAttribute = (ReleaseAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(ReleaseAttribute));
+                var regressionReleaseAttribute = (RegressionReleaseAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(RegressionReleaseAttribute));
 
-                // TODO: Add a paramaters to exclude this step. 
-                testCase.TestExecution = new TestExecution()
+                if (testCaseAttribute != null)
                 {
-                    IsCompleted = (testContext.CurrentTestOutcome == UnitTestOutcome.Passed),
-                    ExecuteStartDate = testProcedure.TestExecutionStartDateTime.ToString("s"),
-                    // Adding 1 second delay so that End is always ahead of Start. 
-                    // Some unit test run faster than reasonable date format will allow.
-                    ExecuteEndDate = DateTime.Now.AddSeconds(1).ToString("s")
-                };
+                    TestCase testCase = new TestCase()
+                    {
+                        TestCaseID = testCaseAttribute.Identifier,
+                        Title = testCaseAttribute.DisplayName,
+                        Description = testCaseAttribute.Title,
+                        TestSteps = testProcedure.Steps,
+                        TestingCategory = testCaseAttribute.Category,
+                        TestingStyle = testCaseAttribute.Style
+                    };
 
-                var scenario = new Scenario()
-                {
-                    ScenarioID = testCase.TestCaseID,
-                    Title = testCase.Title,
-                    CurrentVersion = releaseAttribute.LastestRelease,
-                    CreatedRelease = releaseAttribute.CreatedRelease,
-                    TestCases = new List<TestCase>() { testCase },
+                    if (testDesignerAttribute != null)
+                    {
+                        testCase.Author = new Author(testDesignerAttribute.UserName);
+                        // TODO: Add username => to job title mapping table.
+                    }
 
-                    Requirements = testCase.TestSteps
-                        .Where(ts => ts.ExpectedOutcome != null)
-                        .Select(ts => new Requirement()
-                        {
-                            RequirementID = ts.ExpectedOutcome.RequirementID,
-                            Title = ts.ExpectedOutcome.ExpectedResult,                            
-                        })
-                        .ToList(),
-                };
+                    if (releaseAttribute != null)
+                    {
+                        testCase.Releases = releaseAttribute.ReleaseVersions;
+                    }
+
+                    if (regressionReleaseAttribute != null)
+                    {
+                        testCase.RegressionReleases = regressionReleaseAttribute.RegressionReleaseVersions;
+                    }
+
+                    // TODO: Add a paramaters to exclude this step. 
+                    testCase.TestExecution = new TestExecution()
+                    {
+                        IsCompleted = (testContext.CurrentTestOutcome == UnitTestOutcome.Passed),
+                        ExecuteStartDate = testProcedure.TestExecutionStartDateTime.ToString("s"),
+                        // Adding 1 second delay so that End is always ahead of Start. 
+                        // Some unit test run faster than reasonable date format will allow.
+                        ExecuteEndDate = DateTime.Now.AddSeconds(1).ToString("s")
+                    };
+
+                    var scenario = new Scenario()
+                    {
+                        ScenarioID = testCase.TestCaseID,
+                        Title = testCase.Title,
+                        CurrentVersion = releaseAttribute.LastestRelease,
+                        CreatedRelease = releaseAttribute.CreatedRelease,
+                        TestCases = new List<TestCase>() { testCase },
+
+                        Requirements = testCase.TestSteps
+                            .Where(ts => ts.ExpectedOutcome != null)
+                            .Select(ts => new Requirement()
+                            {
+                                RequirementID = ts.ExpectedOutcome.RequirementID,
+                                Title = ts.ExpectedOutcome.ExpectedResult,                            
+                            })
+                            .ToList(),
+                    };
                 
-                function.Scenarios.Add(scenario);
+                    function.Scenarios.Add(scenario);
+                }
             }
         }
 
