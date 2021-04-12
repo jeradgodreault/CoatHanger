@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 
 [assembly: InternalsVisibleTo("UnitTests")]
 namespace CoatHanger.Core.Style
@@ -31,7 +29,7 @@ namespace CoatHanger.Core.Style
         }
 
         public static string ToAndFormat(this string and)
-        {         
+        {
             return ToFormattedGwt(and, "and ");
         }
 

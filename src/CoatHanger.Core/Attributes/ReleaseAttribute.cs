@@ -7,7 +7,7 @@ namespace CoatHanger
 {
     [AttributeUsage(validOn: AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class ReleaseAttribute : Attribute
-    {        
+    {
         public List<string> ReleaseVersions { get; set; } = new List<string>();
         public string LastestRelease => ReleaseVersions.Last();
         public string CreatedRelease => ReleaseVersions.First();
@@ -28,7 +28,7 @@ namespace CoatHanger
         /// Release attributes are used to help generate release documents. 
         /// </summary>
         /// <param name="releaseVersion">The release versions this test case was modified significantly.</param>
-        public ReleaseAttribute(params int[] releaseVersion) 
+        public ReleaseAttribute(params int[] releaseVersion)
         {
             // null guards.
             if (releaseVersion == null || releaseVersion.Length == 0) throw new ArgumentNullException($"The {nameof(releaseVersion)} variable cannot be null for the {nameof(ReleaseAttribute)}"); if (releaseVersion == null || releaseVersion.Length == 0) throw new ArgumentNullException($"The {nameof(releaseVersion)} variable cannot be null or emtpy for the {nameof(ReleaseAttribute)}");

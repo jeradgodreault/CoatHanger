@@ -8,7 +8,7 @@
     <Description>A testing framework where the automated tests are the requirements.</Description>
     <Copyright>Jerad Godreault</Copyright>
     <Authors>Jerad Godreault</Authors>
-    <Version>0.4.0</Version>
+    <Version>0.6.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/jeradgodreault/CoatHanger</PackageProjectUrl>
     <Company>CoatHanger</Company>
@@ -24,8 +24,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.TestPlatform.ObjectModel" Version="16.7.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
     <PackageReference Include="Nustache" Version="1.16.0.10" />
     <PackageReference Include="YamlDotNet" Version="9.1.0" />
   </ItemGroup>

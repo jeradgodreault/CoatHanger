@@ -30,7 +30,7 @@ namespace CoatHanger
         ///          `-- Test Case: Scenario C.2
         /// </code>
         /// </example>
-        public AreaAttribute(Type areaType) 
+        public AreaAttribute(Type areaType)
         {
             // null guard
             if (areaType == null) throw new ArgumentNullException($"You cannot pass null into the {nameof(AreaAttribute)} attribute.");

@@ -27,6 +27,20 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
+        public VerificationStep Confirm(string that, bool actual, Action<bool> assertionMethod)
+        {            
+            assertionMethod.Invoke(actual);
+            Actions.Add("Confirm that:" + "\r" + that);
+            return this;
+        }
+
+        public VerificationStep And(string that, bool actual, Action<bool> assertionMethod)
+        {
+            assertionMethod.Invoke(actual);
+            Actions[Actions.Count - 1] = Actions[Actions.Count - 1] + "\r" + that;
+            return this;
+        }
+
         public VerificationStep Confirm<T>(string that, T actual, Action<T, T> assertionMethod, T expected)
         {
             assertionMethod.Invoke(expected, actual);
@@ -81,10 +95,60 @@ namespace CoatHanger.Core.Step
             );
         }
 
+        /// <summary>
+        /// Assoicates JPEG screenshot as evidence to the current step at the specified timestamp. 
+        /// </summary>
+        public void AddEvidence(string fileName, DateTime timestamp, EvidenceType evidenceType)
+        {
+            Evidences.Add
+            (
+                new Evidence()
+                {
+                    FileName = fileName,
+                    TimeStamp = timestamp,
+                    EvidenceType = evidenceType
+                }
+            );
+        }
+
         public List<string> GetActionStep()
         {
             return Actions;
         }
 
+
+        /// <summary>
+        /// Observations are not output into the documentation. 
+        /// This allow you to have additional Asserts that normally you wouldn't want to include
+        /// in the test case. Example: you would want to document the present of a success message , but 
+        /// not document that error, warning or other error messages are present. These are "implicit" if you
+        /// were run the test case manually. However automated testing might need more clues. 
+        public VerificationStep Observe(string that, Action observation)
+        {
+            try
+            {
+                observation.Invoke();
+            }
+            catch (Exception ex)
+            {
+                new ObservationException(that, ex);
+            }
+
+            return this;
+        }
     }
+
+    public class ObservationException : Exception
+    {
+        public ObservationException(string message) : base(message)
+        {
+
+        }
+
+        public ObservationException(string message, Exception innerException) : base(message, innerException)
+        {
+
+        }
+    }
+
 }

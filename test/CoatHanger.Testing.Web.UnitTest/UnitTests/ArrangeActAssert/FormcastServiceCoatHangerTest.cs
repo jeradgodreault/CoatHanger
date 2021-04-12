@@ -39,12 +39,13 @@ namespace CoatHanger.Testing.Web.UnitTest
         {
             CoatHangerManager.CoatHangerService.AddTestCase
             (
-                assembly: Assembly.GetExecutingAssembly(), 
-                testContext: TestContext,
+                assembly: Assembly.GetExecutingAssembly(),
+                testResultOutcome: (TestResultOutcome)TestContext.CurrentTestOutcome,
                 testProcedure: TestProcedure
             );
         }
 
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier: "A.99", 
@@ -87,6 +88,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier: "A.1.1",
@@ -127,6 +129,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier:"A.3", 
@@ -168,7 +171,8 @@ namespace CoatHanger.Testing.Web.UnitTest
                 , to: "Cool"
             );
         }
- 
+
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier: "A.4", 
@@ -210,7 +214,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
-
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier: "A.5", 
@@ -253,7 +257,7 @@ namespace CoatHanger.Testing.Web.UnitTest
  
         }
 
-
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier: "A.6", 
@@ -296,6 +300,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier: "A.7", 
@@ -338,6 +343,7 @@ namespace CoatHanger.Testing.Web.UnitTest
 
         }
 
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier: "A.8",
@@ -379,6 +385,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
+        [TestMethod]
         [CoatHanger.TestCase
         (
             identifier: "A.9", 
@@ -420,7 +427,8 @@ namespace CoatHanger.Testing.Web.UnitTest
             );
         }
 
-       [CoatHanger.TestCase
+        [TestMethod]
+        [CoatHanger.TestCase
        (
            manualTest: true,
            identifier: "A.10",
@@ -462,6 +470,7 @@ namespace CoatHanger.Testing.Web.UnitTest
             Inconclusive("Manual Test Case - not yet automated");
         }
 
+        [TestMethod]
         [CoatHanger.TestCase
         (
             manualTest: true,

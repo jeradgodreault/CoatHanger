@@ -50,7 +50,7 @@ namespace CoatHanger.Core
             foreach (var testCase in feature.Functions
                 .Where(ts => ts.Scenarios.Count > 0)
                 .SelectMany(ts => ts.Scenarios)
-                .SelectMany(ts=> ts.TestCases)
+                .SelectMany(ts => ts.TestCases)
             )
             {
                 var requirements = testCase.TestSteps
@@ -90,7 +90,7 @@ namespace CoatHanger.Core
                     })
                     .ToList();
             }
-          
+
 
             return matrix;
         }

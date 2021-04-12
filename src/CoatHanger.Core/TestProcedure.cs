@@ -2,7 +2,6 @@
 using CoatHanger.Core.Style;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -18,6 +17,8 @@ namespace CoatHanger.Core
         private int CurrentExpectedResultStepNumber { get; set; } = 1;
         public TestCaseAttribute TestCase { get; private set; }
         internal MethodBase TestMethod { get; set; }
+        public List<Attachment> TestAttachments { get; private set; } = new List<Attachment>();
+        public List<Attachment> RequirementAttachments { get; private set; } = new List<Attachment>();
 
         public DateTime TestExecutionStartDateTime { get; private set; }
 
@@ -36,7 +37,7 @@ namespace CoatHanger.Core
                     , [CallerLineNumber] int sourceLineNumber = 0)
         {
             if (!IsStarted)
-            {               
+            {
                 IsStarted = true;
 
                 var testCaseAttribute = (TestCaseAttribute)Attribute.GetCustomAttribute(currentMethod, typeof(TestCaseAttribute));
@@ -49,7 +50,7 @@ namespace CoatHanger.Core
                 TestCase = testCaseAttribute;
                 TestMethod = currentMethod;
                 TestExecutionStartDateTime = DateTime.Now;
-            } 
+            }
             else
             {
                 throw new InvalidOperationException("A test procedure can only be called once.");
@@ -61,7 +62,7 @@ namespace CoatHanger.Core
         /// </summary>
         public void Finish([CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         {
-            
+
         }
 
         public void AddSharedStep(List<string> actions)
@@ -79,7 +80,7 @@ namespace CoatHanger.Core
             Steps.Add(new TestStep()
             {
                 IsSharedStep = true,
-                Actions = actions,                
+                Actions = actions,
                 Evidences = evidences,
                 StepNumber = CurrentStepNumber
             });
@@ -97,13 +98,13 @@ namespace CoatHanger.Core
             {
                 IsSharedStep = false,
                 Actions = new List<string> { "*** Take a screenshot" },
-                Evidences = new List<Evidence>() 
-                { 
+                Evidences = new List<Evidence>()
+                {
                     new Evidence()
                     {
                         EvidenceType = EvidenceType.JPEG_IMAGE,
                         FileName = fileName,
-                        TimeStamp = DateTime.Now                        
+                        TimeStamp = DateTime.Now
                     }
                 },
                 StepNumber = CurrentStepNumber
@@ -112,7 +113,7 @@ namespace CoatHanger.Core
             CurrentStepNumber++;
         }
 
-        
+
 
         public void AddSharedStep(Func<SharedStep> by)
         {
@@ -148,7 +149,7 @@ namespace CoatHanger.Core
             {
                 StepNumber = CurrentStepNumber++,
                 Actions = new List<string> { action },
-                Evidences = new List<Evidence>(),                
+                Evidences = new List<Evidence>(),
                 IsSharedStep = false
             });
         }
@@ -215,6 +216,22 @@ namespace CoatHanger.Core
 
             CurrentStepNumber++;
             CurrentExpectedResultStepNumber++;
+        }
+
+        public void AddAttachment(string fileName)
+        {
+            AddTestAttachment(fileName);
+            AddRequirementAttachment(fileName);
+        }
+
+        public void AddTestAttachment(string fileName)
+        {
+
+        }
+
+        public void AddRequirementAttachment(string fileName)
+        {
+            
         }
     }
 }

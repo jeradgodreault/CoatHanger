@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CoatHanger.Core.Enums
+﻿namespace CoatHanger.Core.Enums
 {
     public enum TestingStyle
     {

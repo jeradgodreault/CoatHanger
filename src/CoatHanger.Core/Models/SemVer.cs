@@ -35,7 +35,7 @@
             long patchRank = _patch * 10000;
             long betaRank = (_beta ?? 0) * 100;
             long alphaRank = (_alpha ?? 0);
-            
+
             return majorRank + minorRank + patchRank + alphaRank + betaRank;
         }
 

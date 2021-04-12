@@ -1,16 +1,12 @@
 ﻿using CoatHanger.Core.Configuration;
+using CoatHanger.Core.Enums;
 using CoatHanger.Core.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using YamlDotNet.Core;
 using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.EventEmitters;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace CoatHanger.Core
@@ -19,9 +15,12 @@ namespace CoatHanger.Core
     {
         private Product Product { get; set; }
         private Assembly Assembly { get; set; }
-        
-        public IAuthorFormatter AuthorFormatter { get; set; } = new DefaultAuthorFormatter();
-        public IReleaseVersionFormatter ReleaseVersionFormatter { get; set; } = new DefaultReleaseVersionFormatter();
+
+        public IAuthorFormatter AuthorFormatter { get; internal set; } = new DefaultAuthorFormatter();
+        public IReleaseVersionFormatter ReleaseVersionFormatter { get; internal set; } = new DefaultReleaseVersionFormatter();
+        public string EvidencePath { get; internal set; } = ".";
+        public string AttachmentPath { get; internal set; } = ".";
+
         public CoatHangerService(ProductArea product)
         {
             Product = new Product()
@@ -35,9 +34,9 @@ namespace CoatHanger.Core
         public CoatHangerService(Product product)
         {
             Product = product;
-        }         
+        }
 
-        public void AddTestCase(Assembly assembly, TestContext testContext, TestProcedure testProcedure)
+        public void AddTestCase(Assembly assembly, TestResultOutcome testResultOutcome, TestProcedure testProcedure)
         {
             // People might mix & match with coathanger test and normal unit test.
             // so if the documentation procedure was never started... just skip it and continue.
@@ -46,9 +45,9 @@ namespace CoatHanger.Core
                 Assembly = assembly;
                 // TODO: Incomplete. Need to map every attribute. 
 
-                var classType = assembly.GetType(testContext.FullyQualifiedTestClassName);
-                var unitTestMethod = testProcedure.TestMethod;
-            
+                var classType = testProcedure.TestMethod.DeclaringType;
+                var unitTestMethod = testProcedure.TestMethod;                
+
                 //Class Only attributes 
                 var functionAttribute = (AreaAttribute)Attribute.GetCustomAttribute(classType, typeof(AreaAttribute));
 
@@ -72,8 +71,8 @@ namespace CoatHanger.Core
                     TestCase testCase = new TestCase()
                     {
                         TestCaseID = testCaseAttribute.Identifier,
-                        Title = testCaseAttribute.DisplayName,
-                        Description = testCaseAttribute.Title,
+                        Title = testCaseAttribute.Title,
+                        Description = testCaseAttribute.Description,
                         TestSteps = testProcedure.Steps,
                         TestingCategory = testCaseAttribute.Category,
                         TestingStyle = testCaseAttribute.Style
@@ -98,7 +97,7 @@ namespace CoatHanger.Core
                     // TODO: Add a paramaters to exclude this step. 
                     testCase.TestExecution = new TestExecution()
                     {
-                        IsCompleted = (testContext.CurrentTestOutcome == UnitTestOutcome.Passed),
+                        IsCompleted = testResultOutcome == TestResultOutcome.Passed,
                         ExecuteStartDate = testProcedure.TestExecutionStartDateTime.ToString("s"),
                         // Adding 1 second delay so that End is always ahead of Start. 
                         // Some unit test run faster than reasonable date format will allow.
@@ -118,11 +117,11 @@ namespace CoatHanger.Core
                             .Select(ts => new Requirement()
                             {
                                 RequirementID = ts.ExpectedOutcome.RequirementID,
-                                Title = ts.ExpectedOutcome.ExpectedResult,                            
+                                Title = ts.ExpectedOutcome.ExpectedResult,
                             })
                             .ToList(),
                     };
-                
+
                     function.Scenarios.Add(scenario);
                 }
             }
@@ -179,9 +178,9 @@ namespace CoatHanger.Core
 
             Product.Features.Sort((x, y) => x.FeatureID.CompareTo(y.FeatureID));
 
-            foreach(var feature in Product.Features)
+            foreach (var feature in Product.Features)
             {
-                foreach(var function in feature.Functions)
+                foreach (var function in feature.Functions)
                 {
                     function.Scenarios.Sort((x, y) => x.ScenarioID.CompareTo(y.ScenarioID));
                 }
@@ -196,7 +195,7 @@ namespace CoatHanger.Core
                     .WithNamingConvention(PascalCaseNamingConvention.Instance)
                     .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
                     .Build();
-                
+
                 serializer.Serialize(file, Product);
             }
         }
@@ -205,6 +204,9 @@ namespace CoatHanger.Core
     public class CoatHangerServiceBuilder
     {
         Product Product { get; set; }
+        private string DocumentationResourcePath { get; set; } = ".";
+        private IAuthorFormatter AuthorFormatter { get; set; } = new DefaultAuthorFormatter();
+        private IReleaseVersionFormatter ReleaseVersionFormatter { get; set; } = new DefaultReleaseVersionFormatter();
 
         public CoatHangerServiceBuilder(ProductArea product)
         {
@@ -216,11 +218,34 @@ namespace CoatHanger.Core
             };
         }
 
+        public CoatHangerServiceBuilder SetResourcePath(string path)
+        {
+            DocumentationResourcePath = path;
+            return this;
+        }
+
+        public CoatHangerServiceBuilder WithAuthorFormatter(IAuthorFormatter authorFormatter)
+        {
+            AuthorFormatter = authorFormatter;
+            return this;
+        }
+
+        public CoatHangerServiceBuilder WithReleaseVersionFormatter(IReleaseVersionFormatter releaseVersionFormatter)
+        {
+            ReleaseVersionFormatter = releaseVersionFormatter;
+            return this;
+        }
+
         public CoatHangerService Build()
         {
             CoatHangerService service = new CoatHangerService(Product);
+            service.AuthorFormatter = AuthorFormatter;
+            service.ReleaseVersionFormatter = ReleaseVersionFormatter;
+            service.AttachmentPath = $"{DocumentationResourcePath}/Attachments";
+            service.EvidencePath = $"{DocumentationResourcePath}/Evidences"; ;
 
             return service;
         }
+
     }
 }

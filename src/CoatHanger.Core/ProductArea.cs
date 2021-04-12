@@ -22,7 +22,7 @@
     {
         public abstract string ID { get; }
         public abstract string Title { get; }
-        public abstract string Summary { get; }        
+        public abstract string Summary { get; }
         public abstract T Parent { get; }
         public virtual IAreaPath ParentArea => (IAreaPath)Parent;
         public virtual ITheme Theme => new NoTheme();
@@ -47,7 +47,7 @@
     {
         public abstract string ID { get; }
         public abstract string Title { get; }
-        public abstract string Summary { get; }        
+        public abstract string Summary { get; }
         public abstract T Parent { get; }
         public virtual ITheme Theme => new NoTheme();
         public virtual IAreaPath ParentArea => (IAreaPath)Parent;

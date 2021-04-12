@@ -10,7 +10,7 @@ namespace CoatHanger.Core.Models
     public class FeatureDTO
     {
         public string FeatureID { get; set; }
-        public string FeatureTitle { get; set; }        
+        public string FeatureTitle { get; set; }
     }
 
     public class FunctionDTO
@@ -44,7 +44,7 @@ namespace CoatHanger.Core.Models
 
     public class RequirementMatrixResultDTO
     {
-        public RequirementDTO Requirement { get; set; } 
+        public RequirementDTO Requirement { get; set; }
         public bool IsTraceable { get; set; }
     }
 }

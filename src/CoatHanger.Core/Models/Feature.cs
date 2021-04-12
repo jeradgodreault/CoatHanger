@@ -81,19 +81,19 @@ namespace CoatHanger.Core.Models
         public List<string> RegressionReleases { get; set; }
 
         public List<string> WorkItems { get; set; }
-        
+
         public Author Author { get; set; }
 
         public List<TestStep> TestSteps { get; set; }
 
         public TestExecution TestExecution { get; set; }
-        
+
         [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
-        public bool IsAutomated { get; set; } = true; 
+        public bool IsAutomated { get; set; } = true;
 
         public TestStatus TestStatus { get; set; }
     }
-    
+
     public enum TestStatus
     {
         Failed = 0,
@@ -107,7 +107,7 @@ namespace CoatHanger.Core.Models
         public string ReleaseID { get; set; }
 
         public string Title { get; set; }
-        
+
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Description { get; set; }
     }
@@ -132,9 +132,9 @@ namespace CoatHanger.Core.Models
     {
         public int StepNumber { get; set; }
 
-        [YamlMember(ScalarStyle = ScalarStyle.Literal)]        
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public List<string> Actions { get; set; }
-        
+
         public ExpectedOutcome ExpectedOutcome { get; set; }
 
         [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
@@ -150,7 +150,7 @@ namespace CoatHanger.Core.Models
         public string FileName { get; set; }
         public EvidenceType EvidenceType { get; set; }
         public DateTime TimeStamp { get; set; }
-    } 
+    }
 
     public enum EvidenceType
     {
@@ -169,7 +169,7 @@ namespace CoatHanger.Core.Models
         /// If requirement id is not provided manually, it will follow the convention of `REQ {TestCaseID}.{ExpectedResultStepNumber}`
         /// </summary>
         public string RequirementID { get; set; }
-        
+
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string ExpectedResult { get; set; }
     }

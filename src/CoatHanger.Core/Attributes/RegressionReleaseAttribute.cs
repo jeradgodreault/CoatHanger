@@ -23,7 +23,7 @@ namespace CoatHanger
             // null guards.
             if (regressionReleaseHistory == null || regressionReleaseHistory.Length == 0)
             {
-                throw new ArgumentNullException($"The {nameof(regressionReleaseHistory)} variable cannot be null for the {nameof(ReleaseAttribute)}"); 
+                throw new ArgumentNullException($"The {nameof(regressionReleaseHistory)} variable cannot be null for the {nameof(ReleaseAttribute)}");
             }
 
             RegressionReleaseVersions.AddRange(regressionReleaseHistory);
@@ -41,7 +41,7 @@ namespace CoatHanger
             // null guards.
             if (regressionReleaseHistory == null || regressionReleaseHistory.Length == 0)
             {
-                throw new ArgumentNullException($"The {nameof(regressionReleaseHistory)} variable cannot be null for the {nameof(ReleaseAttribute)}"); 
+                throw new ArgumentNullException($"The {nameof(regressionReleaseHistory)} variable cannot be null for the {nameof(ReleaseAttribute)}");
             }
 
             RegressionReleaseVersions = regressionReleaseHistory

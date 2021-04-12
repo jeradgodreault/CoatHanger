@@ -19,7 +19,7 @@ namespace CoatHanger.Core
             // Fetch the templates htmls.
             var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            string layoutFilePath = Path.Combine(assemblyPath, @"Template\_layout.html");            
+            string layoutFilePath = Path.Combine(assemblyPath, @"Template\_layout.html");
             string traceabilityMatrixFilePath = Path.Combine(assemblyPath, @"Template\TraceabilityMatrixTableReport.html");
 
             // TODO Cache templates.
@@ -41,8 +41,8 @@ namespace CoatHanger.Core
             matrix.Requirements = new List<RequirementDTO>();
             matrix.TestCases = new List<TestCaseDTO>();
 
-            foreach(var testCase in product.Features
-                .SelectMany(f=> f.Functions)
+            foreach (var testCase in product.Features
+                .SelectMany(f => f.Functions)
                 .Where(ts => ts.Scenarios.Count > 0)
                 .SelectMany(ts => ts.Scenarios)
                 .SelectMany(ts => ts.TestCases)
@@ -62,7 +62,7 @@ namespace CoatHanger.Core
                 var testCaseDto = new TestCaseDTO()
                 {
                     TestCaseID = testCase.TestCaseID,
-                    TestCaseDescription = testCase.Description,                    
+                    TestCaseDescription = testCase.Description,
                     TraceableRequirements = requirements,
                     TraceableRequirementCount = requirements.Count
                 };
@@ -77,7 +77,7 @@ namespace CoatHanger.Core
                 matrix.TestCases.Add(testCaseDto);
             }
 
-            foreach(var testcase in matrix.TestCases)
+            foreach (var testcase in matrix.TestCases)
             {
                 testcase.RequirementMatrix = matrix.Requirements
                     .Select(r => new RequirementMatrixResultDTO()
@@ -110,7 +110,7 @@ namespace CoatHanger.Core
                     }
                     result += "</div>";
                 }
-             }
+            }
 
             return result;
         }

@@ -1,8 +1,6 @@
 ﻿using CoatHanger.Core.Style;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CoatHanger.Core.Step
 {
@@ -20,10 +18,10 @@ namespace CoatHanger.Core.Step
             Then,
             Unknown
         }
-        
+
         public GivenWhenThenProcedure()
         {
-            
+
         }
 
         public void Background(string that)
@@ -243,8 +241,8 @@ namespace CoatHanger.Core.Step
             }
 
             output = finalOutput;
-            
-            return result; 
+
+            return result;
         }
 
         #endregion (thatFormat, value, input)
@@ -253,8 +251,8 @@ namespace CoatHanger.Core.Step
 
         public GivenWhenThenProcedure GivenTemplate<T>(string template, T input)
         {
-            var thatTemplate = Nustache.Core.Render.StringToString((Givens.Count == 0) 
-                ? template.ToGivenFormat() 
+            var thatTemplate = Nustache.Core.Render.StringToString((Givens.Count == 0)
+                ? template.ToGivenFormat()
                 : template.ToAndFormat(), input);
 
             Givens.Add(template);
@@ -267,8 +265,8 @@ namespace CoatHanger.Core.Step
 
         public GivenWhenThenProcedure WhenTemplate<T>(string template, T input)
         {
-            var thatTemplate = Nustache.Core.Render.StringToString((Whens.Count == 0) 
-                ? template.ToWhenFormat() 
+            var thatTemplate = Nustache.Core.Render.StringToString((Whens.Count == 0)
+                ? template.ToWhenFormat()
                 : template.ToAndFormat(), input);
 
             Whens.Add(template);
@@ -280,8 +278,8 @@ namespace CoatHanger.Core.Step
         }
 
         public GivenWhenThenProcedure ThenTemplate<T>(string template, T input)
-        {            
-            var thatTemplate = Nustache.Core.Render.StringToString((Thens.Count == 0) 
+        {
+            var thatTemplate = Nustache.Core.Render.StringToString((Thens.Count == 0)
                 ? template.ToThenFormat()
                 : template.ToAndFormat(), input);
 
@@ -454,7 +452,7 @@ namespace CoatHanger.Core.Step
 
             var verification = ToVerify.Invoke(new VerificationStep());
             base.AddStep(verification.GetActionStep().ToArray(), expectOutcome);
-            
+
             Thens.Add(that);
             LastAction = GivenWhenThenAction.Then;
 
@@ -462,7 +460,7 @@ namespace CoatHanger.Core.Step
         }
 
         public GivenWhenThenProcedure And(string that, Func<VerificationStep, VerificationStep> ToVerify)
-        {            
+        {
             return Then(that, ToVerify);
         }
 

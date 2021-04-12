@@ -77,7 +77,7 @@
     /// NON-FUNCTIONAL REQUIREMENT (NFR) specifies the quality attribute of a software system. 
     /// They judge the software system based on constraints that are critical to the success of the software system. 
     /// </summary>
-    public enum NonFunctionalRequirement  
+    public enum NonFunctionalRequirement
     {
         /// <summary>
         /// System performance defines how fast a system can respond to a particular user’s action 
