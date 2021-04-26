@@ -41,6 +41,35 @@ namespace CoatHanger.Core.Models
         public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
     }
 
+
+    public class GherkinScenario
+    {
+        public int ScenarioID { get; set; }
+        public List<string> Givens { get; set; } = new List<string>();
+        public List<string> Whens { get; set; } = new List<string>();
+        public List<string> Thens { get; set; } = new List<string>();
+
+        public Dictionary<string, List<string>> Example { get; set; }
+    }
+
+    public class GherkinExample
+    {
+        public List<GherkinColumn> Columns { get; set; }
+        public Tuple<GherkinColumn, List<GherkinRow>> Rows { get; set; }
+    }
+
+    public class GherkinColumn
+    {
+        public string ColumnName { get; set; }
+        public string DisplayText { get; set; }
+    }
+
+    public class GherkinRow
+    {
+        public string ColumnName { get; set; }
+        public string Value { get; set; }
+    }
+
     public class Scenario
     {
         public string ScenarioID { get; set; }

@@ -91,7 +91,6 @@ namespace CoatHanger.Core
         /// <summary>
         /// Creates a "Take a screenshot" step that assoicate with a Jpeg screenshot.
         /// </summary>
-        /// <param name="fileName"></param>
         public void AddScreenshotStep(string fileName)
         {
             Steps.Add(new TestStep()
@@ -112,8 +111,6 @@ namespace CoatHanger.Core
 
             CurrentStepNumber++;
         }
-
-
 
         public void AddSharedStep(Func<SharedStep> by)
         {
@@ -169,6 +166,18 @@ namespace CoatHanger.Core
         {
             by.Invoke();
             AddStep(action);
+        }
+
+        public void AddStep<T>(string action, Func<T> by, out T result)
+        {
+            AddStep(action);
+            result = by.Invoke();
+        }
+
+        public void AddStep<T>(string action, T input, out T result)
+        {
+            AddStep(action);
+            result = input;
         }
 
         public void AddStep(string[] actions, ExpectedOutcome expectedOutcome)

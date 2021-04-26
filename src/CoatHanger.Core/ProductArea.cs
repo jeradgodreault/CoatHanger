@@ -90,4 +90,44 @@
 
         public string Summary => "";
     }
+
+
+    /// <summary>
+    /// They’re statements that describe how you must carry out 
+    /// certain operations and if there is some limit that you need to apply.
+    /// 
+    /// They guide behaviors and define what, where, when, why and how 
+    /// something should be done in a company.
+    /// </summary>
+    public abstract class Rule
+    {
+        public string ID { get; set; }
+        public string Title { get; set; }
+        public string Summary { get; set; }
+    }
+
+
+
+
+    public enum BuisnessRule
+    {
+        /// <summary>
+        /// Constraint rules specify policies or conditions that restrict object structure and behavior. 
+        /// </summary>
+        Constraint,
+
+        /// <summary>
+        /// Inference rules specify that if certain facts are true, 
+        /// a conclusion can be inferred. 
+        /// </summary>
+        Inference,
+
+        /// <summary>
+        /// Computation rules derive their results by way of processing algorithms, 
+        /// a more sophisticated variant of inference rules. 
+        /// </summary>
+        Computation
+    }
+
 }
+
