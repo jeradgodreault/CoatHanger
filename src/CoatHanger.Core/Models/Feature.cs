@@ -38,18 +38,18 @@ namespace CoatHanger.Core.Models
         public string FunctionID { get; set; }
         public string Title { get; set; }
         public string Summary { get; set; }
-        public List<Scenario> Scenarios { get; set; } = new List<Scenario>();
+        public List<GherkinScenario> Scenarios { get; set; } = new List<GherkinScenario>();
+        public List<TestCase> TestCases { get; set; } = new List<TestCase>();
     }
-
 
     public class GherkinScenario
     {
-        public int ScenarioID { get; set; }
+        public string ScenarioID { get; set; }
         public List<string> Givens { get; set; } = new List<string>();
         public List<string> Whens { get; set; } = new List<string>();
         public List<string> Thens { get; set; } = new List<string>();
-
         public Dictionary<string, List<string>> Example { get; set; }
+        public List<BusinessRuleDTO> BusinessRules { get; set; } = new List<BusinessRuleDTO>();
     }
 
     public class GherkinExample
@@ -74,8 +74,6 @@ namespace CoatHanger.Core.Models
     {
         public string ScenarioID { get; set; }
         public string Title { get; set; }
-        public List<Requirement> Requirements { get; set; }
-        public List<TestCase> TestCases { get; set; }
         public string CurrentVersion { get; set; }
         public string CreatedRelease { get; set; }
     }
@@ -86,9 +84,18 @@ namespace CoatHanger.Core.Models
         public string Title { get; set; }
     }
 
+    public class BusinessRuleDTO
+    {
+        public string BusinessRuleID { get; set; }
+        public string Title { get; set; }
+        public string ParentID { get; set; }
+    }
+
     public class TestCase
     {
         public string TestCaseID { get; set; }
+
+        public List<PrerequisiteStep> PrerequisiteSteps { get; set; }
 
         /// <summary>
         /// This field contains a short describes of the scenario of the test case

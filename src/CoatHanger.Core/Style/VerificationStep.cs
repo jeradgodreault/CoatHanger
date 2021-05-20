@@ -8,6 +8,7 @@ namespace CoatHanger.Core.Step
     {
         private List<string> Actions = new List<string>();
         private List<Evidence> Evidences = new List<Evidence>();
+        private List<BusinessRule> BusinessRules = new List<BusinessRule>();
 
         public VerificationStep Statement(string statement)
         {
@@ -34,11 +35,23 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
+        public VerificationStep Confirm(BusinessRule businessRule, bool actual, Action<bool> assertionMethod)
+        {
+            BusinessRules.Add(businessRule);
+            return Confirm($"BR.{businessRule.ID} - {businessRule.Title}", actual, assertionMethod);
+        }
+
         public VerificationStep And(string that, bool actual, Action<bool> assertionMethod)
         {
             assertionMethod.Invoke(actual);
             Actions[Actions.Count - 1] = Actions[Actions.Count - 1] + "\r" + that;
             return this;
+        }
+
+        public VerificationStep Confirm<T>(BusinessRule businessRule, T actual, Action<T, T> assertionMethod, T expected)
+        {
+            BusinessRules.Add(businessRule);
+            return Confirm($"BR.{businessRule.ID} - {businessRule.Title}", actual, assertionMethod, expected);
         }
 
         public VerificationStep Confirm<T>(string that, T actual, Action<T, T> assertionMethod, T expected)
@@ -56,6 +69,12 @@ namespace CoatHanger.Core.Step
             Actions[Actions.Count - 1] = Actions[Actions.Count - 1] + "\r" + that;
 
             return this;
+        }
+
+        public VerificationStep And<T>(BusinessRule businessRule, T actual, Action<T, T> assertionMethod, T expected)
+        {
+            BusinessRules.Add(businessRule);
+            return And($"BR.{businessRule.ID} - {businessRule.Title}", actual, assertionMethod, expected);
         }
 
         public void AddEvidence(Evidence evidence)

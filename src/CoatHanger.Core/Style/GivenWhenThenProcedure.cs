@@ -445,6 +445,21 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
+        public GivenWhenThenProcedure Then(BusinessRule businessRule
+            , Func<VerificationStep, VerificationStep> ToVerify)
+        {
+            var that = $"BR.{businessRule.ID} - {businessRule.Title}";
+            BusinessRules.Add(businessRule);
+
+            return Then(that, ToVerify);
+        }
+
+        public GivenWhenThenProcedure And(BusinessRule businessRule
+            , Func<VerificationStep, VerificationStep> ToVerify)
+        {
+            return Then(businessRule, ToVerify);
+        }
+
         public GivenWhenThenProcedure Then(string that, Func<VerificationStep, VerificationStep> ToVerify)
         {
             that = that.ToThenFormat();

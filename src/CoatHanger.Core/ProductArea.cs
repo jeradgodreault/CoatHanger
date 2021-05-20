@@ -99,17 +99,17 @@
     /// They guide behaviors and define what, where, when, why and how 
     /// something should be done in a company.
     /// </summary>
-    public abstract class Rule
+    public abstract class BusinessRule
     {
         public string ID { get; set; }
         public string Title { get; set; }
         public string Summary { get; set; }
+        public abstract RuleType RuleType { get; set; }
+        public abstract BusinessRule Parent { get; set; }
     }
 
 
-
-
-    public enum BuisnessRule
+    public enum RuleType
     {
         /// <summary>
         /// Constraint rules specify policies or conditions that restrict object structure and behavior. 
@@ -126,8 +126,13 @@
         /// Computation rules derive their results by way of processing algorithms, 
         /// a more sophisticated variant of inference rules. 
         /// </summary>
-        Computation
+        Computation,
+
+        /// <summary>
+        /// A decision rule is used when a subject needs to be evaluated and assigned the next step. 
+        /// (e.g. approved, rejected, sent back for more information).
+        /// </summary>
+        Decision
     }
 
 }
-

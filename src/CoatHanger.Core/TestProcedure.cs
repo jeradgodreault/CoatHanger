@@ -19,6 +19,7 @@ namespace CoatHanger.Core
         internal MethodBase TestMethod { get; set; }
         public List<Attachment> TestAttachments { get; private set; } = new List<Attachment>();
         public List<Attachment> RequirementAttachments { get; private set; } = new List<Attachment>();
+        public List<BusinessRule> BusinessRules { get; private set; } = new List<BusinessRule>();
 
         public DateTime TestExecutionStartDateTime { get; private set; }
 

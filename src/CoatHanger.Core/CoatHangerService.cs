@@ -1,6 +1,7 @@
 ﻿using CoatHanger.Core.Configuration;
 using CoatHanger.Core.Enums;
 using CoatHanger.Core.Models;
+using CoatHanger.Core.Step;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,7 +76,8 @@ namespace CoatHanger.Core
                         Description = testCaseAttribute.Description,
                         TestSteps = testProcedure.Steps,
                         TestingCategory = testCaseAttribute.Category,
-                        TestingStyle = testCaseAttribute.Style
+                        TestingStyle = testCaseAttribute.Style,
+                        PrerequisiteSteps = testProcedure.PrerequisiteSteps
                     };
 
                     if (testDesignerAttribute != null)
@@ -104,25 +106,27 @@ namespace CoatHanger.Core
                         ExecuteEndDate = DateTime.Now.AddSeconds(1).ToString("s")
                     };
 
-                    var scenario = new Scenario()
+                    if (testProcedure is GivenWhenThenProcedure gwt)
                     {
-                        ScenarioID = testCase.TestCaseID,
-                        Title = testCase.Title,
-                        CurrentVersion = releaseAttribute.LastestRelease,
-                        CreatedRelease = releaseAttribute.CreatedRelease,
-                        TestCases = new List<TestCase>() { testCase },
+                        var scenario = new GherkinScenario()
+                        {
+                            ScenarioID = testCase.TestCaseID,
+                            Givens = gwt.Givens,
+                            Whens = gwt.Whens,
+                            Thens = gwt.Thens,
+                            // We have to transform it due to hierarchy.
+                            BusinessRules = gwt.BusinessRules
+                                .Select(br => new BusinessRuleDTO()
+                                {
+                                    BusinessRuleID = br.ID,
+                                    Title = br.Title,
+                                    ParentID = br?.Parent?.ID
+                                })
+                                .ToList()
+                        };
 
-                        Requirements = testCase.TestSteps
-                            .Where(ts => ts.ExpectedOutcome != null)
-                            .Select(ts => new Requirement()
-                            {
-                                RequirementID = ts.ExpectedOutcome.RequirementID,
-                                Title = ts.ExpectedOutcome.ExpectedResult,
-                            })
-                            .ToList(),
-                    };
-
-                    function.Scenarios.Add(scenario);
+                        function.Scenarios.Add(scenario);
+                    }
                 }
             }
         }
