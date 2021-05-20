@@ -497,5 +497,74 @@ namespace CoatHanger.Testing.Web.UnitTest
 
             Inconclusive("Manual Test Case - not yet automated");
         }
+
+
+        [TestMethod]
+        [CoatHanger.TestCase
+        (
+            identifier: "A.11",
+            title: "When the temperature is greater than 30 degree celcius",
+            description: "This test case verifies the **scorching** temperature label is being calculated correctly."
+        )]
+        [CoatHanger.TestDesigner("smithj")]
+        [CoatHanger.Release("1.0.0")]
+        [CoatHanger.Requirement(FunctionalRequirement.BusinessRule)]
+        public void WhenTemperatureGreaterThanThirty_ExpectBusinessRule()
+        {
+            TestProcedure.Start(MethodBase.GetCurrentMethod());
+
+            FormcastService service = new FormcastService();
+
+            // given            
+            TestProcedure.Given(thatFormat: "the temperature is {0} degree celcius", input: 31, out var temperature);
+
+            // when 
+            TestProcedure.When
+            (
+                that: "getting the temperature summary",
+                by: () => service.GetTemperatureSummary(temperature),
+                out var result
+            );
+
+            // THEN
+            TestProcedure.Then(
+                businessRule: new ScorchingBusinessRule(), 
+                ToVerify: (step) =>
+            {
+                step.Statement("Examine the results")
+                .Confirm(that: "The value is Scorching", actual: result, assertionMethod: Assert.AreEqual, expected: "Scorching")
+                .Confirm(businessRule: new NotEmptyBusinessRule(), actual: result != "", assertionMethod: Assert.AreEqual, expected: true)
+                ;
+                return step;
+            });
+        }
+
+        public class ScorchingBusinessRule : BusinessRule
+        {
+            public override string ID { get => "A.02"; }
+            public override string Title { get => "The system shall output temperature of Scorching when temperature is >= 30";  }
+            public override string Summary { get => ""; }
+            public override RuleType RuleType { get => RuleType.Computation; }
+            public override BusinessRule Parent { get => null; }
+        }
+
+        public class NotEmptyBusinessRule : BusinessRule
+        {
+            public override string ID { get => "A.04"; }
+            public override string Title { get => "The system shall return a value"; }
+            public override string Summary { get => ""; }
+            public override RuleType RuleType { get => RuleType.Decision; }
+            public override BusinessRule Parent { get => new NoNullBusinessRule(); }
+        }
+
+        public class NoNullBusinessRule : BusinessRule
+        {
+            public override string ID { get => "A.06"; }
+            public override string Title { get => "The system shall not return null"; }
+            public override string Summary { get => ""; }
+            public override RuleType RuleType { get => RuleType.Decision; }
+            public override BusinessRule Parent { get => null; }
+        }
+
     }
 }

@@ -448,7 +448,7 @@ namespace CoatHanger.Core.Step
         public GivenWhenThenProcedure Then(BusinessRule businessRule
             , Func<VerificationStep, VerificationStep> ToVerify)
         {
-            var that = $"BR.{businessRule.ID} - {businessRule.Title}";
+            var that = $"{businessRule.Title}";
             BusinessRules.Add(businessRule);
 
             return Then(that, ToVerify);
@@ -467,6 +467,7 @@ namespace CoatHanger.Core.Step
 
             var verification = ToVerify.Invoke(new VerificationStep());
             base.AddStep(verification.GetActionStep().ToArray(), expectOutcome);
+            base.BusinessRules.AddRange(verification.GetBusinessRules());
 
             Thens.Add(that);
             LastAction = GivenWhenThenAction.Then;

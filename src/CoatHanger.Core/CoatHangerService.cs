@@ -106,6 +106,10 @@ namespace CoatHanger.Core
                         ExecuteEndDate = DateTime.Now.AddSeconds(1).ToString("s")
                     };
 
+                    testCase.TestStatus = testResultOutcome == TestResultOutcome.Passed 
+                            ? TestStatus.Passed 
+                            : TestStatus.Failed;
+
                     if (testProcedure is GivenWhenThenProcedure gwt)
                     {
                         var scenario = new GherkinScenario()
@@ -127,6 +131,8 @@ namespace CoatHanger.Core
 
                         function.Scenarios.Add(scenario);
                     }
+
+                    function.TestCases.Add(testCase);
                 }
             }
         }

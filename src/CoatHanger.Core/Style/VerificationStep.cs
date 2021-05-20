@@ -29,7 +29,7 @@ namespace CoatHanger.Core.Step
         }
 
         public VerificationStep Confirm(string that, bool actual, Action<bool> assertionMethod)
-        {            
+        {
             assertionMethod.Invoke(actual);
             Actions.Add("Confirm that:" + "\r" + that);
             return this;
@@ -133,6 +133,11 @@ namespace CoatHanger.Core.Step
         public List<string> GetActionStep()
         {
             return Actions;
+        }
+
+        public List<BusinessRule> GetBusinessRules()
+        {
+            return BusinessRules;
         }
 
 

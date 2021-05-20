@@ -101,11 +101,11 @@
     /// </summary>
     public abstract class BusinessRule
     {
-        public string ID { get; set; }
-        public string Title { get; set; }
-        public string Summary { get; set; }
-        public abstract RuleType RuleType { get; set; }
-        public abstract BusinessRule Parent { get; set; }
+        public abstract string ID { get; }
+        public abstract string Title { get; }
+        public abstract string Summary { get;  }
+        public abstract RuleType RuleType { get; }
+        public abstract BusinessRule Parent { get; }
     }
 
 
