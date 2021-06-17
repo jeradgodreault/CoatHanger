@@ -99,15 +99,14 @@
     /// They guide behaviors and define what, where, when, why and how 
     /// something should be done in a company.
     /// </summary>
-    public abstract class BusinessRule
+    public class BusinessRule
     {
-        public abstract string ID { get; }
-        public abstract string Title { get; }
-        public abstract string Summary { get;  }
-        public abstract RuleType RuleType { get; }
-        public abstract BusinessRule Parent { get; }
+        public virtual string ID { get; set; }
+        public virtual string Title { get; set; }
+        public virtual string Summary { get; set; }
+        public virtual RuleType RuleType { get; set; }
+        public virtual BusinessRule Parent { get; set; }
     }
-
 
     public enum RuleType
     {

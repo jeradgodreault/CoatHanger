@@ -436,12 +436,15 @@ namespace CoatHanger.Core.Step
         public GivenWhenThenProcedure ThenTemplate<T>(string template, T expectedResult, Action<T> by)
         {
             var thatStatement = Nustache.Core.Render.StringToString(template.ToGivenFormat(), expectedResult);
-            Thens.Add(template);
 
             string expectOutcome = (Thens.Count == 0) ? $"Then {thatStatement}" : $"And {thatStatement}";
             base.AddStep("Confirm the expected result.", expectOutcome);
 
             by.Invoke(expectedResult);
+
+            Thens.Add(template);
+            LastAction = GivenWhenThenAction.Then;
+
             return this;
         }
 

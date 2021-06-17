@@ -16,10 +16,22 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
+        public VerificationStep Statement(BusinessRule businessRule)
+        {
+            BusinessRules.Add(businessRule);
+            return Statement($"BR.{businessRule.ID} - {businessRule.Title}");
+        }
+
         public VerificationStep Instruction(string instruction)
         {
             Actions.Add(instruction);
             return this;
+        }
+
+        public VerificationStep Instruction(BusinessRule businessRule)
+        {
+            BusinessRules.Add(businessRule);
+            return Instruction($"BR.{businessRule.ID} - {businessRule.Title}");
         }
 
         public VerificationStep Instruction(List<string> instructions)

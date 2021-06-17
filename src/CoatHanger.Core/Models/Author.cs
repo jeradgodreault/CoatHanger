@@ -6,6 +6,11 @@ namespace CoatHanger.Core.Models
     {
         public string UserName { get; set; }
 
+        public Author()
+        {
+
+        }
+
         public Author(string username)
         {
             // null guards. 
