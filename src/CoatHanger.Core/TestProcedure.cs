@@ -20,10 +20,13 @@ namespace CoatHanger.Core
         public List<Attachment> TestAttachments { get; private set; } = new List<Attachment>();
         public List<Attachment> RequirementAttachments { get; private set; } = new List<Attachment>();
         public List<BusinessRule> BusinessRules { get; private set; } = new List<BusinessRule>();
+        public HashSet<string> References { get; private set; } = new HashSet<string>();
 
         public DateTime TestExecutionStartDateTime { get; private set; }
 
         public bool IsStarted { get; private set; } = false;
+
+        public Iteration Iteration { get; private set; } = new Iteration();
 
         public TestProcedure()
         {
@@ -51,6 +54,7 @@ namespace CoatHanger.Core
                 TestCase = testCaseAttribute;
                 TestMethod = currentMethod;
                 TestExecutionStartDateTime = DateTime.Now;
+                Iteration.TestCaseID = TestCase.Identifier;
             }
             else
             {
@@ -68,7 +72,7 @@ namespace CoatHanger.Core
 
         public void AddSharedStep(List<string> actions)
         {
-            AddSharedStep(actions, new List<Evidence>());
+            AddSharedStep(actions: actions, evidence: null);
         }
 
         public void AddSharedStep(List<string> actions, Evidence evidence)
@@ -94,23 +98,42 @@ namespace CoatHanger.Core
         /// </summary>
         public void AddScreenshotStep(string fileName)
         {
-            Steps.Add(new TestStep()
+            var screenshot = new Evidence()
             {
-                IsSharedStep = false,
-                Actions = new List<string> { "*** Take a screenshot" },
-                Evidences = new List<Evidence>()
-                {
-                    new Evidence()
-                    {
-                        EvidenceType = EvidenceType.JPEG_IMAGE,
-                        FileName = fileName,
-                        TimeStamp = DateTime.Now
-                    }
-                },
-                StepNumber = CurrentStepNumber
-            });
+                EvidenceType = EvidenceType.JPEG_IMAGE,
+                FileName = fileName,
+                TimeStamp = DateTime.Now
+            };
 
-            CurrentStepNumber++;
+            if (Steps.Count == 0)
+            {
+                Steps.Add(new TestStep()
+                {
+                    IsSharedStep = false,
+                    Actions = new List<string> { "*** Take a screenshot" },
+                    Evidences = new List<Evidence>()
+                    {
+                       screenshot
+                    },
+                    StepNumber = CurrentStepNumber
+                });
+
+                CurrentStepNumber++;
+            }
+            else
+            {
+                // Append the previous step with "Take a screenshot"
+                var step = Steps[Steps.Count - 1];
+                step.Actions.Add("*** Take a screenshot");
+
+                if (step.Evidences != null)
+                {
+                    step.Evidences.Add(screenshot);
+                } else
+                {
+                    step.Evidences = new List<Evidence>() { screenshot };
+                }
+            }
         }
 
         public void AddSharedStep(Func<SharedStep> by)
@@ -141,17 +164,23 @@ namespace CoatHanger.Core
             AddStep(string.Join(Environment.NewLine, actions));
         }
 
+        /// <summary>
+        /// Adds a step to the test case. 
+        /// </summary>
         public void AddStep(string action)
         {
             Steps.Add(new TestStep()
             {
                 StepNumber = CurrentStepNumber++,
                 Actions = new List<string> { action },
-                Evidences = new List<Evidence>(),
+                Evidences = null,
                 IsSharedStep = false
             });
         }
 
+        /// <summary>
+        /// Adds a step to the test case with assoicate evidence of the execution.  
+        /// </summary>
         public void AddStep(string action, Evidence evidence)
         {
             Steps.Add(new TestStep()
@@ -163,18 +192,41 @@ namespace CoatHanger.Core
             });
         }
 
+        /// <summary>
+        /// Adds a step to the test case with delegate to do the step. 
+        /// </summary>
         public void AddStep(string action, Action by)
         {
             by.Invoke();
             AddStep(action);
         }
 
+        /// <summary>
+        /// Adds a step to the test case with delegate to do the step and return some outcome of step.
+        /// This can then be assigned to a out variable. 
+        /// <code>
+        /// TestProcedure.AddStep
+        /// (
+        ///     action: "Get the highest price item",
+        ///     by : {
+        ///        return database.Products.OrderBy(p=> x.Price).Last();
+        ///     }
+        ///     var out product
+        /// )
+        /// 
+        /// Assert.AreEqual(product.Name, "Most expensive item");
+        /// </code>
+        /// </summary>
         public void AddStep<T>(string action, Func<T> by, out T result)
         {
             AddStep(action);
             result = by.Invoke();
         }
 
+        /// <summary>
+        /// Adds a step to the test case and creates a new variable in the same line.
+        /// <code>testProcedure.AddStep(action: "Choose a value from 1 to 10, input: new Random(1,10), out var value);</code>
+        /// </summary>
         public void AddStep<T>(string action, T input, out T result)
         {
             AddStep(action);
@@ -191,6 +243,23 @@ namespace CoatHanger.Core
             AddManualStep(actions: new List<string>(actions)
             , expectedResult: string.Join(Environment.NewLine, expectedResults)
             , requirementID: $"{TestCase.Identifier}-{CurrentExpectedResultStepNumber}");
+        }
+
+        /// <summary>
+        /// Adds a step to the test case. 
+        /// </summary>
+        /// <param name="actions">The actions the users performs during the test execution</param>
+        /// <param name="expectedResults">The final outcome of the all the steps and what should be observed</param>
+        /// <param name="IsSuccessful">Was the the step succefully in its execution</param>
+        /// <param name="comment">the comment about the step execution. Should be the assert failure message.</param>
+        public void AddStep(string[] actions, string expectedResults, bool IsSuccessful, string comment)
+        {
+            AddManualStep(actions: new List<string>(actions)
+            , expectedResult: string.Join(Environment.NewLine, expectedResults)
+            , requirementID: $"{TestCase.Identifier}-{CurrentExpectedResultStepNumber}"
+            , IsSuccessful: IsSuccessful
+            , comment: comment
+            );
         }
 
         public void AddStep(string action, params string[] expectedResults)
@@ -212,6 +281,11 @@ namespace CoatHanger.Core
 
         public void AddManualStep(List<string> actions, string expectedResult, string requirementID)
         {
+            AddManualStep(actions, expectedResult, requirementID, true, null);
+        }
+
+        public void AddManualStep(List<string> actions, string expectedResult, string requirementID, bool IsSuccessful, string comment)
+        {
             Steps.Add(new TestStep()
             {
                 StepNumber = CurrentStepNumber,
@@ -221,27 +295,136 @@ namespace CoatHanger.Core
                 {
                     RequirementID = requirementID,
                     ExpectedResult = expectedResult,
-                }
+                    
+                },
+                IsSuccessful = IsSuccessful,
+                Comment = comment
             });
 
             CurrentStepNumber++;
             CurrentExpectedResultStepNumber++;
         }
 
+        /// <summary>
+        /// Adds a reference link to the test case summary. These are good for files or website links
+        /// that are appear multiple times in many test cases. This avoid bloating up the document with duplicate attachments. 
+        /// </summary>
+        public void AddTestReference(string reference)
+        {
+            if (string.IsNullOrEmpty(reference)) throw new ArgumentNullException("Test case references must have a value");
+            References.Add(reference);
+        }
+
+        /// <summary>
+        /// Adds an attachment to both the test case and requirement. 
+        /// </summary>
         public void AddAttachment(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException("Attachment must have a filename path");
+
             AddTestAttachment(fileName);
             AddRequirementAttachment(fileName);
         }
 
+        /// <summary>
+        /// Adds an attachment to the test case. 
+        /// </summary>
         public void AddTestAttachment(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException("Test Attachment must have a filename path");
 
+            TestAttachments.Add(new Attachment() { FileName = fileName });
         }
 
+        /// <summary>
+        /// Adds an attachment to the requirement.  
+        /// </summary>
         public void AddRequirementAttachment(string fileName)
         {
-            
+            if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException("Requirement Attachment must have a filename path");
+
+            RequirementAttachments.Add(new Attachment() { FileName = fileName });
         }
+
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// </summary>
+        public void RegisterParameter(string key, string value)
+        {
+            Iteration.TestParameters.Add(key, value);
+            Iteration.RequirementParameters.Add(key, value);
+        }
+
+        public void RegisterParameter(string key, int value)
+        {
+            RegisterParameter(key, value.ToString());
+        }
+
+        public void RegisterParameter(string key, bool value)
+        {
+            RegisterParameter(key, value.ToString());
+        }
+
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// </summary>
+        public void RegisterParameter(string key, string value, string label)
+        {
+            Iteration.TestParameters.Add(key, value);
+            Iteration.RequirementParameters.Add(key, value);
+            Iteration.LabelParameters.Add(key, label);
+        }
+
+        public void RegisterParameter(string key, int value, string label)
+        {
+            RegisterParameter(key, value.ToString(), label);
+        }
+
+        public void RegisterParameter(string key, bool value, string label)
+        {
+            RegisterParameter(key, value.ToString(), label);
+        }
+
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// </summary>
+        public void RegisterTestParameter(string key, string value)
+        {
+            Iteration.TestParameters.Add(key, value);
+        }
+
+        public void RegisterTestParameter(string key, int value)
+        {
+            RegisterTestParameter(key, value.ToString());
+        }
+
+        public void RegisterTestParameter(string key, bool value)
+        {
+            RegisterTestParameter(key, value.ToString());
+        }
+
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// </summary>
+        public void RegisterTestParameter(string key, string value, string label)
+        {
+            Iteration.TestParameters.Add(key, value);
+            Iteration.LabelParameters.Add(key, label);
+        }
+
+        public void RegisterTestParameter(string key, int value, string label)
+        {
+            RegisterTestParameter(key, value.ToString(), label);
+        }
+
+        public void RegisterTestParameter(string key, bool value, string label)
+        {
+            RegisterTestParameter(key, value.ToString(), label);
+        }
+
     }
 }

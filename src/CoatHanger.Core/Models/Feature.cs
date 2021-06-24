@@ -48,26 +48,9 @@ namespace CoatHanger.Core.Models
         public List<string> Givens { get; set; } = new List<string>();
         public List<string> Whens { get; set; } = new List<string>();
         public List<string> Thens { get; set; } = new List<string>();
-        public Dictionary<string, List<string>> Example { get; set; }
-        public List<BusinessRuleDTO> BusinessRules { get; set; } = new List<BusinessRuleDTO>();
-    }
+        public List<string> BusinessRules { get; set; } = new List<string>();
 
-    public class GherkinExample
-    {
-        public List<GherkinColumn> Columns { get; set; }
-        public Tuple<GherkinColumn, List<GherkinRow>> Rows { get; set; }
-    }
-
-    public class GherkinColumn
-    {
-        public string ColumnName { get; set; }
-        public string DisplayText { get; set; }
-    }
-
-    public class GherkinRow
-    {
-        public string ColumnName { get; set; }
-        public string Value { get; set; }
+        public List<Iteration> Iterations { get; set; } = new List<Iteration>();
     }
 
     public class Scenario
@@ -89,11 +72,24 @@ namespace CoatHanger.Core.Models
         public string BusinessRuleID { get; set; }
         public string Title { get; set; }
         public string ParentID { get; set; }
+
+        public override int GetHashCode()
+        {
+            return BusinessRuleID.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as BusinessRuleDTO;
+            if (other == null) return false;
+            return this.BusinessRuleID == other.BusinessRuleID;
+        }
     }
 
     public class TestCase
     {
         public string TestCaseID { get; set; }
+        public string ScenarioID { get; set; }
 
         public List<PrerequisiteStep> PrerequisiteSteps { get; set; }
 
@@ -128,6 +124,25 @@ namespace CoatHanger.Core.Models
         public bool IsAutomated { get; set; } = true;
 
         public TestStatus TestStatus { get; set; }
+        public List<string> References { get; set; }        
+
+        public int InterationID { get; set; }
+    }
+
+    public class Iteration
+    {
+        public int InterationID { get; set; }
+        public string TestCaseID { get; set; }
+
+        /// <summary>
+        /// Parameters relevant for only for test cases.
+        /// </summary>        
+        public Dictionary<string, string> TestParameters { get; set; } = new Dictionary<string, string>();
+        /// <summary>
+        /// Parameters relevant for only for requirements.
+        /// </summary>
+        public Dictionary<string, string> RequirementParameters { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> LabelParameters { get; set; } = new Dictionary<string, string>();
     }
 
     public enum TestStatus
@@ -179,6 +194,8 @@ namespace CoatHanger.Core.Models
         public List<Evidence> Evidences { get; set; }
 
         public string Comment { get; set; }
+
+        public bool IsSuccessful { get; set; } = true;
     }
 
     public class Evidence

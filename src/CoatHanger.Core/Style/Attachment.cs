@@ -8,6 +8,5 @@ namespace CoatHanger.Core.Style
     public class Attachment
     {
         public string FileName { get; set; }
-        public string Path { get; set; }
     }
 }

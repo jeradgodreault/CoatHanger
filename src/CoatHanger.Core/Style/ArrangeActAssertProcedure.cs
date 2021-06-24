@@ -17,7 +17,7 @@ namespace CoatHanger.Core.Style
         {
             Inputs.Add(variableName, valueOf);
 
-            AddStep(action: (Inputs.Count == 0) ? $"Given the { variableName } is { valueOf }." : "");
+            AddStep(action: ((Inputs.Count == 0) ? $"Given " : "And ") + $"the { variableName } is { valueOf }");
 
             return valueOf;
         }

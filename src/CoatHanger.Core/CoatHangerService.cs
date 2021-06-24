@@ -16,6 +16,7 @@ namespace CoatHanger.Core
     {
         private Product Product { get; set; }
         private Assembly Assembly { get; set; }
+        private HashSet<BusinessRuleDTO> BusinessRules { get; set; } = new HashSet<BusinessRuleDTO>();
 
         public IAuthorFormatter AuthorFormatter { get; internal set; } = new DefaultAuthorFormatter();
         public IReleaseVersionFormatter ReleaseVersionFormatter { get; internal set; } = new DefaultReleaseVersionFormatter();
@@ -69,15 +70,23 @@ namespace CoatHanger.Core
 
                 if (testCaseAttribute != null)
                 {
+                    var scenario = (Product.Features
+                        .SelectMany(f => f.Functions)
+                        .SelectMany(f => f.Scenarios)
+                        .SingleOrDefault(f => f.ScenarioID == testCaseAttribute.Identifier));
+
+                    var currentInterationID = scenario?.Iterations?.Max(i => i.InterationID + 1) ?? 1;                    
+
                     TestCase testCase = new TestCase()
                     {
-                        TestCaseID = testCaseAttribute.Identifier,
+                        TestCaseID = $"{testCaseAttribute.Identifier}",
+                        ScenarioID = (scenario != null) ? scenario.ScenarioID : testCaseAttribute.Identifier,
                         Title = testCaseAttribute.Title,
                         Description = testCaseAttribute.Description,
                         TestSteps = testProcedure.Steps,
                         TestingCategory = testCaseAttribute.Category,
                         TestingStyle = testCaseAttribute.Style,
-                        PrerequisiteSteps = testProcedure.PrerequisiteSteps
+                        PrerequisiteSteps = (testProcedure.PrerequisiteSteps.Count > 0)?  testProcedure.PrerequisiteSteps : null
                     };
 
                     if (testDesignerAttribute != null)
@@ -94,7 +103,7 @@ namespace CoatHanger.Core
                     if (regressionReleaseAttribute != null)
                     {
                         testCase.RegressionReleases = regressionReleaseAttribute.RegressionReleaseVersions;
-                    }
+                    }                    
 
                     // TODO: Add a paramaters to exclude this step. 
                     testCase.TestExecution = new TestExecution()
@@ -110,31 +119,69 @@ namespace CoatHanger.Core
                             ? TestStatus.Passed 
                             : TestStatus.Failed;
 
+                    if (testProcedure.References.Count > 0)
+                    {
+                        testCase.References = testProcedure.References.ToList();
+                    }                    
+
                     if (testProcedure is GivenWhenThenProcedure gwt)
                     {
-                        var scenario = new GherkinScenario()
-                        {
-                            ScenarioID = testCase.TestCaseID,
-                            Givens = gwt.Givens,
-                            Whens = gwt.Whens,
-                            Thens = gwt.Thens,
-                            // We have to transform it due to hierarchy.
-                            BusinessRules = gwt.BusinessRules
-                                .Select(br => new BusinessRuleDTO()
-                                {
-                                    BusinessRuleID = br.ID,
-                                    Title = br.Title,
-                                    ParentID = br?.Parent?.ID
-                                })
-                                .ToList()
-                        };
+                        var iteration = testProcedure.Iteration;
 
-                        function.Scenarios.Add(scenario);
+                        if (scenario == null)
+                        {
+                            scenario = new GherkinScenario()
+                            {
+                                ScenarioID = testCase.TestCaseID,
+                                Givens = gwt.Givens,
+                                Whens = gwt.Whens,
+                                Thens = gwt.Thens,
+                                BusinessRules = gwt.BusinessRules.Select(br => br.ID).Distinct().ToList()
+                            };
+
+                            // First interation of scenario is always one. 
+                            iteration.InterationID = 1;
+                            function.Scenarios.Add(scenario);
+
+                            foreach(var br in gwt.BusinessRules)
+                            {
+                                AddBusinessRule(br);
+                            }                            
+                        }
+                        else
+                        {
+                            iteration.InterationID = currentInterationID;
+                        }
+
+                        if (iteration.TestParameters.Count > 0 || iteration.RequirementParameters.Count > 0)
+                        {
+                            scenario.Iterations.Add(iteration);
+                        } else
+                        {
+                            scenario.Iterations = null;
+                        }                        
                     }
 
+                    testCase.InterationID = currentInterationID;
                     function.TestCases.Add(testCase);
                 }
             }
+        }
+
+        private void AddBusinessRule(BusinessRule br)
+        {
+            if (br.Parent != null)
+            {
+                // Recusrive navigate the hierarchy 
+                AddBusinessRule(br.Parent);
+            }
+
+            BusinessRules.Add(new BusinessRuleDTO()
+            {
+                BusinessRuleID = br.ID,
+                Title = br.Title,
+                ParentID = br?.Parent?.ID
+            });
         }
 
         private void AddFeatureIfNotExist(AreaAttribute functionAttribute)
@@ -208,6 +255,17 @@ namespace CoatHanger.Core
 
                 serializer.Serialize(file, Product);
             }
+
+            using (StreamWriter file = File.CreateText(@$"{Directory.GetCurrentDirectory()}/CoatHangerBusinessRule.yaml"))
+            {
+                var serializer = new SerializerBuilder()
+                    .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
+                    .Build();
+
+                serializer.Serialize(file, BusinessRules);
+            }
+
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using CoatHanger.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CoatHanger.Core.Step
 {
@@ -9,6 +10,8 @@ namespace CoatHanger.Core.Step
         private List<string> Actions = new List<string>();
         private List<Evidence> Evidences = new List<Evidence>();
         private List<BusinessRule> BusinessRules = new List<BusinessRule>();
+        public bool IsVerified { get; private set; } = true;
+        public string FailedVerificationErrorMessage { get; private set; }
 
         public VerificationStep Statement(string statement)
         {
@@ -41,9 +44,9 @@ namespace CoatHanger.Core.Step
         }
 
         public VerificationStep Confirm(string that, bool actual, Action<bool> assertionMethod)
-        {
-            assertionMethod.Invoke(actual);
-            Actions.Add("Confirm that:" + "\r" + that);
+        {            
+            Actions.Add("Confirm that:" + " • " + that);
+            CheckAssertion(assertionMethod, actual, that);
             return this;
         }
 
@@ -54,9 +57,9 @@ namespace CoatHanger.Core.Step
         }
 
         public VerificationStep And(string that, bool actual, Action<bool> assertionMethod)
-        {
-            assertionMethod.Invoke(actual);
-            Actions[Actions.Count - 1] = Actions[Actions.Count - 1] + "\r" + that;
+        {            
+            Actions[Actions.Count - 1] = Actions[Actions.Count - 1] + " • " + that;
+            CheckAssertion(assertionMethod, actual, that);
             return this;
         }
 
@@ -67,18 +70,18 @@ namespace CoatHanger.Core.Step
         }
 
         public VerificationStep Confirm<T>(string that, T actual, Action<T, T> assertionMethod, T expected)
-        {
-            assertionMethod.Invoke(expected, actual);
-            Actions.Add("Confirm that:" + "\r" + that);
+        {            
+            Actions.Add("Confirm that:" + " • " + that);
+            CheckAssertion(assertionMethod, expected, actual, that);
 
             return this;
         }
 
         public VerificationStep And<T>(string that, T actual, Action<T, T> assertionMethod, T expected)
         {
-            assertionMethod.Invoke(expected, actual);
 
-            Actions[Actions.Count - 1] = Actions[Actions.Count - 1] + "\r" + that;
+            Actions[Actions.Count - 1] = Actions[Actions.Count - 1] + " • " + that;
+            CheckAssertion(assertionMethod, expected, actual, that);
 
             return this;
         }
@@ -152,6 +155,33 @@ namespace CoatHanger.Core.Step
             return BusinessRules;
         }
 
+        private void CheckAssertion(Action<bool> assertionMethod, bool actual, string step)
+        {
+            try
+            {
+                assertionMethod.Invoke(actual);
+            }
+            catch (Exception ex)
+            {
+                IsVerified = false;
+                FailedVerificationErrorMessage = $"Verification failed during the step '{step}'\n\n " + ex.Message;
+                throw;
+            }
+        }
+
+        private void CheckAssertion<T>(Action<T, T> assertionMethod, T expected, T actual, string step)
+        {
+            try
+            {
+                assertionMethod.Invoke(expected, actual);
+            } 
+            catch (Exception ex)
+            {
+                IsVerified = false;
+                FailedVerificationErrorMessage = $"Verification failed during the step '{step}'\n\n " + ex.Message;
+                throw;
+            }
+        }
 
         /// <summary>
         /// Observations are not output into the documentation. 
@@ -167,12 +197,17 @@ namespace CoatHanger.Core.Step
             }
             catch (Exception ex)
             {
+                IsVerified = false;
+                FailedVerificationErrorMessage = $"Unexpected observation was detected. Review '{that}'";
                 new ObservationException(that, ex);
             }
 
             return this;
         }
     }
+
+
+
 
     public class ObservationException : Exception
     {

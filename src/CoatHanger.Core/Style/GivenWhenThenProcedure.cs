@@ -468,12 +468,23 @@ namespace CoatHanger.Core.Step
             that = that.ToThenFormat();
             string expectOutcome = (Thens.Count == 0) ? $"Then {that}" : $"And {that}";
 
-            var verification = ToVerify.Invoke(new VerificationStep());
-            base.AddStep(verification.GetActionStep().ToArray(), expectOutcome);
-            base.BusinessRules.AddRange(verification.GetBusinessRules());
-
             Thens.Add(that);
             LastAction = GivenWhenThenAction.Then;
+
+            var verificationStep = new VerificationStep();
+            try
+            {
+                ToVerify.Invoke(verificationStep);                
+            }
+            catch (Exception)
+            {                
+                throw;
+            }
+            finally
+            {
+                base.AddStep(verificationStep.GetActionStep().ToArray(), expectOutcome, verificationStep.IsVerified, verificationStep.FailedVerificationErrorMessage);
+                base.BusinessRules.AddRange(verificationStep.GetBusinessRules());
+            }
 
             return this;
         }

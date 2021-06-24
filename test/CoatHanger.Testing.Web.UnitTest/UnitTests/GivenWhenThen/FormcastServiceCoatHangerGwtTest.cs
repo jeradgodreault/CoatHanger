@@ -49,7 +49,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.99", 
+            identifier: "GWT.A.99", 
             title: "When the temperature is less than zero degree celcius",
             description: "This test case verifies the **freezing** temperature label is being calculated correctly."
         )]
@@ -83,7 +83,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.1.1",
+            identifier: "GWT.A.1.1",
             title: "When the temperature is exactly zero degree celcius",
             description: "This test case verifies the **freezing** temperature label is being calculated correctly."
         )]
@@ -138,9 +138,13 @@ namespace CoatHanger.Testing.Web.UnitTest
         public void WhenTemperatureBetweenOneAndLessThanTwenty_ExpectCool(string range, int value, string expectedResult)
         {
             TestProcedure.Start(MethodBase.GetCurrentMethod());
+            TestProcedure.RegisterParameter(nameof(range), range);
+            TestProcedure.RegisterParameter(nameof(value), value);
+            TestProcedure.RegisterParameter(nameof(expectedResult), expectedResult, "Expected Result");
+            TestProcedure.AddTestReference("See TestRange_Approved.xlsx");
 
             FormcastService service = new FormcastService();
-
+            
             // given            
             TestProcedure
                 .Given(that: $"the current temperature is between 1 or 20 degree celcius")
@@ -172,7 +176,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.4", 
+            identifier: "GWT.A.4", 
             title: "When the temperature is exactly 20 degree celcius",
             description: "This test case verifies the **mild** temperature label is being calculated correctly."
         )]
@@ -211,7 +215,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.5", 
+            identifier: "GWT.A.5", 
             title: "When the temperature is less than 25 degree celcius",
             description: "This test case verifies the **mild** temperature label is being calculated correctly."
         )]
@@ -243,8 +247,8 @@ namespace CoatHanger.Testing.Web.UnitTest
                 step.Statement("Examine the results for what its not")
                 .Confirm(that: "The value is not Hot", actual: result, AreNotEqual, expected: "Hot")
                 .And(that: "The value is not cold", actual: result, AreNotEqual,  expected: "Hot")
-                .And(that: "The temperature < 25 ", actual: true, AreEqual, expected: (temperature < 25))
-                .And(that: "The temperature >= 20 ", actual: true, AreEqual, expected: (temperature >= 20))
+                .And(that: "The temperature < 25", actual: true, AreEqual, expected: (temperature < 25))
+                .And(that: "The temperature >= 20", actual: true, AreEqual, expected: (temperature >= 20))
                 ;
 
                 return step;
@@ -254,7 +258,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.6", 
+            identifier: "GWT.A.6", 
             title: "When the temperature is exactly 25 degree celcius",
             description: "This test case verifies the **mild** temperature label is being calculated correctly."
         )]
@@ -289,7 +293,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.7", 
+            identifier: "GWT.A.7", 
             title: "When the temperature is between 25 and 29 degree celcius",
             description: "This test case verifies the **hot** temperature label is being calculated correctly."
         )]
@@ -325,7 +329,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.8",
+            identifier: "GWT.A.8",
             title: "When the temperature is exactly 30 degree celcius",
             description: "This test case verifies the **scorching** temperature label is being calculated correctly."
         )]
@@ -360,7 +364,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.9", 
+            identifier: "GWT.A.9", 
             title: "When the temperature is greater than 30 degree celcius",
             description: "This test case verifies the **scorching** temperature label is being calculated correctly."
         )]
@@ -396,7 +400,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
        (
            manualTest: true,
-           identifier: "A.10",
+           identifier: "GWT.A.10",
            title: "Where the performance of the temperature page is examined.",
            description: "This test case verifies bug item #45214 - page is too slow."
        )]
@@ -439,7 +443,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [CoatHanger.TestCase
         (
             manualTest: true,
-            identifier: "A.01",
+            identifier: "GWT.A.01",
             title: "Where the performance of the \"contact us\" page is examined.",
             description: "This test case verifies cross cutting concern of about page performance."
         )]
@@ -502,7 +506,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [TestMethod]
         [CoatHanger.TestCase
         (
-            identifier: "A.11",
+            identifier: "GWT.A.11",
             title: "When the temperature is greater than 30 degree celcius",
             description: "This test case verifies the **scorching** temperature label is being calculated correctly."
         )]
