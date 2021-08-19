@@ -1,4 +1,6 @@
-﻿namespace CoatHanger.Core
+﻿using System.Collections.Generic;
+
+namespace CoatHanger.Core
 {
     public abstract class ProductArea : IAreaPath
     {
@@ -41,6 +43,20 @@
         public virtual IAreaPath ParentArea => (IAreaPath)Parent;
         public abstract T Parent { get; }
         public virtual string Area => "Function";
+    }
+
+    /// <summary>
+    /// Sub-Functionality is a function broken down into a smaller pieces.
+    /// </summary>
+    public abstract class SubFunctionArea<T> : IAreaPath where T : IAreaPath
+    {
+        public abstract string ID { get; }
+        public abstract string Title { get; }
+        public abstract string Summary { get; }
+        public virtual ITheme Theme => new NoTheme();
+        public virtual IAreaPath ParentArea => (IAreaPath)Parent;
+        public abstract T Parent { get; }
+        public virtual string Area => "Sub-Function";
     }
 
     public abstract class ComponentArea<T> : IAreaPath where T : IAreaPath
@@ -91,7 +107,6 @@
         public string Summary => "";
     }
 
-
     /// <summary>
     /// They’re statements that describe how you must carry out 
     /// certain operations and if there is some limit that you need to apply.
@@ -99,13 +114,45 @@
     /// They guide behaviors and define what, where, when, why and how 
     /// something should be done in a company.
     /// </summary>
-    public class BusinessRule
+    public class BusinessRule : IRule
     {
         public virtual string ID { get; set; }
         public virtual string Title { get; set; }
         public virtual string Summary { get; set; }
         public virtual RuleType RuleType { get; set; }
         public virtual BusinessRule Parent { get; set; }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Regulation
+    {
+        public virtual string ID { get; set; }
+        public virtual string Title { get; set; }
+        public virtual string Summary { get; set; }
+        public virtual string Version { get; set; }
+        public List<RegulationRule> RegulationRules { get; set; }
+    }
+
+    /// <summary>
+    /// A rule or order issued by an executive authority or regulatory agency of a 
+    /// government and having the force of law.
+    /// </summary>
+    public class RegulationRule : IRule
+    {
+        public virtual string ID { get; set; }
+        public virtual string Title { get; set; }
+        public virtual string Summary { get; set; }
+        public List<IRule> ComplianceRules { get; set; }
+        public Regulation Regulation { get; set; }
+    }
+
+    public interface IRule
+    {
+        public abstract string ID { get; set; }
+        public abstract string Title { get; set; }
+        public abstract string Summary { get; set; }
     }
 
     public enum RuleType

@@ -15,9 +15,23 @@ namespace CoatHanger.Core.Style
             return this;
         }
 
+        public SharedStep Action(string action, Action by)
+        {
+            Actions.Add(action);
+            by.Invoke();
+            return this;
+        }
+
         public SharedStep Step(string step)
         {
             Actions.Add(step);
+            return this;
+        }
+
+        public SharedStep Step(string step, Action by)
+        {
+            Actions.Add(step);
+            by.Invoke();
             return this;
         }
 
@@ -27,9 +41,23 @@ namespace CoatHanger.Core.Style
             return this;
         }
 
+        public SharedStep LookFor(string action, Action by)
+        {
+            Actions.Add(action);
+            by.Invoke();
+            return this;
+        }
+
         public SharedStep Go(string action)
         {
             Actions.Add(action);
+            return this;
+        }
+
+        public SharedStep Go(string action, Action by)
+        {
+            Actions.Add(action);
+            by.Invoke();
             return this;
         }
 
@@ -39,8 +67,17 @@ namespace CoatHanger.Core.Style
             return this;
         }
 
+        public SharedStep Instruction(string instruction, Action by)
+        {
+            Actions.Add(instruction + "\n");
+            by.Invoke();
+
+            return this;
+        }
+
         public void AddEvidence(Evidence evidence)
         {
+            Actions.Add("*** Collect Evidence" + "\n");
             Evidences.Add(evidence);
         }
 
@@ -49,6 +86,8 @@ namespace CoatHanger.Core.Style
         /// </summary>
         public void AddScreenshot(string fileName)
         {
+            Actions.Add("*** Take a screenshot" + "\n");
+
             Evidences.Add
             (
                 new Evidence()
@@ -65,6 +104,8 @@ namespace CoatHanger.Core.Style
         /// </summary>
         public void AddScreenshot(string fileName, DateTime timestamp)
         {
+            Actions.Add("*** Take a screenshot" + "\n");
+
             Evidences.Add
             (
                 new Evidence()

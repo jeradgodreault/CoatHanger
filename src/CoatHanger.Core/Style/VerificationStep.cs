@@ -19,10 +19,23 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
+        public VerificationStep Statement(string statement, Action by)
+        {
+            Actions.Add(statement);
+            by.Invoke();
+            return this;
+        }
+
         public VerificationStep Statement(BusinessRule businessRule)
         {
             BusinessRules.Add(businessRule);
-            return Statement($"BR.{businessRule.ID} - {businessRule.Title}");
+            return Statement($"{businessRule.ID} - {businessRule.Title}");
+        }
+
+        public VerificationStep Statement(BusinessRule businessRule, Action by)
+        {
+            BusinessRules.Add(businessRule);
+            return Statement($"{businessRule.ID} - {businessRule.Title}", by);
         }
 
         public VerificationStep Instruction(string instruction)
@@ -31,15 +44,30 @@ namespace CoatHanger.Core.Step
             return this;
         }
 
+        public VerificationStep Instruction(string instruction, Action by)
+        {
+            Actions.Add(instruction);
+            by.Invoke();
+            return this;
+        }
+
         public VerificationStep Instruction(BusinessRule businessRule)
         {
             BusinessRules.Add(businessRule);
-            return Instruction($"BR.{businessRule.ID} - {businessRule.Title}");
+            return Instruction($"{businessRule.ID} - {businessRule.Title}");
         }
 
         public VerificationStep Instruction(List<string> instructions)
         {
             Actions.AddRange(instructions);
+            return this;
+        }
+
+        public VerificationStep Instruction(List<string> instructions, Action by)
+        {
+            Actions.AddRange(instructions);
+            by.Invoke();
+
             return this;
         }
 
@@ -53,7 +81,7 @@ namespace CoatHanger.Core.Step
         public VerificationStep Confirm(BusinessRule businessRule, bool actual, Action<bool> assertionMethod)
         {
             BusinessRules.Add(businessRule);
-            return Confirm($"BR.{businessRule.ID} - {businessRule.Title}", actual, assertionMethod);
+            return Confirm($"{businessRule.ID} - {businessRule.Title}", actual, assertionMethod);
         }
 
         public VerificationStep And(string that, bool actual, Action<bool> assertionMethod)
@@ -66,7 +94,7 @@ namespace CoatHanger.Core.Step
         public VerificationStep Confirm<T>(BusinessRule businessRule, T actual, Action<T, T> assertionMethod, T expected)
         {
             BusinessRules.Add(businessRule);
-            return Confirm($"BR.{businessRule.ID} - {businessRule.Title}", actual, assertionMethod, expected);
+            return Confirm($"{businessRule.ID} - {businessRule.Title}", actual, assertionMethod, expected);
         }
 
         public VerificationStep Confirm<T>(string that, T actual, Action<T, T> assertionMethod, T expected)
@@ -89,11 +117,13 @@ namespace CoatHanger.Core.Step
         public VerificationStep And<T>(BusinessRule businessRule, T actual, Action<T, T> assertionMethod, T expected)
         {
             BusinessRules.Add(businessRule);
-            return And($"BR.{businessRule.ID} - {businessRule.Title}", actual, assertionMethod, expected);
+            return And($"{businessRule.ID} - {businessRule.Title}", actual, assertionMethod, expected);
         }
 
         public void AddEvidence(Evidence evidence)
         {
+            Actions.Add("*** Collect Evidence" + "\n");
+
             Evidences.Add(evidence);
         }
 
@@ -102,6 +132,8 @@ namespace CoatHanger.Core.Step
         /// </summary>
         public void AddScreenshot(string fileName)
         {
+            Actions.Add("*** Take a screenshot" + "\n");
+
             Evidences.Add
             (
                 new Evidence()
@@ -118,6 +150,8 @@ namespace CoatHanger.Core.Step
         /// </summary>
         public void AddScreenshot(string fileName, DateTime timestamp)
         {
+            Actions.Add("*** Take a screenshot" + "\n");
+
             Evidences.Add
             (
                 new Evidence()
@@ -134,6 +168,8 @@ namespace CoatHanger.Core.Step
         /// </summary>
         public void AddEvidence(string fileName, DateTime timestamp, EvidenceType evidenceType)
         {
+            Actions.Add("*** Collect Evidence" + "\n");
+
             Evidences.Add
             (
                 new Evidence()
@@ -205,9 +241,6 @@ namespace CoatHanger.Core.Step
             return this;
         }
     }
-
-
-
 
     public class ObservationException : Exception
     {

@@ -18,7 +18,7 @@ namespace CoatHanger.Testing.Web.UnitTest
     /// Use the <see cref="FormcastServiceMsTest"/> as example of MSTest implementation. 
     /// </summary>
     [TestClass]
-    [CoatHanger.Area(areaType: typeof(TemperatureCalculationFunction))]
+    [CoatHanger.Area(areaType: typeof(TemperatureCalculation2Function))]
     public class FormcastServiceCoatHangerGwtTest
     {
         private GivenWhenThenProcedure TestProcedure;

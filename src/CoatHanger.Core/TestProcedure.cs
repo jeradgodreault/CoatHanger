@@ -2,6 +2,7 @@
 using CoatHanger.Core.Style;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -27,6 +28,11 @@ namespace CoatHanger.Core
         public bool IsStarted { get; private set; } = false;
 
         public Iteration Iteration { get; private set; } = new Iteration();
+
+        /// <summary>
+        /// This boolean is used to ensure you don't add steps within an existing step.
+        /// </summary>
+        protected bool IsBuilderMode { get; set; } = false;
 
         public TestProcedure()
         {
@@ -82,12 +88,15 @@ namespace CoatHanger.Core
 
         public void AddSharedStep(List<string> actions, List<Evidence> evidences)
         {
+            if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify) Complete the builder step first before adding new steps.");
+
             Steps.Add(new TestStep()
             {
                 IsSharedStep = true,
                 Actions = actions,
                 Evidences = evidences,
-                StepNumber = CurrentStepNumber
+                StepNumber = CurrentStepNumber,
+                IsSuccessful = true
             });
 
             CurrentStepNumber++;
@@ -98,6 +107,8 @@ namespace CoatHanger.Core
         /// </summary>
         public void AddScreenshotStep(string fileName)
         {
+            if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify). Use the builder API method for taking a screenshot.");
+
             var screenshot = new Evidence()
             {
                 EvidenceType = EvidenceType.JPEG_IMAGE,
@@ -107,6 +118,7 @@ namespace CoatHanger.Core
 
             if (Steps.Count == 0)
             {
+
                 Steps.Add(new TestStep()
                 {
                     IsSharedStep = false,
@@ -115,7 +127,8 @@ namespace CoatHanger.Core
                     {
                        screenshot
                     },
-                    StepNumber = CurrentStepNumber
+                    StepNumber = CurrentStepNumber,
+                    IsSuccessful = true,
                 });
 
                 CurrentStepNumber++;
@@ -138,8 +151,19 @@ namespace CoatHanger.Core
 
         public void AddSharedStep(Func<SharedStep> by)
         {
-            var sharedStep = by.Invoke();
-            AddSharedStep(sharedStep.Actions, sharedStep.Evidences);
+            SharedStep sharedStep;
+            try
+            {
+                IsBuilderMode = true;
+                sharedStep = by.Invoke();
+                IsBuilderMode = false;
+                AddSharedStep(sharedStep.Actions, sharedStep.Evidences);
+            }
+            catch
+            {
+                IsBuilderMode = false;
+                throw;
+            }
         }
 
         public void AddPrerequisiteStep(string description)
@@ -169,12 +193,15 @@ namespace CoatHanger.Core
         /// </summary>
         public void AddStep(string action)
         {
+            if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify) Complete the builder step first before adding new steps.");
+
             Steps.Add(new TestStep()
             {
                 StepNumber = CurrentStepNumber++,
                 Actions = new List<string> { action },
                 Evidences = null,
-                IsSharedStep = false
+                IsSharedStep = false,
+                IsSuccessful = true,
             });
         }
 
@@ -183,12 +210,15 @@ namespace CoatHanger.Core
         /// </summary>
         public void AddStep(string action, Evidence evidence)
         {
+            if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify) Complete the builder step first before adding new steps.");
+
             Steps.Add(new TestStep()
             {
                 StepNumber = CurrentStepNumber++,
                 Actions = new List<string> { action },
                 Evidences = new List<Evidence>() { evidence },
-                IsSharedStep = false
+                IsSharedStep = false,
+                IsSuccessful = true
             });
         }
 
@@ -197,8 +227,8 @@ namespace CoatHanger.Core
         /// </summary>
         public void AddStep(string action, Action by)
         {
-            by.Invoke();
             AddStep(action);
+            by.Invoke();            
         }
 
         /// <summary>
@@ -254,11 +284,25 @@ namespace CoatHanger.Core
         /// <param name="comment">the comment about the step execution. Should be the assert failure message.</param>
         public void AddStep(string[] actions, string expectedResults, bool IsSuccessful, string comment)
         {
+            AddStep(actions, expectedResults, IsSuccessful, comment, new List<BusinessRule>());
+        }
+
+        /// <summary>
+        /// Adds a step to the test case. 
+        /// </summary>
+        /// <param name="actions">The actions the users performs during the test execution</param>
+        /// <param name="expectedResults">The final outcome of the all the steps and what should be observed</param>
+        /// <param name="IsSuccessful">Was the the step succefully in its execution</param>
+        /// <param name="comment">the comment about the step execution. Should be the assert failure message.</param>
+        /// <param name="businessRules"></param>
+        public void AddStep(string[] actions, string expectedResults, bool IsSuccessful, string comment, List<BusinessRule> businessRules)
+        {
             AddManualStep(actions: new List<string>(actions)
             , expectedResult: string.Join(Environment.NewLine, expectedResults)
             , requirementID: $"{TestCase.Identifier}-{CurrentExpectedResultStepNumber}"
             , IsSuccessful: IsSuccessful
             , comment: comment
+            , businessRules: businessRules
             );
         }
 
@@ -286,6 +330,19 @@ namespace CoatHanger.Core
 
         public void AddManualStep(List<string> actions, string expectedResult, string requirementID, bool IsSuccessful, string comment)
         {
+            AddManualStep(actions, expectedResult, requirementID, IsSuccessful, comment, new List<BusinessRule>());
+        }
+
+        public void AddManualStep(List<string> actions
+            , string expectedResult
+            , string requirementID
+            , bool IsSuccessful
+            , string comment
+            , List<BusinessRule> businessRules
+        )
+        {
+            if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify) Complete the builder step first before adding new steps.");
+
             Steps.Add(new TestStep()
             {
                 StepNumber = CurrentStepNumber,
@@ -297,6 +354,7 @@ namespace CoatHanger.Core
                     ExpectedResult = expectedResult,
                     
                 },
+                BusinessRules = businessRules.Select(br=> br.ID).ToList(),
                 IsSuccessful = IsSuccessful,
                 Comment = comment
             });
@@ -356,11 +414,19 @@ namespace CoatHanger.Core
             Iteration.RequirementParameters.Add(key, value);
         }
 
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// </summary>
         public void RegisterParameter(string key, int value)
         {
             RegisterParameter(key, value.ToString());
         }
 
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// </summary>
         public void RegisterParameter(string key, bool value)
         {
             RegisterParameter(key, value.ToString());
@@ -369,6 +435,7 @@ namespace CoatHanger.Core
         /// <summary>
         /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
         /// substitute them instead of making new test cases. 
+        /// 
         /// </summary>
         public void RegisterParameter(string key, string value, string label)
         {
@@ -396,12 +463,11 @@ namespace CoatHanger.Core
             Iteration.TestParameters.Add(key, value);
         }
 
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// </summary>
         public void RegisterTestParameter(string key, int value)
-        {
-            RegisterTestParameter(key, value.ToString());
-        }
-
-        public void RegisterTestParameter(string key, bool value)
         {
             RegisterTestParameter(key, value.ToString());
         }
@@ -410,21 +476,45 @@ namespace CoatHanger.Core
         /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
         /// substitute them instead of making new test cases. 
         /// </summary>
+        public void RegisterTestParameter(string key, bool value)
+        {
+            RegisterTestParameter(key, value.ToString());
+        }
+
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// 
+        /// Add a custom label to the key for prettier documentation.
+        /// </summary>
         public void RegisterTestParameter(string key, string value, string label)
         {
             Iteration.TestParameters.Add(key, value);
             Iteration.LabelParameters.Add(key, label);
         }
 
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases. 
+        /// 
+        /// Add a custom label to the key for prettier documentation.
+        /// </summary>
         public void RegisterTestParameter(string key, int value, string label)
         {
             RegisterTestParameter(key, value.ToString(), label);
         }
 
+        /// <summary>
+        /// Register a Parameter for the current Iteration. The idea with Parameter is that you can
+        /// substitute them instead of making new test cases.
+        /// 
+        /// Add a custom label to the key for prettier documentation.
+        /// </summary>
         public void RegisterTestParameter(string key, bool value, string label)
         {
             RegisterTestParameter(key, value.ToString(), label);
         }
+
 
     }
 }

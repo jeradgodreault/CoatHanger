@@ -16,6 +16,7 @@ namespace CoatHanger.Core.Models
         [YamlMember(ScalarStyle = ScalarStyle.Literal)]
         public string Summary { get; set; }
         public List<Feature> Features { get; set; } = new List<Feature>();
+        public DateTime GeneratedDateTime { get; set; }
     }
 
     /// <summary>
@@ -38,27 +39,41 @@ namespace CoatHanger.Core.Models
         public string FunctionID { get; set; }
         public string Title { get; set; }
         public string Summary { get; set; }
+        public List<Function> Functions { get; set; } = new List<Function>();
+    }
+
+    public class CoatHangerSpecDTO
+    {
+        public string ProductID { get; set; }
+        public DateTime GeneratedDateTime { get; set; }
         public List<GherkinScenario> Scenarios { get; set; } = new List<GherkinScenario>();
         public List<TestCase> TestCases { get; set; } = new List<TestCase>();
+    }
+
+    public class CoatHangerResultDTO
+    {
+        public string ProductID { get; set; }
+        public DateTime GeneratedDateTime { get; set; }
+        public List<TestResult> TestResults { get; set; } = new List<TestResult>();
+    }
+
+    public class TestResult
+    {        
+        public string TestCaseID { get; set; }
+        public int InterationID { get; set; }
+        public TestExecution TestExecution { get; set; }
+
     }
 
     public class GherkinScenario
     {
         public string ScenarioID { get; set; }
+        public string FunctionID { get; set; }
         public List<string> Givens { get; set; } = new List<string>();
         public List<string> Whens { get; set; } = new List<string>();
         public List<string> Thens { get; set; } = new List<string>();
         public List<string> BusinessRules { get; set; } = new List<string>();
-
         public List<Iteration> Iterations { get; set; } = new List<Iteration>();
-    }
-
-    public class Scenario
-    {
-        public string ScenarioID { get; set; }
-        public string Title { get; set; }
-        public string CurrentVersion { get; set; }
-        public string CreatedRelease { get; set; }
     }
 
     public class Requirement
@@ -86,10 +101,18 @@ namespace CoatHanger.Core.Models
         }
     }
 
+    public class CoatHangerBusinessRuleDTO
+    {
+        public string ProductID { get; set; }
+        public DateTime GeneratedDateTime { get; set; }        
+        public List<BusinessRuleDTO> BusinessRules { get; set; }
+    }
+
     public class TestCase
     {
         public string TestCaseID { get; set; }
         public string ScenarioID { get; set; }
+        public string FunctionID { get; set; }
 
         public List<PrerequisiteStep> PrerequisiteSteps { get; set; }
 
@@ -117,8 +140,6 @@ namespace CoatHanger.Core.Models
         public Author Author { get; set; }
 
         public List<TestStep> TestSteps { get; set; }
-
-        public TestExecution TestExecution { get; set; }
 
         [YamlMember(DefaultValuesHandling = DefaultValuesHandling.OmitDefaults)]
         public bool IsAutomated { get; set; } = true;
@@ -168,7 +189,7 @@ namespace CoatHanger.Core.Models
         public Author ExecutedBy { get; set; }
         public string ExecuteStartDate { get; set; }
         public string ExecuteEndDate { get; set; }
-        public bool IsCompleted { get; set; }
+        public bool IsSuccessful { get; set; }
     }
 
     public class PrerequisiteStep
@@ -193,9 +214,27 @@ namespace CoatHanger.Core.Models
 
         public List<Evidence> Evidences { get; set; }
 
+        public List<string> BusinessRules { get; set; }
+
         public string Comment { get; set; }
 
-        public bool IsSuccessful { get; set; } = true;
+        public bool IsSuccessful { get; set; } 
+    }
+
+    public class TestCaseResult
+    {
+        public string TestCaseID { get; set; }
+        public string ScenarioID { get; set; }
+        public List<TestStepResult> TestStepResults { get; set; }
+        public TestExecution TestExecution { get; set; }
+    }
+
+    public class TestStepResult
+    {
+        public int StepNumber { get; set; }
+        public string Comment { get; set; }
+        public List<Evidence> Evidences { get; set; }
+        public bool IsSuccessful { get; set; }
     }
 
     public class Evidence

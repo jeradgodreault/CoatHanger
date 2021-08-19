@@ -75,9 +75,31 @@ sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
     {
         public override string ID => "CHW.A.1";
 
-        public override string Title => "Temperature Calculation";
+        public override string Title => "Temperature Calculation (CURRENT)";
 
-        public override string Summary => "Determine if the temperature is freezing, cold, or hot.";
+        public override string Summary => "Determine if the temperature is freezing, cold, or hot. (CURRENT)";
+
+        public override WeatherForcastFeature Parent => new WeatherForcastFeature();
+    }
+
+    public class TemperatureCalculation2Function : SubFunctionArea<TemperatureCalculationFunction>
+    {
+        public override string ID => "CHW.A.2";
+
+        public override string Title => "Temperature Calculation NEW";
+
+        public override string Summary => "NEW Determine if the temperature is freezing, cold, or hot. ";
+
+        public override TemperatureCalculationFunction Parent => new TemperatureCalculationFunction();
+    }
+
+    public class TemperatureCalculation3Function : FunctionArea<WeatherForcastFeature>
+    {
+        public override string ID => "CHW.A.3";
+
+        public override string Title => "Temperature Calculation (OLD)";
+
+        public override string Summary => "Determine if the temperature is freezing, cold, or hot. (OLD)";
 
         public override WeatherForcastFeature Parent => new WeatherForcastFeature();
     }

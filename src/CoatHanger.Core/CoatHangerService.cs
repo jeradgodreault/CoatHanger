@@ -16,26 +16,60 @@ namespace CoatHanger.Core
     {
         private Product Product { get; set; }
         private Assembly Assembly { get; set; }
-        private HashSet<BusinessRuleDTO> BusinessRules { get; set; } = new HashSet<BusinessRuleDTO>();
+        
+        internal IAuthorFormatter AuthorFormatter { get; set; } = new DefaultAuthorFormatter();
+        internal IReleaseVersionFormatter ReleaseVersionFormatter { get; set; } = new DefaultReleaseVersionFormatter();
+        internal string EvidencePath { get; set; } = ".";
+        internal string AttachmentPath { get; set; } = ".";
+        internal string FileNamePrefix {get; set; } = "";
 
-        public IAuthorFormatter AuthorFormatter { get; internal set; } = new DefaultAuthorFormatter();
-        public IReleaseVersionFormatter ReleaseVersionFormatter { get; internal set; } = new DefaultReleaseVersionFormatter();
-        public string EvidencePath { get; internal set; } = ".";
-        public string AttachmentPath { get; internal set; } = ".";
+        internal string TargetDirectory { get; set; }       
 
-        public CoatHangerService(ProductArea product)
+        // final output 
+        private CoatHangerSpecDTO CoatHangerSpec { get; set; }
+        private HashSet<BusinessRuleDTO> BusinessRules { get; set; }
+        private CoatHangerResultDTO CoatHangerResult { get; set; }
+
+        public CoatHangerService()
         {
-            Product = new Product()
+            if (TargetDirectory == null)
             {
-                ProductID = product.ID,
-                Title = product.Title,
-                Summary = product.Summary
-            };
+                TargetDirectory = Directory.GetCurrentDirectory();
+            }
         }
 
-        public CoatHangerService(Product product)
+        internal void Init(Product product)
         {
-            Product = product;
+            try
+            {
+                var deserializer = new DeserializerBuilder()
+                .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                .Build();
+
+                Product = deserializer.Deserialize<Product>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerProduct.yaml"));
+                CoatHangerSpec = deserializer.Deserialize<CoatHangerSpecDTO>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerSpec.yaml"));
+                CoatHangerResult = deserializer.Deserialize<CoatHangerResultDTO>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerResult.yaml"));
+                var businessRulesDto = deserializer.Deserialize<CoatHangerBusinessRuleDTO>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerBusinessRule.yaml"));
+
+                BusinessRules = new HashSet<BusinessRuleDTO>(businessRulesDto.BusinessRules);
+            }
+            catch (Exception ex)
+            {
+                //TODO: Clean up this implementation. 
+                Product = product;
+
+                CoatHangerSpec = new CoatHangerSpecDTO()
+                {
+                    ProductID = product.ProductID
+                };
+
+                CoatHangerResult = new CoatHangerResultDTO()
+                {
+                    ProductID = product.ProductID
+                };
+
+                BusinessRules = new HashSet<BusinessRuleDTO>();
+            }
         }
 
         public void AddTestCase(Assembly assembly, TestResultOutcome testResultOutcome, TestProcedure testProcedure)
@@ -58,8 +92,21 @@ namespace CoatHanger.Core
                     throw new ArgumentException($"The class {classType.FullName} does not have the required {nameof(AreaAttribute)}");
                 }
 
-                AddFeatureIfNotExist(functionAttribute);
-                var function = AddFunctionIfNotExist(functionAttribute);
+                AddHierarchy(functionAttribute.Area);
+
+                var function = Product.Features.SelectMany(feature => feature.Functions)
+                    .Where(f=> f.FunctionID == functionAttribute.Area.ID)
+                    .FirstOrDefault();
+
+                // must be a sub-function
+                if (function == null)
+                {
+                    function = Product.Features
+                        .SelectMany(feature => feature.Functions)
+                        .SelectMany(function => function.Functions)
+                        .Where(f => f.FunctionID == functionAttribute.Area.ID)
+                        .SingleOrDefault();
+                }
 
                 //Method Only attributes 
                 var testCaseAttribute = (TestCaseAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(TestCaseAttribute));
@@ -70,17 +117,20 @@ namespace CoatHanger.Core
 
                 if (testCaseAttribute != null)
                 {
-                    var scenario = (Product.Features
-                        .SelectMany(f => f.Functions)
-                        .SelectMany(f => f.Scenarios)
-                        .SingleOrDefault(f => f.ScenarioID == testCaseAttribute.Identifier));
+                    int currentInterationID = 1;
+                    var scenario = CoatHangerSpec.Scenarios
+                        .SingleOrDefault(f => f.ScenarioID == testCaseAttribute.Identifier);
 
-                    var currentInterationID = scenario?.Iterations?.Max(i => i.InterationID + 1) ?? 1;                    
+                    if (scenario?.Iterations != null && scenario?.Iterations.Count > 0)
+                    {
+                        currentInterationID = scenario.Iterations.Max(i => i.InterationID + 1);
+                    }                    
 
                     TestCase testCase = new TestCase()
                     {
                         TestCaseID = $"{testCaseAttribute.Identifier}",
                         ScenarioID = (scenario != null) ? scenario.ScenarioID : testCaseAttribute.Identifier,
+                        FunctionID = function.FunctionID,
                         Title = testCaseAttribute.Title,
                         Description = testCaseAttribute.Description,
                         TestSteps = testProcedure.Steps,
@@ -103,21 +153,33 @@ namespace CoatHanger.Core
                     if (regressionReleaseAttribute != null)
                     {
                         testCase.RegressionReleases = regressionReleaseAttribute.RegressionReleaseVersions;
-                    }                    
+                    }
 
-                    // TODO: Add a paramaters to exclude this step. 
-                    testCase.TestExecution = new TestExecution()
+
+                    var testResult = new TestResult()
                     {
-                        IsCompleted = testResultOutcome == TestResultOutcome.Passed,
-                        ExecuteStartDate = testProcedure.TestExecutionStartDateTime.ToString("s"),
-                        // Adding 1 second delay so that End is always ahead of Start. 
-                        // Some unit test run faster than reasonable date format will allow.
-                        ExecuteEndDate = DateTime.Now.AddSeconds(1).ToString("s")
+                        TestCaseID = testCase.TestCaseID,
+                        InterationID = currentInterationID,
+                        TestExecution = new TestExecution()
+                        {
+                            IsSuccessful = testResultOutcome == TestResultOutcome.Passed,
+                            ExecuteStartDate = testProcedure.TestExecutionStartDateTime.ToString("s"),
+                            // Adding 1 second delay so that End is always ahead of Start. 
+                            // Some unit test run faster than reasonable date format will allow.
+                            ExecuteEndDate = DateTime.Now.AddSeconds(1).ToString("s")
+                        }
                     };
 
-                    testCase.TestStatus = testResultOutcome == TestResultOutcome.Passed 
-                            ? TestStatus.Passed 
-                            : TestStatus.Failed;
+                    CoatHangerResult.TestResults.Add(testResult);
+
+                    testCase.TestStatus = CoatHangerResult.TestResults
+                        .Where(tr => tr.TestCaseID == testCase.TestCaseID && tr.InterationID == currentInterationID)
+                        .OrderByDescending(tr=> tr.TestExecution.ExecuteStartDate)
+                        .First()
+                        .TestExecution.IsSuccessful
+                        ? TestStatus.Passed
+                        : TestStatus.Failed;
+
 
                     if (testProcedure.References.Count > 0)
                     {
@@ -133,6 +195,7 @@ namespace CoatHanger.Core
                             scenario = new GherkinScenario()
                             {
                                 ScenarioID = testCase.TestCaseID,
+                                FunctionID = function.FunctionID,
                                 Givens = gwt.Givens,
                                 Whens = gwt.Whens,
                                 Thens = gwt.Thens,
@@ -141,7 +204,7 @@ namespace CoatHanger.Core
 
                             // First interation of scenario is always one. 
                             iteration.InterationID = 1;
-                            function.Scenarios.Add(scenario);
+                            CoatHangerSpec.Scenarios.Add(scenario);
 
                             foreach(var br in gwt.BusinessRules)
                             {
@@ -163,7 +226,7 @@ namespace CoatHanger.Core
                     }
 
                     testCase.InterationID = currentInterationID;
-                    function.TestCases.Add(testCase);
+                    CoatHangerSpec.TestCases.Add(testCase);
                 }
             }
         }
@@ -184,69 +247,105 @@ namespace CoatHanger.Core
             });
         }
 
-        private void AddFeatureIfNotExist(AreaAttribute functionAttribute)
-        {
-            if (!Product.Features.Any(f => f.FeatureID == functionAttribute.Area.ParentArea.ID))
+        private void AddHierarchy(IAreaPath areaPath)
+        {            
+            // Features are top-level nodes. 
+            if (areaPath.Area == "Feature")
             {
-                lock (Product)
-                {
-                    var feature = new Feature()
-                    {
-                        FeatureID = functionAttribute.Area.ParentArea.ID,
-                        Summary = functionAttribute.Area.ParentArea.Summary,
-                        Title = functionAttribute.Area.ParentArea.Title,
-                    };
+                var currentFeature = Product.Features
+                    .Where(f => f.FeatureID == areaPath.ID)
+                    .SingleOrDefault();
 
-                    Product.Features.Add(feature);
+                if (currentFeature == null)
+                {
+                    Product.Features.Add(new Feature()
+                    {
+                        FeatureID = areaPath.ID,
+                        Summary = areaPath.Summary,
+                        Title = areaPath.Title,
+                    });
+                }
+            }
+            else if (areaPath.Area == "Function")
+            {
+                // Does the feature exisit? If not add it. 
+                if (Product.Features.Where(f => f.FeatureID == areaPath.ParentArea.ID).SingleOrDefault() == null)
+                {
+                    AddHierarchy(areaPath.ParentArea);
+                }
+
+                var parentFeature = Product.Features
+                .Where(f => f.FeatureID == areaPath.ParentArea.ID)
+                .SingleOrDefault();
+
+                // Does the function already exist for this feature? 
+                if (!Product.Features
+                    .SelectMany(feature=> feature.Functions)
+                    .Any(feature => feature.FunctionID == areaPath.ID)) 
+                {
+                    parentFeature.Functions.Add(new Function()
+                    {
+                        FunctionID = areaPath.ID,
+                        Summary = areaPath.Summary,
+                        Title = areaPath.Title,
+                    });
+                }
+            }
+            else if (areaPath.Area == "Sub-Function")
+            {
+                if (Product.Features.SelectMany(f=> f.Functions).Where(f => f.FunctionID == areaPath.ParentArea.ID).SingleOrDefault() == null)
+                {
+                    AddHierarchy(areaPath.ParentArea);
+                }
+
+                var parentFunction = Product.Features
+                .SelectMany(f=> f.Functions)
+                .Where(f => f.FunctionID == areaPath.ParentArea.ID)
+                .SingleOrDefault();
+
+                // Does the function already exist for this feature? 
+                if (!Product.Features
+                    .SelectMany(feature => feature.Functions)
+                    .SelectMany(function=> function.Functions)
+                    .Any(f => f.FunctionID == areaPath.ID)
+                )
+                {
+                    parentFunction.Functions.Add(new Function()
+                    {
+                        FunctionID = areaPath.ID,
+                        Summary = areaPath.Summary,
+                        Title = areaPath.Title,
+                    });
                 }
             }
         }
-
-        private Function AddFunctionIfNotExist(AreaAttribute functionAttribute)
-        {
-            var feature = Product.Features
-                .Where(f => f.FeatureID == functionAttribute.Area.ParentArea.ID)
-                .Single();
-
-            if (!feature.Functions.Any(f => f.FunctionID == functionAttribute.Area.ID))
-            {
-                lock (Product)
-                {
-                    var function = new Function()
-                    {
-                        FunctionID = functionAttribute.Area.ID,
-                        Summary = functionAttribute.Area.Summary,
-                        Title = functionAttribute.Area.Title,
-                    };
-
-                    feature.Functions.Add(function);
-                }
-            }
-
-            return feature.Functions
-                .Where(f => f.FunctionID == functionAttribute.Area.ID)
-                .Single();
-        }
-
 
         public void Finish()
         {
-            // TODO: Need a way for users to pass in sorting algorthm in the constructor. 
+            var generatedDateTime = DateTime.Now;
+            Product.GeneratedDateTime = generatedDateTime;
 
+            // TODO: Need a way for users to pass in sorting algorthm in the constructor. 
             Product.Features.Sort((x, y) => x.FeatureID.CompareTo(y.FeatureID));
 
             foreach (var feature in Product.Features)
             {
-                foreach (var function in feature.Functions)
-                {
-                    function.Scenarios.Sort((x, y) => x.ScenarioID.CompareTo(y.ScenarioID));
-                }
-
                 feature.Functions.Sort((x, y) => x.FunctionID.CompareTo(y.FunctionID));
             }
 
+            CoatHangerSpec.Scenarios.Sort((x, y) => x.ScenarioID.CompareTo(y.ScenarioID));
+            CoatHangerSpec.TestCases.Sort((x, y) => x.TestCaseID.CompareTo(y.TestCaseID));
+            CoatHangerResult.TestResults.Sort((x, y) =>
+            {
+                int result = x.TestCaseID.CompareTo(y.TestCaseID);
+                return result != 0 ? result : x.InterationID.CompareTo(y.InterationID);
+            });
+
+            var businessRuleList = BusinessRules.ToList();
+            businessRuleList.Sort((x, y) => x.BusinessRuleID.CompareTo(y.BusinessRuleID));
+
             // serialize yaml directly to a file
-            using (StreamWriter file = File.CreateText(@$"{Directory.GetCurrentDirectory()}/CoatHangerSpec.yaml"))
+            using (StreamWriter file = File.CreateText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerProduct.yaml"))
             {
                 var serializer = new SerializerBuilder()
                     .WithNamingConvention(PascalCaseNamingConvention.Instance)
@@ -256,14 +355,44 @@ namespace CoatHanger.Core
                 serializer.Serialize(file, Product);
             }
 
-            using (StreamWriter file = File.CreateText(@$"{Directory.GetCurrentDirectory()}/CoatHangerBusinessRule.yaml"))
+            using (StreamWriter file = File.CreateText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerSpec.yaml"))
             {
                 var serializer = new SerializerBuilder()
                     .WithNamingConvention(PascalCaseNamingConvention.Instance)
                     .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
                     .Build();
 
-                serializer.Serialize(file, BusinessRules);
+                CoatHangerSpec.GeneratedDateTime = generatedDateTime;
+
+                serializer.Serialize(file, CoatHangerSpec);
+            }
+
+            using (StreamWriter file = File.CreateText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerResult.yaml"))
+            {
+                var serializer = new SerializerBuilder()
+                    .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
+                    .Build();
+
+                CoatHangerResult.GeneratedDateTime = generatedDateTime;
+
+                serializer.Serialize(file, CoatHangerResult);
+            }
+
+
+            using (StreamWriter file = File.CreateText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerBusinessRule.yaml"))
+            {
+                var serializer = new SerializerBuilder()
+                    .WithNamingConvention(PascalCaseNamingConvention.Instance)
+                    .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
+                    .Build();
+
+                serializer.Serialize(file, new CoatHangerBusinessRuleDTO()
+                {
+                    ProductID = Product.ProductID,
+                    GeneratedDateTime = generatedDateTime,
+                    BusinessRules = businessRuleList
+                });
             }
 
         }
@@ -275,6 +404,8 @@ namespace CoatHanger.Core
         private string DocumentationResourcePath { get; set; } = ".";
         private IAuthorFormatter AuthorFormatter { get; set; } = new DefaultAuthorFormatter();
         private IReleaseVersionFormatter ReleaseVersionFormatter { get; set; } = new DefaultReleaseVersionFormatter();
+        private string FileNamePrefix { get; set; } = "";
+        private string TargetDirectoryPath { get; set; }
 
         public CoatHangerServiceBuilder(ProductArea product)
         {
@@ -304,13 +435,35 @@ namespace CoatHanger.Core
             return this;
         }
 
+        public CoatHangerServiceBuilder WithFileNamePrefix(string prefix)
+        {
+            if (string.IsNullOrEmpty(prefix)) throw new ArgumentException($"The filename prefix ({nameof(prefix)} paramater) cannot be null or empty.");
+            FileNamePrefix = prefix + "_";
+            return this; 
+        }
+
+        /// <summary>
+        /// The directory the coathanger files should be saved too.
+        /// </summary>
+        public CoatHangerServiceBuilder WithTargetDirectory(string targetDirectoryPath)
+        {
+            if (string.IsNullOrEmpty(targetDirectoryPath)) throw new ArgumentException($"The filename path ({nameof(targetDirectoryPath)} paramater) cannot be null or empty.");
+            TargetDirectoryPath = targetDirectoryPath;
+            return this;
+        } 
+
         public CoatHangerService Build()
         {
-            CoatHangerService service = new CoatHangerService(Product);
-            service.AuthorFormatter = AuthorFormatter;
-            service.ReleaseVersionFormatter = ReleaseVersionFormatter;
-            service.AttachmentPath = $"{DocumentationResourcePath}/Attachments";
-            service.EvidencePath = $"{DocumentationResourcePath}/Evidences"; ;
+            CoatHangerService service = new CoatHangerService()
+            {
+                AuthorFormatter = AuthorFormatter,
+                ReleaseVersionFormatter = ReleaseVersionFormatter,
+                AttachmentPath = $"{DocumentationResourcePath}/Attachments",
+                EvidencePath = $"{DocumentationResourcePath}/Evidences",
+                FileNamePrefix = FileNamePrefix,
+                TargetDirectory = TargetDirectoryPath ?? Directory.GetCurrentDirectory()
+            };
+            service.Init(Product);
 
             return service;
         }

@@ -474,16 +474,19 @@ namespace CoatHanger.Core.Step
             var verificationStep = new VerificationStep();
             try
             {
-                ToVerify.Invoke(verificationStep);                
+                base.IsBuilderMode = true;
+                ToVerify.Invoke(verificationStep);
+
+                base.IsBuilderMode = false;
+                base.AddStep(verificationStep.GetActionStep().ToArray(), expectOutcome, verificationStep.IsVerified, verificationStep.FailedVerificationErrorMessage, verificationStep.GetBusinessRules());
+                base.BusinessRules.AddRange(verificationStep.GetBusinessRules());
             }
             catch (Exception)
-            {                
-                throw;
-            }
-            finally
             {
-                base.AddStep(verificationStep.GetActionStep().ToArray(), expectOutcome, verificationStep.IsVerified, verificationStep.FailedVerificationErrorMessage);
+                base.IsBuilderMode = false;
+                base.AddStep(verificationStep.GetActionStep().ToArray(), expectOutcome, false, verificationStep.FailedVerificationErrorMessage, verificationStep.GetBusinessRules());
                 base.BusinessRules.AddRange(verificationStep.GetBusinessRules());
+                throw;
             }
 
             return this;

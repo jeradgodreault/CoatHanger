@@ -12,7 +12,7 @@ namespace CoatHanger.Testing.Web.UnitTest
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext context)
         {
-            CoatHangerService = new CoatHangerService(new CHWeatherProduct());
+            CoatHangerService = new CoatHangerServiceBuilder(new CHWeatherProduct()).Build();
         }
 
         [AssemblyCleanup]
