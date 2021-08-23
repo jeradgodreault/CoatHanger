@@ -82,15 +82,21 @@ namespace CoatHanger.Core
                 // TODO: Incomplete. Need to map every attribute. 
 
                 var classType = testProcedure.TestMethod.DeclaringType;
-                var unitTestMethod = testProcedure.TestMethod;                
+                var unitTestMethod = testProcedure.TestMethod;
 
-                //Class Only attributes 
-                var functionAttribute = (AreaAttribute)Attribute.GetCustomAttribute(classType, typeof(AreaAttribute));
 
-                if (functionAttribute == null)
+                AreaAttribute functionAttribute = null; 
+
+                var classFunctionAttribute = (AreaAttribute)Attribute.GetCustomAttribute(classType, typeof(AreaAttribute));
+                var methodFunctionAttribute = (AreaAttribute)Attribute.GetCustomAttribute(unitTestMethod, typeof(AreaAttribute));
+
+                if (classFunctionAttribute == null && methodFunctionAttribute == null)
                 {
-                    throw new ArgumentException($"The class {classType.FullName} does not have the required {nameof(AreaAttribute)}");
+                    throw new ArgumentException($"The class or method {classType.FullName} does not have the required {nameof(AreaAttribute)} attribute");
                 }
+
+                // attribute at the method level takes priority.
+                functionAttribute = methodFunctionAttribute ?? classFunctionAttribute; 
 
                 AddHierarchy(functionAttribute.Area);
 

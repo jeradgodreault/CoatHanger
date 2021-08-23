@@ -3,7 +3,7 @@ using System;
 
 namespace CoatHanger
 {
-    [AttributeUsage(validOn: AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(validOn: AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
     public class AreaAttribute : Attribute
     {
         public IAreaPath Area { get; set; }

@@ -123,15 +123,9 @@ namespace CoatHanger.Core
         public virtual BusinessRule Parent { get; set; }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public class Regulation
-    {
-        public virtual string ID { get; set; }
-        public virtual string Title { get; set; }
-        public virtual string Summary { get; set; }
-        public virtual string Version { get; set; }
+    public interface IRegulation : IRule
+    {    
+        public string Version { get; }
         public List<RegulationRule> RegulationRules { get; set; }
     }
 
@@ -145,14 +139,14 @@ namespace CoatHanger.Core
         public virtual string Title { get; set; }
         public virtual string Summary { get; set; }
         public List<IRule> ComplianceRules { get; set; }
-        public Regulation Regulation { get; set; }
+        public IRegulation Regulation { get; set; }
     }
 
     public interface IRule
     {
-        public abstract string ID { get; set; }
-        public abstract string Title { get; set; }
-        public abstract string Summary { get; set; }
+        public string ID { get;}
+        public string Title { get; }
+        public string Summary { get; }
     }
 
     public enum RuleType
@@ -180,5 +174,4 @@ namespace CoatHanger.Core
         /// </summary>
         Decision
     }
-
 }
