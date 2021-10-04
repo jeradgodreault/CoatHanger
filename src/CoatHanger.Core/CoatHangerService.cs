@@ -29,8 +29,10 @@ namespace CoatHanger.Core
         private CoatHangerSpecDTO CoatHangerSpec { get; set; }
         private HashSet<BusinessRuleDTO> BusinessRules { get; set; }
         private CoatHangerResultDTO CoatHangerResult { get; set; }
+        private Guid TestRunID { get; set; } = Guid.NewGuid();
+        private DateTime ModifiedDate { get; set; } = DateTime.Now;
 
-        public CoatHangerService()
+        internal CoatHangerService()
         {
             if (TargetDirectory == null)
             {
@@ -49,7 +51,7 @@ namespace CoatHanger.Core
                 Product = deserializer.Deserialize<Product>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerProduct.yaml"));
                 CoatHangerSpec = deserializer.Deserialize<CoatHangerSpecDTO>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerSpec.yaml"));
                 CoatHangerResult = deserializer.Deserialize<CoatHangerResultDTO>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerResult.yaml"));
-                var businessRulesDto = deserializer.Deserialize<CoatHangerBusinessRuleDTO>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerBusinessRule.yaml"));
+                var businessRulesDto = deserializer.Deserialize<CoatHangerRuleDTO>(File.ReadAllText(@$"{TargetDirectory}/{FileNamePrefix}CoatHangerBusinessRule.yaml"));
 
                 BusinessRules = new HashSet<BusinessRuleDTO>(businessRulesDto.BusinessRules);
             }
@@ -125,7 +127,8 @@ namespace CoatHanger.Core
                 {
                     int currentInterationID = 1;
                     var scenario = CoatHangerSpec.Scenarios
-                        .SingleOrDefault(f => f.ScenarioID == testCaseAttribute.Identifier);
+                        .SingleOrDefault(f => f.ScenarioID == testCaseAttribute.Identifier 
+                            && f.TestRunID == TestRunID);
 
                     if (scenario?.Iterations != null && scenario?.Iterations.Count > 0)
                     {
@@ -142,7 +145,8 @@ namespace CoatHanger.Core
                         TestSteps = testProcedure.Steps,
                         TestingCategory = testCaseAttribute.Category,
                         TestingStyle = testCaseAttribute.Style,
-                        PrerequisiteSteps = (testProcedure.PrerequisiteSteps.Count > 0)?  testProcedure.PrerequisiteSteps : null
+                        PrerequisiteSteps = (testProcedure.PrerequisiteSteps.Count > 0)?  testProcedure.PrerequisiteSteps : null,
+                        SqlQueryReferences = (testProcedure.SqlQueryReferences.Count > 0) ? testProcedure.SqlQueryReferences : null
                     };
 
                     if (testDesignerAttribute != null)
@@ -164,7 +168,8 @@ namespace CoatHanger.Core
 
                     var testResult = new TestResult()
                     {
-                        TestCaseID = testCase.TestCaseID,
+                        TestRunID = TestRunID,
+                        TestCaseID = testCase.TestCaseID,                        
                         InterationID = currentInterationID,
                         TestExecution = new TestExecution()
                         {
@@ -202,6 +207,7 @@ namespace CoatHanger.Core
                             {
                                 ScenarioID = testCase.TestCaseID,
                                 FunctionID = function.FunctionID,
+                                TestRunID = TestRunID,
                                 Givens = gwt.Givens,
                                 Whens = gwt.Whens,
                                 Thens = gwt.Thens,
@@ -393,7 +399,7 @@ namespace CoatHanger.Core
                     .ConfigureDefaultValuesHandling(DefaultValuesHandling.OmitNull)
                     .Build();
 
-                serializer.Serialize(file, new CoatHangerBusinessRuleDTO()
+                serializer.Serialize(file, new CoatHangerRuleDTO()
                 {
                     ProductID = Product.ProductID,
                     GeneratedDateTime = generatedDateTime,

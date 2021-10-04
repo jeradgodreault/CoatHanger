@@ -14,7 +14,7 @@ namespace CoatHanger.Core
         public List<TestStep> Steps { get; private set; } = new List<TestStep>();
         public List<PrerequisiteStep> PrerequisiteSteps { get; private set; } = new List<PrerequisiteStep>();
         private int PrerequisiteStep { get; set; } = 1;
-        private int CurrentStepNumber { get; set; } = 1;
+        protected int CurrentStepNumber { get; set; } = 1;
         private int CurrentExpectedResultStepNumber { get; set; } = 1;
         public TestCaseAttribute TestCase { get; private set; }
         internal MethodBase TestMethod { get; set; }
@@ -22,6 +22,7 @@ namespace CoatHanger.Core
         public List<Attachment> RequirementAttachments { get; private set; } = new List<Attachment>();
         public List<BusinessRule> BusinessRules { get; private set; } = new List<BusinessRule>();
         public HashSet<string> References { get; private set; } = new HashSet<string>();
+        public List<string> SqlQueryReferences { get; set; } = new List<string>();
 
         public DateTime TestExecutionStartDateTime { get; private set; }
 
@@ -102,19 +103,29 @@ namespace CoatHanger.Core
             CurrentStepNumber++;
         }
 
+        public void AddScreenshotStep(string fileName)
+        {
+            AddScreenshotStep(new List<string> { fileName });
+        }
+
         /// <summary>
         /// Creates a "Take a screenshot" step that assoicate with a Jpeg screenshot.
         /// </summary>
-        public void AddScreenshotStep(string fileName)
+        public void AddScreenshotStep(List<string> fileNames)
         {
             if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify). Use the builder API method for taking a screenshot.");
 
-            var screenshot = new Evidence()
+            var evidences = new List<Evidence>();
+            
+            foreach(var fileName in fileNames)
             {
-                EvidenceType = EvidenceType.JPEG_IMAGE,
-                FileName = fileName,
-                TimeStamp = DateTime.Now
-            };
+                evidences.Add(new Evidence()
+                {
+                    EvidenceType = EvidenceType.JPEG_IMAGE,
+                    FileName = fileName,
+                    TimeStamp = DateTime.Now
+                });
+            }
 
             if (Steps.Count == 0)
             {
@@ -123,10 +134,7 @@ namespace CoatHanger.Core
                 {
                     IsSharedStep = false,
                     Actions = new List<string> { "*** Take a screenshot" },
-                    Evidences = new List<Evidence>()
-                    {
-                       screenshot
-                    },
+                    Evidences = evidences,
                     StepNumber = CurrentStepNumber,
                     IsSuccessful = true,
                 });
@@ -139,12 +147,13 @@ namespace CoatHanger.Core
                 var step = Steps[Steps.Count - 1];
                 step.Actions.Add("*** Take a screenshot");
 
-                if (step.Evidences != null)
+                if (step.Evidences != null && step.Evidences.Count > 0)
                 {
-                    step.Evidences.Add(screenshot);
-                } else
+                    step.Evidences.AddRange(evidences);
+                } 
+                else
                 {
-                    step.Evidences = new List<Evidence>() { screenshot };
+                    step.Evidences = evidences;
                 }
             }
         }
@@ -166,6 +175,10 @@ namespace CoatHanger.Core
             }
         }
 
+        /// <summary>
+        /// Add a prerequisite description to the test case summary and also logs it as a step. 
+        /// You would use this if your test case was also responsible for setting up the current state. 
+        /// </summary>
         public void AddPrerequisiteStep(string description)
         {
             if (string.IsNullOrEmpty(description)) throw new ArgumentNullException("Prerequisite step description cannot be null or empty. Please provide a value.");
@@ -177,6 +190,9 @@ namespace CoatHanger.Core
             });
         }
 
+        /// <summary>
+        /// Add a prerequisite description to the test case summary and also logs it as a step
+        /// </summary>
         public void AddPrerequisiteStep(string description, Action setup)
         {
             AddPrerequisiteStep(description);
@@ -220,6 +236,122 @@ namespace CoatHanger.Core
                 IsSharedStep = false,
                 IsSuccessful = true
             });
+        }
+
+        /// <summary>
+        /// Adds a step to the test case with assoicate evidence of the execution.  
+        /// </summary>
+        public void AddStep(string action, List<Evidence> evidences)
+        {
+            if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify) Complete the builder step first before adding new steps.");
+
+            Steps.Add(new TestStep()
+            {
+                StepNumber = CurrentStepNumber++,
+                Actions = new List<string> { action },
+                Evidences = evidences,
+                IsSharedStep = false,
+                IsSuccessful = true
+            });
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery)
+        {
+            AddSqlQueryStep(rawSqlQuery, new List<string>());
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery, Func<Evidence> execute)
+        {
+            AddSqlQueryStep(rawSqlQuery, new List<string>(), execute);
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery, Func<List<Evidence>> execute)
+        {
+            AddSqlQueryStep(rawSqlQuery, new List<string>(), execute);
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery, string comment)
+        {
+            AddSqlQueryStep(rawSqlQuery, new List<string>() { comment });
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery, string comment, Func<Evidence> execute)
+        {
+            AddSqlQueryStep(rawSqlQuery, new List<string>() { comment }, execute);
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery, string comment, Func<List<Evidence>> execute)
+        {
+            AddSqlQueryStep(rawSqlQuery, new List<string>() { comment }, execute);
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery, List<string> comments)
+        {
+            var step = LogSqlQuery(rawSqlQuery, comments);
+            AddStep(step);
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery, List<string> comments, Func<Evidence> execute)
+        {
+            var step = LogSqlQuery(rawSqlQuery, comments);
+
+            try
+            {
+                var evidence = execute.Invoke();
+
+                if (evidence == null)
+                {
+                    throw new NullReferenceException("You must return an Evidence when using AddSqlQueryStep");
+                }
+
+                AddStep(step, evidence);
+
+            } catch (Exception ex)
+            {
+                AddStep(step, false, ex.ToString());
+                throw ex;
+            }
+        }
+
+        public void AddSqlQueryStep(string rawSqlQuery, List<string> comments, Func<List<Evidence>> execute)
+        {
+            var step = LogSqlQuery(rawSqlQuery, comments);
+
+            try
+            {
+                var evidences = execute.Invoke();
+
+                if (evidences == null || evidences.Count == 0)
+                {
+                    throw new NullReferenceException("You must return an List<Evidence> when using AddSqlQueryStep");
+                }
+
+                AddStep(step, evidences);
+
+            }
+            catch (Exception ex)
+            {
+                AddStep(step, false, ex.ToString());
+                throw ex;
+            }
+        }
+
+        private string LogSqlQuery(string rawSqlQuery, List<string> comments)
+        {
+            var sqlQueryReferenceName = $"SQL-{(SqlQueryReferences.Count + 1):00}";
+
+            foreach (var comment in comments)
+            {
+                rawSqlQuery = $"-- • {comment}\n" + rawSqlQuery;
+            }
+
+            rawSqlQuery = $"-- {sqlQueryReferenceName}\n" + rawSqlQuery;
+
+            SqlQueryReferences.Add(rawSqlQuery);
+
+            return (comments.Count > 0)
+                ? $"Execute {sqlQueryReferenceName} script • " + string.Join(" • ", comments)
+                : $"Execute {sqlQueryReferenceName} script"; ;
         }
 
         /// <summary>
@@ -275,6 +407,22 @@ namespace CoatHanger.Core
             , requirementID: $"{TestCase.Identifier}-{CurrentExpectedResultStepNumber}");
         }
 
+        public void AddStep(string action, bool isSuccessful, string comment)
+        {
+            if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify) Complete the builder step first before adding new steps.");
+
+            Steps.Add(new TestStep()
+            {
+                StepNumber = CurrentStepNumber++,
+                Actions = new List<string> { action },
+                Evidences = new List<Evidence>(),
+                IsSharedStep = false,
+                IsSuccessful = isSuccessful,
+                Comment = comment
+            });
+        }
+
+
         /// <summary>
         /// Adds a step to the test case. 
         /// </summary>
@@ -294,8 +442,19 @@ namespace CoatHanger.Core
         /// <param name="expectedResults">The final outcome of the all the steps and what should be observed</param>
         /// <param name="IsSuccessful">Was the the step succefully in its execution</param>
         /// <param name="comment">the comment about the step execution. Should be the assert failure message.</param>
-        /// <param name="businessRules"></param>
         public void AddStep(string[] actions, string expectedResults, bool IsSuccessful, string comment, List<BusinessRule> businessRules)
+        {
+            AddStep(actions, expectedResults, IsSuccessful, comment, businessRules);
+        }
+
+        /// <summary>
+        /// Adds a step to the test case. 
+        /// </summary>
+        /// <param name="actions">The actions the users performs during the test execution</param>
+        /// <param name="expectedResults">The final outcome of the all the steps and what should be observed</param>
+        /// <param name="IsSuccessful">Was the the step succefully in its execution</param>
+        /// <param name="comment">the comment about the step execution. Should be the assert failure message.</param>
+        public void AddStep(string[] actions, string expectedResults, bool IsSuccessful, string comment, List<BusinessRule> businessRules, List<Evidence> evidences)
         {
             AddManualStep(actions: new List<string>(actions)
             , expectedResult: string.Join(Environment.NewLine, expectedResults)
@@ -303,6 +462,7 @@ namespace CoatHanger.Core
             , IsSuccessful: IsSuccessful
             , comment: comment
             , businessRules: businessRules
+            , evidences: evidences
             );
         }
 
@@ -333,12 +493,24 @@ namespace CoatHanger.Core
             AddManualStep(actions, expectedResult, requirementID, IsSuccessful, comment, new List<BusinessRule>());
         }
 
+         public void AddManualStep(List<string> actions
+            , string expectedResult
+            , string requirementID
+            , bool IsSuccessful
+            , string comment
+            , List<BusinessRule> businessRules
+        )
+        {
+            AddManualStep(actions, expectedResult, requirementID, IsSuccessful, comment, businessRules, null);
+        }
+
         public void AddManualStep(List<string> actions
             , string expectedResult
             , string requirementID
             , bool IsSuccessful
             , string comment
             , List<BusinessRule> businessRules
+            , List<Evidence> evidences
         )
         {
             if (IsBuilderMode) throw new InvalidOperationException("You are currently building a step with a builder method. (e.g ToVerify) Complete the builder step first before adding new steps.");
@@ -354,6 +526,7 @@ namespace CoatHanger.Core
                     ExpectedResult = expectedResult,
                     
                 },
+                Evidences = evidences,
                 BusinessRules = businessRules.Select(br=> br.ID).ToList(),
                 IsSuccessful = IsSuccessful,
                 Comment = comment

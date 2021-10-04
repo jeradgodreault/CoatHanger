@@ -9,36 +9,42 @@ namespace CoatHanger.Core
     public class CoatHangerMergeService
     {
         public CoatHangerSpecDTO CoatHangerSpec { get; private set; }
-        public CoatHangerBusinessRuleDTO BusinessRules { get; private set; }
+        public CoatHangerRuleDTO BusinessRules { get; private set; }
         public CoatHangerResultDTO CoatHangerResult { get; private set; }
         public Product Product { get; private set; }
 
 
-        public Product Merge(Product product)
+        public Product Merge(Product currentProduct)
         {
-            var isDirty = false;
+            var isDirty = false;            
+
             if (Product == null)
             {
-                Product = product;
-                return product;
+                Product = currentProduct;
+                return currentProduct;
             }
             else
             {
-                foreach (var feature in product.Features)
+                foreach (var feature in currentProduct.Features.ToList())
                 {
                     if (!Product.Features.Any(f => f.FeatureID == feature.FeatureID))
                     {
-                        product.Features
+                        Product.Features
                             .Add(feature);
                         isDirty = true;
                         continue;
                     }
 
-                    foreach (var function in feature.Functions)
+                    foreach (var function in feature.Functions.ToList())
                     {
-                        if (!Product.Features.SelectMany(f => f.Functions).Any(f => f.FunctionID == function.FunctionID))
+
+                        var existingFunction = Product.Features
+                            .SelectMany(f => f.Functions)
+                            .Where(f => f.FunctionID == function.FunctionID).SingleOrDefault();
+
+                        if (existingFunction == null)
                         {
-                            product.Features
+                            Product.Features
                                 .Where(f => f.FeatureID == feature.FeatureID)
                                 .Single().Functions
                                 .Add(function);
@@ -46,12 +52,28 @@ namespace CoatHanger.Core
                             isDirty = true;
                             continue;
                         }
-
-                        foreach (var subFunction in function.Functions)
+                        else
                         {
-                            if (!Product.Features.SelectMany(f => f.Functions).SelectMany(f => f.Functions).Any(f => f.FunctionID == subFunction.FunctionID))
+                            if (currentProduct.GeneratedDateTime >= Product.GeneratedDateTime)
                             {
-                                product.Features
+                                existingFunction.Title = function.Title;
+                                existingFunction.Summary = function.Summary;
+                                isDirty = true;
+                            }                            
+                        }
+
+                        foreach (var subFunction in function.Functions.ToList())
+                        {
+
+                            var existingSubFunction = Product.Features
+                                .SelectMany(f => f.Functions)
+                                .SelectMany(f => f.Functions)
+                                .Where(f => f.FunctionID == subFunction.FunctionID)
+                                .SingleOrDefault();
+
+                            if (existingFunction == null)
+                            {
+                                Product.Features
                                     .Where(f => f.FeatureID == feature.FeatureID)
                                     .SelectMany(f => f.Functions)
                                     .SelectMany(f => f.Functions)
@@ -60,7 +82,15 @@ namespace CoatHanger.Core
                                     .Add(function);
 
                                 isDirty = true;
-                                continue;
+                            }
+                            else
+                            {
+                                if (currentProduct.GeneratedDateTime >= Product.GeneratedDateTime)
+                                {
+                                    existingSubFunction.Title = subFunction.Title;
+                                    existingSubFunction.Summary = subFunction.Summary;
+                                    isDirty = true;
+                                }
                             }
                         }
                     }
@@ -68,9 +98,9 @@ namespace CoatHanger.Core
             }
 
 
-            if (isDirty && product.GeneratedDateTime >= Product.GeneratedDateTime)
+            if (isDirty && currentProduct.GeneratedDateTime >= Product.GeneratedDateTime)
             {
-                Product.GeneratedDateTime = product.GeneratedDateTime;
+                Product.GeneratedDateTime = currentProduct.GeneratedDateTime;
             }
 
             return Product;
@@ -137,7 +167,7 @@ namespace CoatHanger.Core
         {
             var isDirty = false;
 
-            if (result == null)
+            if (CoatHangerResult == null)
             {
                 CoatHangerResult = result;   
             }
@@ -164,7 +194,7 @@ namespace CoatHanger.Core
             return CoatHangerResult;
         }
 
-        public CoatHangerBusinessRuleDTO Merge(CoatHangerBusinessRuleDTO businessRules)
+        public CoatHangerRuleDTO Merge(CoatHangerRuleDTO businessRules)
         {
             if (BusinessRules == null)
             {

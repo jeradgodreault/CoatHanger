@@ -37,33 +37,52 @@ namespace CoatHanger.Core.Step
 
         #region (that)
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         public GivenWhenThenProcedure Given(string that)
         {
+            return Given(that, true);
+        }
+
+        public GivenWhenThenProcedure Given(string that, bool isTestStep)
+        {
             that = that.ToGivenFormat();
-            base.AddStep((Givens.Count == 0)
+            if (isTestStep)
+            {
+                base.AddStep((Givens.Count == 0)
                ? $"Given {that}"
                : $"And {that}"
             );
+            }
 
             Givens.Add(that);
             LastAction = GivenWhenThenAction.Given;
 
             return this;
         }
+
         public GivenWhenThenProcedure When(string that)
+        {
+            return When(that, true);
+        }
+
+        public GivenWhenThenProcedure When(string that, bool isTestStep)
         {
             that = that.ToWhenFormat();
 
-            base.AddStep((Whens.Count == 0)
-               ? $"When {that}"
-               : $"And {that}"
-            );
+            if (isTestStep)
+            {
+                base.AddStep((Whens.Count == 0)
+                   ? $"When {that}"
+                   : $"And {that}"
+                );
+            }
 
             Whens.Add(that);
             LastAction = GivenWhenThenAction.When;
 
             return this;
         }
+
 
         public GivenWhenThenProcedure Then(string that)
         {
@@ -90,16 +109,27 @@ namespace CoatHanger.Core.Step
 
         #region (that, by)
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         public GivenWhenThenProcedure Given(string that, Action by)
         {
-            Given(that);
+            return Given(that, by, true);
+        }
+
+        public GivenWhenThenProcedure Given(string that, Action by, bool isTestStep)
+        {
+            Given(that, isTestStep);
             by.Invoke();
             return this;
         }
 
         public GivenWhenThenProcedure When(string that, Action by)
         {
-            When(that);
+            return When(that, by, true);
+        }
+
+        public GivenWhenThenProcedure When(string that, Action by, bool isTestStep)
+        {
+            When(that, isTestStep);
             by.Invoke();
             return this;
         }
@@ -113,18 +143,25 @@ namespace CoatHanger.Core.Step
 
         public GivenWhenThenProcedure And(string that, Action by)
         {
+            return And(that, by, true);
+        }
+
+        public GivenWhenThenProcedure And(string that, Action by, bool isTestStep)
+        {
             if (LastAction == GivenWhenThenAction.Unknown) throw new InvalidOperationException("You cannot invoke the AND statement without calling a GIVEN/WHEN/THEN first.");
+            if (LastAction == GivenWhenThenAction.Then && !isTestStep) throw new InvalidOperationException("Then statement must always be logged as test step. They are the expected outcomes.");
 
             return (LastAction == GivenWhenThenAction.When)
-                ? When(that, by)
+                ? When(that, by, isTestStep)
                 : (LastAction == GivenWhenThenAction.Then)
                 ? Then(that, by)
-                : Given(that, by);
+                : Given(that, by, isTestStep);
         }
 
         #endregion (that, by)
 
         #region (thatFormat, input)
+
 
         /// <summary>
         /// Uses `String.Format` to construct the step. 
@@ -133,7 +170,17 @@ namespace CoatHanger.Core.Step
         /// </summary>
         public GivenWhenThenProcedure Given<T>(string thatFormat, T input)
         {
-            Given(string.Format(thatFormat, input));
+            return Given(thatFormat, input, true);
+        }
+
+        /// <summary>
+        /// Uses `String.Format` to construct the step. 
+        /// Example
+        /// - .Given("there are {0} cumcumbers", GetCucumbersCount()); 
+        /// </summary>
+        public GivenWhenThenProcedure Given<T>(string thatFormat, T input, bool isTestStep)
+        {
+            Given(string.Format(thatFormat, input), isTestStep);
             return this;
         }
 
@@ -144,7 +191,17 @@ namespace CoatHanger.Core.Step
         /// </summary>
         public GivenWhenThenProcedure When<T>(string thatFormat, T input)
         {
-            When(string.Format(thatFormat, input));
+            return When(thatFormat, input, true);
+        }
+
+        /// <summary>
+        /// Uses `String.Format` to construct the step. 
+        /// Example
+        /// - .When("I eat {0} cumcumbers", GetCucumbersCount()); 
+        /// </summary>
+        public GivenWhenThenProcedure When<T>(string thatFormat, T input, bool isTestStep)
+        {
+            When(string.Format(thatFormat, input), isTestStep);
             return this;
         }
 
@@ -160,19 +217,30 @@ namespace CoatHanger.Core.Step
         }
 
         /// <summary>
-        /// Uses `String.Format` to construct the step. 
+        /// Uses `String.Format` to construct the statement and step. 
         /// Example
         /// - .And("Fred ate {0} cumcumbers", fred.GetCucumbersCount()); 
         /// </summary>
         public GivenWhenThenProcedure And<T>(string thatFormat, T input)
         {
+            return And(thatFormat, input, true);
+        }
+
+        /// <summary>
+        /// Uses `String.Format` to construct the step. 
+        /// Example
+        /// - .And("Fred ate {0} cumcumbers", fred.GetCucumbersCount()); 
+        /// </summary>
+        public GivenWhenThenProcedure And<T>(string thatFormat, T input, bool isTestStep)
+        {
             if (LastAction == GivenWhenThenAction.Unknown) throw new InvalidOperationException("You cannot invoke the AND statement without calling a GIVEN/WHEN/THEN first.");
+            if (LastAction == GivenWhenThenAction.Then && !isTestStep) throw new InvalidOperationException("Then statement must always be logged as test step. They are the expected outcomes.");
 
             return (LastAction == GivenWhenThenAction.When)
-                ? When(thatFormat, input)
+                ? When(thatFormat, input, isTestStep)
                 : (LastAction == GivenWhenThenAction.Then)
                 ? Then(thatFormat, input)
-                : Given(thatFormat, input);
+                : Given(thatFormat, input, isTestStep);
         }
 
         #endregion (thatFormat, input)
@@ -188,7 +256,19 @@ namespace CoatHanger.Core.Step
         /// </summary>
         public GivenWhenThenProcedure Given<T>(string thatFormat, T input, out T output)
         {
-            Given(string.Format(thatFormat, input));
+            return Given(thatFormat, input, true, out output);
+        }
+
+        /// <summary>
+        /// A short cut of writing formating a step and creating a variable in a single line. 
+        /// This leverages String.Format(). 
+        /// 
+        /// Example
+        /// Given(that: "I there are {0} cucumbers", input: 50, out int cucumberCount)
+        /// </summary>
+        public GivenWhenThenProcedure Given<T>(string thatFormat, T input, bool isTestStep, out T output)
+        {
+            Given(string.Format(thatFormat, input), isTestStep);
             output = input;
             return this;
         }
@@ -202,7 +282,19 @@ namespace CoatHanger.Core.Step
         /// </summary>
         public GivenWhenThenProcedure When<T>(string thatFormat, T input, out T output)
         {
-            When(string.Format(thatFormat, input));
+            return When(thatFormat, input, true, out output);
+        }
+
+        /// <summary>
+        /// A short cut of writing formating a step and creating a variable in a single line. 
+        /// This leverages String.Format(). 
+        /// 
+        /// Example
+        /// When(that: "I eat {0} cucumbers", input: 50, out int cucumberCount)
+        /// </summary>
+        public GivenWhenThenProcedure When<T>(string thatFormat, T input, bool isTestStep, out T output)
+        {
+            When(string.Format(thatFormat, input), isTestStep);
             output = input;
             return this;
         }
@@ -223,13 +315,18 @@ namespace CoatHanger.Core.Step
 
         public GivenWhenThenProcedure And<T>(string thatFormat, T input, out T output)
         {
+            return And(thatFormat, input, true, out output);
+        }
+
+        public GivenWhenThenProcedure And<T>(string thatFormat, T input, bool isTestStep, out T output)
+        {
             if (LastAction == GivenWhenThenAction.Unknown) throw new InvalidOperationException("You cannot invoke the AND statement without calling a GIVEN/WHEN/THEN first.");
 
             T finalOutput;
             GivenWhenThenProcedure result;
             if (LastAction == GivenWhenThenAction.When)
             {
-                result = When<T>(thatFormat, input, out finalOutput);
+                result = When<T>(thatFormat, input, isTestStep, out finalOutput);
             }
             else if (LastAction == GivenWhenThenAction.Then)
             {
@@ -237,7 +334,7 @@ namespace CoatHanger.Core.Step
             }
             else
             {
-                result = Given<T>(thatFormat, input, out finalOutput);
+                result = Given<T>(thatFormat, input, isTestStep, out finalOutput);
             }
 
             output = finalOutput;
@@ -382,14 +479,24 @@ namespace CoatHanger.Core.Step
 
         public GivenWhenThenProcedure Given<T>(string that, Func<T> by, out T result)
         {
-            Given(that);
+            return Given(that, by, true, out result);
+        }
+
+        public GivenWhenThenProcedure Given<T>(string that, Func<T> by, bool isTestStep, out T result)
+        {
+            Given(that, isTestStep);
             result = by.Invoke();
             return this;
         }
 
         public GivenWhenThenProcedure When<T>(string that, Func<T> by, out T result)
         {
-            When(that);
+            return When(that, by, true, out result);
+        }
+
+        public GivenWhenThenProcedure When<T>(string that, Func<T> by, bool isTestStep, out T result)
+        {
+            When(that, isTestStep);
             result = by.Invoke();
             return this;
         }
@@ -471,20 +578,39 @@ namespace CoatHanger.Core.Step
             Thens.Add(that);
             LastAction = GivenWhenThenAction.Then;
 
-            var verificationStep = new VerificationStep();
+            var verificationStep = new VerificationStep
+            {
+                CurrentStepNumber = base.CurrentStepNumber
+            };
             try
             {
                 base.IsBuilderMode = true;
                 ToVerify.Invoke(verificationStep);
 
                 base.IsBuilderMode = false;
-                base.AddStep(verificationStep.GetActionStep().ToArray(), expectOutcome, verificationStep.IsVerified, verificationStep.FailedVerificationErrorMessage, verificationStep.GetBusinessRules());
+                base.AddStep(verificationStep.GetActionStep().ToArray()
+                    , expectOutcome
+                    , verificationStep.IsVerified
+                    , verificationStep.FailedVerificationErrorMessage
+                    , verificationStep.GetBusinessRules()
+                    , verificationStep.GetEvidences()
+                );
+                
                 base.BusinessRules.AddRange(verificationStep.GetBusinessRules());
+                base.SqlQueryReferences.AddRange(verificationStep.SqlQueryReferences);
             }
             catch (Exception)
             {
                 base.IsBuilderMode = false;
-                base.AddStep(verificationStep.GetActionStep().ToArray(), expectOutcome, false, verificationStep.FailedVerificationErrorMessage, verificationStep.GetBusinessRules());
+                
+                base.AddStep(verificationStep.GetActionStep().ToArray()
+                    , expectOutcome
+                    , false
+                    , verificationStep.FailedVerificationErrorMessage
+                    , verificationStep.GetBusinessRules()
+                    , verificationStep.GetEvidences()
+                );
+
                 base.BusinessRules.AddRange(verificationStep.GetBusinessRules());
                 throw;
             }

@@ -8,7 +8,7 @@
     <Description>A testing framework where the automated tests are the requirements.</Description>
     <Copyright>Jerad Godreault</Copyright>
     <Authors>Jerad Godreault</Authors>
-    <Version>0.16.3</Version>
+    <Version>0.17.2</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <PackageProjectUrl>https://github.com/jeradgodreault/CoatHanger</PackageProjectUrl>
     <Company>CoatHanger</Company>

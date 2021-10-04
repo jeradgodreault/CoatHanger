@@ -77,7 +77,7 @@ namespace CoatHanger.Core.Style
 
         public void AddEvidence(Evidence evidence)
         {
-            Actions.Add("*** Collect Evidence" + "\n");
+            Actions.Add("*** Collect attachment" + "\n");
             Evidences.Add(evidence);
         }
 

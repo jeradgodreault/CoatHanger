@@ -59,6 +59,7 @@ namespace CoatHanger.Core.Models
 
     public class TestResult
     {        
+        public Guid TestRunID { get; set; }
         public string TestCaseID { get; set; }
         public int InterationID { get; set; }
         public TestExecution TestExecution { get; set; }
@@ -69,6 +70,7 @@ namespace CoatHanger.Core.Models
     {
         public string ScenarioID { get; set; }
         public string FunctionID { get; set; }
+        public Guid TestRunID { get; set; }
         public List<string> Givens { get; set; } = new List<string>();
         public List<string> Whens { get; set; } = new List<string>();
         public List<string> Thens { get; set; } = new List<string>();
@@ -101,18 +103,30 @@ namespace CoatHanger.Core.Models
         }
     }
 
-    public class CoatHangerBusinessRuleDTO
+    public class CoatHangerRuleDTO
     {
         public string ProductID { get; set; }
         public DateTime GeneratedDateTime { get; set; }        
         public List<BusinessRuleDTO> BusinessRules { get; set; }
+        public List<RegulationDTO> Regulations { get; set; }
     }
+
+    public class RegulationDTO
+    {
+        public string ID { get; set; }
+        public string Title { get; set; }
+        public string Summary { get; set; }
+        public List<IRule> ComplianceRules { get; set; }        
+    }
+
+    
 
     public class TestCase
     {
         public string TestCaseID { get; set; }
         public string ScenarioID { get; set; }
         public string FunctionID { get; set; }
+        public int InterationID { get; set; }
 
         public List<PrerequisiteStep> PrerequisiteSteps { get; set; }
 
@@ -145,9 +159,9 @@ namespace CoatHanger.Core.Models
         public bool IsAutomated { get; set; } = true;
 
         public TestStatus TestStatus { get; set; }
-        public List<string> References { get; set; }        
-
-        public int InterationID { get; set; }
+        public List<string> References { get; set; }
+        [YamlMember(ScalarStyle = ScalarStyle.Literal)]
+        public List<string> SqlQueryReferences { get; set; }
     }
 
     public class Iteration
